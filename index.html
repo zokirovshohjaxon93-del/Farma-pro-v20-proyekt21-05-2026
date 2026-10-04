@@ -394,6 +394,81 @@ body.pv-open{overflow:hidden}
 .tbl td:first-child{min-width:150px}
 .hb-l span{min-width:0;flex:1}.hb-l b{flex:none}
 
+/* ═════════ v22: colour themes + Liquid Glass ═════════ */
+:root{--acc:#0B7A63;--acc2:#075C4B;--acc-l:#45C9A4;--bg1:#CFEFE2;--bg2:#DCE9FA;--bg3:#F3ECDD}
+:root[data-accent=ocean]{--acc:#1765C8;--acc2:#0E4D9E;--acc-l:#72AEF2;--bg1:#D6E8FC;--bg2:#D9F2F2;--bg3:#E9E5FA}
+:root[data-accent=lavender]{--acc:#6B4CD6;--acc2:#5235B4;--acc-l:#B7A2F8;--bg1:#E8E0FC;--bg2:#DDE9FB;--bg3:#FBE3EF}
+:root[data-accent=peach]{--acc:#D35A3A;--acc2:#B0432A;--acc-l:#F7A387;--bg1:#FDE2D6;--bg2:#FCEFD6;--bg3:#F6E1EC}
+:root[data-accent=graphite]{--acc:#334450;--acc2:#1F2C35;--acc-l:#A5B9C4;--bg1:#DFE6EB;--bg2:#E9ECEF;--bg3:#E4E9EE}
+:root{--brand:var(--acc);--brand2:var(--acc2);--brand-soft:color-mix(in srgb,var(--acc) 13%,transparent);--brand-ink:#fff;
+  --bg:#F2F5F4;--glass:rgba(255,255,255,.66);--glass-strong:rgba(255,255,255,.84);--glass-brd:rgba(255,255,255,.8);
+  --glass-hi:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(255,255,255,.25);--glass-sh:0 10px 30px -10px rgba(20,40,35,.22);--surface:rgba(255,255,255,.72)}
+:root[data-theme=dark]{--brand:var(--acc-l);--brand2:var(--acc-l);--brand-soft:color-mix(in srgb,var(--acc-l) 16%,transparent);--brand-ink:#0B1412;
+  --bg:#0B1211;--bg1:color-mix(in srgb,var(--acc) 30%,#0B1211);--bg2:color-mix(in srgb,var(--acc) 12%,#101A24);--bg3:#140F1B;
+  --glass:rgba(30,40,38,.55);--glass-strong:rgba(20,28,27,.86);--glass-brd:rgba(255,255,255,.10);--glass-hi:inset 0 1px 0 rgba(255,255,255,.10);--glass-sh:0 10px 30px -10px rgba(0,0,0,.6);--surface:rgba(28,38,36,.72)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--brand:var(--acc-l);--brand2:var(--acc-l);--brand-soft:color-mix(in srgb,var(--acc-l) 16%,transparent);--brand-ink:#0B1412;
+  --bg:#0B1211;--bg1:color-mix(in srgb,var(--acc) 30%,#0B1211);--bg2:color-mix(in srgb,var(--acc) 12%,#101A24);--bg3:#140F1B;
+  --glass:rgba(30,40,38,.55);--glass-strong:rgba(20,28,27,.86);--glass-brd:rgba(255,255,255,.10);--glass-hi:inset 0 1px 0 rgba(255,255,255,.10);--glass-sh:0 10px 30px -10px rgba(0,0,0,.6);--surface:rgba(28,38,36,.72)}}
+body{background:var(--bg)}
+body::before{content:"";position:fixed;inset:-10%;z-index:-1;pointer-events:none;
+  background:radial-gradient(60% 45% at 8% 6%,var(--bg1),transparent 70%),radial-gradient(55% 45% at 96% 18%,var(--bg2),transparent 70%),radial-gradient(70% 55% at 50% 104%,var(--bg3),transparent 70%)}
+.inp,.picker,textarea.inp,select.inp{background:var(--glass-strong)}
+.card,.item,.stat,.act,.ring,.note,.chip,.search{background:var(--glass);border-color:var(--glass-brd);box-shadow:var(--glass-hi),var(--glass-sh)}
+.chip.on{background:var(--ink);color:var(--bg)}
+.item.sel{background:var(--brand-soft);border-color:var(--brand)}
+/* glass chrome: header, floating tab bar, sheets, FAB */
+.top{background:color-mix(in srgb,var(--bg) 55%,transparent);-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%)}
+.top.scrolled{border-bottom-color:var(--glass-brd)}
+@media (max-width:899px){
+  .bnav{left:12px;right:12px;bottom:calc(var(--sab) + 10px);height:66px;padding:0 6px;border-radius:30px;border:1px solid var(--glass-brd);
+    background:var(--glass);-webkit-backdrop-filter:blur(26px) saturate(190%);backdrop-filter:blur(26px) saturate(190%);box-shadow:var(--glass-hi),0 14px 40px -12px rgba(0,0,0,.35)}
+  .bnav button{border-radius:24px;margin:6px 0;gap:2px}
+  .bnav button.on{background:color-mix(in srgb,var(--brand) 14%,transparent);box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+  .bnav button.on::before{display:none}
+  .fab{bottom:calc(var(--sab) + 90px)}
+  main#view{padding-bottom:calc(var(--sab) + 170px)}
+}
+@media (min-width:900px){.bnav{background:var(--glass);-webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%);border-right-color:var(--glass-brd)}}
+.sheet{background:var(--glass-strong);-webkit-backdrop-filter:blur(34px) saturate(180%);backdrop-filter:blur(34px) saturate(180%);border:1px solid var(--glass-brd)}
+.sheet-h,.sheet-f{background:transparent;border-color:var(--glass-brd)}
+.fab{background:linear-gradient(180deg,color-mix(in srgb,var(--brand) 82%,#fff) 0%,var(--brand) 100%);border:1px solid rgba(255,255,255,.45);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 12px 28px -8px color-mix(in srgb,var(--brand) 70%,transparent);border-radius:22px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.btn{background:var(--glass);border-color:var(--glass-brd);box-shadow:var(--glass-hi)}
+.btn.primary{background:linear-gradient(180deg,color-mix(in srgb,var(--brand) 85%,#fff) 0%,var(--brand) 100%);border-color:rgba(255,255,255,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 6px 16px -6px color-mix(in srgb,var(--brand) 70%,transparent)}
+.btn.danger{background:var(--red-soft)}
+.seg{background:var(--glass);border:1px solid var(--glass-brd);box-shadow:var(--glass-hi)}
+.seg button.on{background:var(--glass-strong);box-shadow:0 2px 8px rgba(0,0,0,.08),var(--glass-hi)}
+.hero{background:linear-gradient(140deg,var(--acc2) 0%,var(--acc) 58%,color-mix(in srgb,var(--acc) 55%,var(--acc-l)) 100%)!important;box-shadow:0 18px 40px -16px color-mix(in srgb,var(--acc) 70%,transparent)}
+.hbtn{color:var(--acc);background:rgba(255,255,255,.92)}
+.toast{background:color-mix(in srgb,var(--ink) 88%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+/* solid mode (reduce transparency / old phones) */
+html.solid body::before{display:none}
+html.solid{--glass:var(--surface2);--glass-strong:var(--surface2)}
+html.solid .top,html.solid .bnav,html.solid .sheet,html.solid .fab,html.solid .toast{-webkit-backdrop-filter:none;backdrop-filter:none}
+html.solid .top{background:var(--bg)}
+/* profile avatar in header */
+.me-av{width:34px;height:34px;border-radius:50%;overflow:hidden;flex:none;display:grid;place-items:center;background:var(--brand);color:var(--brand-ink);font-weight:700;font-size:13px;box-shadow:0 0 0 2px var(--glass-brd)}
+.me-av img{width:100%;height:100%;object-fit:cover}
+.greet-row{display:flex;align-items:center;gap:12px;margin:2px 0 12px}
+.greet-row .me-av{width:52px;height:52px;font-size:18px;box-shadow:0 0 0 3px rgba(255,255,255,.35)}
+.greet-row .greet{margin:0}
+.swatches{display:flex;gap:10px;flex-wrap:wrap}
+.sw{width:46px;height:46px;border-radius:50%;border:3px solid transparent;box-shadow:var(--glass-sh)}
+.sw.on{border-color:var(--ink)}
+.bonus{border-radius:22px;padding:16px;color:#fff;background:linear-gradient(135deg,var(--acc2),var(--acc));box-shadow:0 14px 32px -14px color-mix(in srgb,var(--acc) 70%,transparent)}
+.bonus .big{font-size:34px;font-weight:800;letter-spacing:-1px}
+.bonus .bar{background:rgba(255,255,255,.25)}.bonus .bar>i{background:#fff}
+.bonus .row{display:flex;justify-content:space-between;font-size:13.5px;margin-top:10px}
+.bonus .hint2{font-size:12.5px;opacity:.9;margin-top:10px;line-height:1.5}
+.pres{font-size:17px;line-height:1.55}
+.pres h2{font-size:26px;letter-spacing:-.5px;margin-bottom:4px}
+.pres .km{padding-left:0;list-style:none;margin:14px 0}
+.pres .km li{padding:12px 14px;border-radius:16px;background:var(--brand-soft);margin-bottom:8px;font-weight:550}
+.gallery{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;margin:10px -18px;padding:0 18px}
+.gallery img{flex:none;width:86%;max-height:60vh;object-fit:contain;border-radius:16px;scroll-snap-align:center;background:var(--surface2)}
+.mic{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand);font-size:17px;flex:none}
+.mic.rec{background:var(--red);color:#fff;animation:pulse 1s infinite}
+
 </style>
 </head>
 <body>
@@ -404,7 +479,7 @@ body.pv-open{overflow:hidden}
   <div class="appcol">
     <div id="banners"></div>
     <header class="top" id="top">
-      <span class="brand-mark mob-only" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/></svg></span>
+      <button class="mob-only" id="meHdr" aria-label="Profil" style="display:flex"></button>
       <h1 id="title">FarmaPro</h1>
       <button class="icon-btn" id="btnSearch" aria-label="Qidiruv"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
       <button class="icon-btn" id="btnSync" aria-label="Sinxron"><svg viewBox="0 0 24 24"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 9.5a4 4 0 0 1-.5 8.5z"/></svg><span class="sync-dot" id="syncDot"></span></button>
@@ -619,8 +694,8 @@ const IDB = {
     async entries(s) { const ks = await this.keys(s); const vs = await this._tx(s, 'readonly', st => st.getAll()); return ks.map((k, i) => [k, vs[i]]); }
 };
 /* ═════════ State ═════════ */
-const COLS = ['contacts', 'gifts', 'debts', 'expired', 'reminders', 'sales', 'returned', 'visits', 'projects', 'events', 'notes', 'plans'];
-const emptyDB = () => ({ contacts: [], gifts: [], debts: [], expired: [], reminders: [], sales: [], returned: [], visits: [], projects: [], events: [], notes: [], plans: [], _deleted: {}, meta: {}, _v: 21 });
+const COLS = ['contacts', 'gifts', 'debts', 'expired', 'reminders', 'sales', 'returned', 'visits', 'projects', 'events', 'notes', 'plans', 'expenses', 'samples', 'catalog'];
+const emptyDB = () => ({ contacts: [], gifts: [], debts: [], expired: [], reminders: [], sales: [], returned: [], visits: [], projects: [], events: [], notes: [], plans: [], expenses: [], samples: [], catalog: [], _deleted: {}, meta: {}, _v: 22 });
 let DB = emptyDB();
 const DEF_SETS = { theme: 'auto', nInApp: true, nBrowser: false, nTelegram: false, tgToken: '', tgChatId: '', remDays: 3, expWarn: 90,
     ghToken: '', ghGistId: '', ghUser: '', ghAuto: true, ghLastSync: 0, ghLastErr: '', ghSeen: {},
@@ -1216,8 +1291,13 @@ function Form(fields, vals = {}) {
                     w.innerHTML = typeof f.html === 'function' ? f.html(state) : f.html;
                     break;
                 case 'textarea':
-                    w.innerHTML = lab + `<textarea class="inp" id="${id}" placeholder="${esc(f.ph || '')}">${esc(v)}</textarea>` + hint;
+                    w.innerHTML = lab + (f.voice ? `<div class="inp-group" style="align-items:flex-start"><textarea class="inp" id="${id}" placeholder="${esc(f.ph || '')}">${esc(v)}</textarea><button type="button" class="mic" id="${id}_mic" aria-label="Ovozli yozish">🎤</button></div>` : `<textarea class="inp" id="${id}" placeholder="${esc(f.ph || '')}">${esc(v)}</textarea>`) + hint;
                     break;
+                case 'qtylist': {
+                    const arr = Array.isArray(v) ? v : [];
+                    w.innerHTML = lab + `<button type="button" class="picker" id="${id}" style="height:auto;min-height:46px;padding:8px 12px;flex-wrap:wrap">${arr.length ? arr.map(x => `<span class="tag blue">${esc(x.name)} × ${fmtNum(x.qty)}</span>`).join(' ') : `<span class="pv ph">${esc(f.ph || 'Tanlang')}</span>`}</button>` + hint;
+                    break;
+                }
                 case 'select':
                     w.innerHTML = lab + `<select class="inp" id="${id}">${(typeof f.opts === 'function' ? f.opts(state) : f.opts).map(([o, l]) => `<option value="${esc(o)}" ${String(o) === String(v) ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>` + hint;
                     break;
@@ -1268,7 +1348,10 @@ function Form(fields, vals = {}) {
                     break;
                 default: {
                     const t = f.type === 'tel' ? 'tel' : f.type === 'date' ? 'date' : f.type === 'time' ? 'time' : f.type === 'password' ? 'password' : 'text';
-                    w.innerHTML = lab + `<input class="inp" id="${id}" type="${t}" ${f.type === 'secret' ? 'autocapitalize="none" autocorrect="off" spellcheck="false"' : ''} ${f.type === 'tel' ? 'inputmode="tel"' : ''} ${f.list ? `list="${id}_l"` : ''} autocomplete="off" placeholder="${esc(f.ph || '')}" value="${esc(v)}">${f.list ? `<datalist id="${id}_l">${(typeof f.list === 'function' ? f.list() : f.list).map(x => `<option value="${esc(x)}">`).join('')}</datalist>` : ''}` + hint;
+                    if (f.voice)
+                        w.innerHTML = lab + `<div class="inp-group"><input class="inp" id="${id}" type="text" autocomplete="off" placeholder="${esc(f.ph || '')}" value="${esc(v)}" ${f.list ? `list="${id}_l"` : ''}><button type="button" class="mic" id="${id}_mic" aria-label="Ovozli yozish" style="margin-top:5px">🎤</button></div>${f.list ? `<datalist id="${id}_l">${(typeof f.list === 'function' ? f.list() : f.list).map(x => `<option value="${esc(x)}">`).join('')}</datalist>` : ''}` + hint;
+                    else
+                        w.innerHTML = lab + `<input class="inp" id="${id}" type="${t}" ${f.type === 'secret' ? 'autocapitalize="none" autocorrect="off" spellcheck="false"' : ''} ${f.type === 'tel' ? 'inputmode="tel"' : ''} ${f.list ? `list="${id}_l"` : ''} autocomplete="off" placeholder="${esc(f.ph || '')}" value="${esc(v)}">${f.list ? `<datalist id="${id}_l">${(typeof f.list === 'function' ? f.list() : f.list).map(x => `<option value="${esc(x)}">`).join('')}</datalist>` : ''}` + hint;
                 }
             }
             el.appendChild(w);
@@ -1433,10 +1516,19 @@ function Form(fields, vals = {}) {
                     set(code);
                 } };
                 break;
+            case 'qtylist':
+                inp.onclick = async () => { const r = await pickQty(f.label, typeof f.opts === 'function' ? f.opts(state) : f.opts, state[f.k] || []); if (r)
+                    set(r, true); };
+                break;
             default:
                 inp.addEventListener('input', () => set(inp.value));
                 if (f.type === 'date' || f.type === 'time')
                     inp.addEventListener('change', () => set(inp.value));
+                if (f.voice) {
+                    const mb = $('#' + CSS.escape(id) + '_mic', w);
+                    if (mb)
+                        mb.onclick = () => Voice.start(mb, inp);
+                }
         }
     };
     const api = { el, state, render, created: [], orig: Object.assign({}, vals),
@@ -1469,7 +1561,7 @@ function Form(fields, vals = {}) {
                     v = v === '' || v === undefined || v === null ? (f.type === 'money' ? 0 : '') : num(v);
                 if (f.type === 'text' || f.type === 'textarea' || f.type === 'tel' || f.type === 'secret' || !f.type)
                     v = String(v !== null && v !== void 0 ? v : '').trim();
-                if (f.type === 'files' || f.type === 'multi')
+                if (f.type === 'files' || f.type === 'multi' || f.type === 'qtylist')
                     v = Array.isArray(v) ? v : [];
                 o[f.k] = v;
             });
@@ -2034,6 +2126,12 @@ const Contacts = {
             { k: 'cat', label: 'Toifa', type: 'select', half: true, opts: () => { const f = VF(); return [['', '— (rejasiz)'], ['A', `A — har ${f.A} kunda`], ['B', `B — har ${f.B} kunda`], ['C', `C — har ${f.C} kunda`]]; }, hint: 'Tashrif muddati kelsa eslatadi' },
             { k: 'workplace', label: 'Ish joyi', half: true, ph: 'Klinika, apteka' },
             { k: 'address', label: 'Manzil', ph: 'Ko\'cha, mahalla, tuman' },
+            { type: 'section', label: 'Vrach profili', show: s => s.type !== 'dorixona' },
+            { k: 'potential', label: 'Potensiali', type: 'select', half: true, opts: [['', '—'], ['high', 'Yuqori'], ['mid', 'O\'rta'], ['low', 'Past']], show: s => s.type !== 'dorixona' },
+            { k: 'loyalty', label: 'Bizga munosabati', type: 'select', half: true, opts: [['', '—'], ['adv', 'Tarafdor (yozadi)'], ['neu', 'Neytral'], ['neg', 'Raqobatchini yozadi']], show: s => s.type !== 'dorixona' },
+            { k: 'prescribes', label: 'Bizdan yozadigan preparatlari', type: 'multi', opts: () => Visits.products(), show: s => s.type !== 'dorixona' },
+            { k: 'competitors', label: 'Raqobatchi preparatlar', ph: 'Masalan: Betaserk, Nimesil', show: s => s.type !== 'dorixona' },
+            { k: 'objections', label: 'E\'tirozlari, qiziqishlari', type: 'textarea', voice: true, show: s => s.type !== 'dorixona' },
             { k: 'loc', label: 'Xaritadagi joylashuvi', type: 'location', hint: 'Kontakt oldida turgan bo\'lsangiz — "Hozirgi joyim", aks holda xaritadan belgilang yoki Google/Yandex havolasini qo\'ying.' },
             { k: 'imgId', label: 'Rasm', type: 'image', max: 480 },
             { k: 'note', label: 'Izoh', type: 'textarea' }
@@ -2118,6 +2216,10 @@ const Contacts = {
           <div><span>Manzil</span><span>${esc([c.address, regionLabel(c.region)].filter(Boolean).join(', ') || '—')}</span></div>
           <div><span>Joylashuv</span><span>${c.lat != null ? `<span class="c-green">Belgilangan</span>` : `<button class="btn sm" data-setloc>${ic('pin')}Belgilash</button>`}</span></div>
           ${c.cat ? (() => { const d = visitDue(c); return `<div><span>Tashrif rejasi</span><span>${c.cat} · har ${d.freq} kunda · <span class="${d.days >= 0 ? 'c-amber' : 'c-green'}">${d.days > 0 ? d.days + ' kun kechikdi' : d.days === 0 ? 'bugun borish kerak' : relD(d.due)}</span></span></div>`; })() : ''}
+          ${c.potential || c.loyalty ? `<div><span>Potensial / munosabat</span><span>${esc([{ high: 'Yuqori', mid: 'O\'rta', low: 'Past' }[c.potential], { adv: 'Tarafdor', neu: 'Neytral', neg: 'Raqobatchida' }[c.loyalty]].filter(Boolean).join(' · '))}</span></div>` : ''}
+          ${(c.prescribes || []).length ? `<div><span>Yozadi</span><span class="c-green">${esc(c.prescribes.join(', '))}</span></div>` : ''}
+          ${c.competitors ? `<div><span>Raqobatchilar</span><span>${esc(c.competitors)}</span></div>` : ''}
+          ${c.objections ? `<div><span>E'tirozlari</span><span style="font-weight:400">${esc(c.objections)}</span></div>` : ''}
           ${c.note ? `<div><span>Izoh</span><span style="font-weight:400">${esc(c.note)}</span></div>` : ''}
         </div></div>
         <div class="stats" style="margin-bottom:6px">
@@ -2599,11 +2701,11 @@ function rowsToContacts(rows) {
 }
 /* ═════════ VISIT FORM (edit / delete / joint visit / detailing) ═════════ */
 const Visits = {
-    products() { return [...new Set(DB.expired.map(e => String(e.name).replace(/\s+(таблетки|капсулы|табл\.?|таб\.?|суппозитории|гель|крем|раствор|сироп|мазь|шампунь)\b.*$/i, '').trim()).concat(DB.visits.flatMap(v => v.products || [])).filter(Boolean))].sort((a, b) => a.localeCompare(b)); },
+    products() { return [...new Set(DB.catalog.map(c => c.name).concat(DB.expired.map(e => String(e.name).replace(/\s+(таблетки|капсулы|табл\.?|таб\.?|суппозитории|гель|крем|раствор|сироп|мазь|шампунь)\b.*$/i, '').trim()).concat(DB.visits.flatMap(v => v.products || []))).filter(Boolean))].sort((a, b) => a.localeCompare(b)); },
     managers() { return [...new Set([getMeta('profile', {}).manager, ...DB.visits.map(v => v.manager)].filter(Boolean))]; },
     async edit(id, contactId, preset = {}) {
         const v = id ? byId('visits', id) : null;
-        const vals = v ? Object.assign(Object.assign({}, v), { geo: false }) : Object.assign({ contactId: contactId || '', date: today(), time: nowTime(), purpose: 'uchrashuv', result: 'muvaffaqiyatli', geo: Geo.ok() && window.isSecureContext, joint: false, manager: '', products: [] }, preset);
+        const vals = v ? Object.assign(Object.assign({ samples: [] }, v), { geo: false }) : Object.assign({ contactId: contactId || '', date: today(), time: nowTime(), purpose: 'uchrashuv', result: 'muvaffaqiyatli', geo: Geo.ok() && window.isSecureContext, joint: false, manager: '', products: [], samples: [] }, preset);
         if (!vals.manager && vals.joint)
             vals.manager = (this.managers()[0] || '');
         const r = await formSheet(v ? 'Tashrifni tahrirlash' : 'Tashrif qayd etish', [
@@ -2611,11 +2713,12 @@ const Visits = {
             { k: 'date', label: 'Sana', type: 'date', half: true, req: true }, { k: 'time', label: 'Vaqt', type: 'time', half: true },
             { k: 'purpose', label: 'Maqsad', type: 'select', half: true, opts: VISIT_PURPOSE }, { k: 'result', label: 'Natija', type: 'select', half: true, opts: VISIT_RESULT },
             { k: 'products', label: 'Taqdim etilgan preparatlar', type: 'multi', opts: () => this.products(), ph: 'Preparatlarni tanlang' },
+            { k: 'samples', label: 'Berilgan namunalar', type: 'qtylist', opts: () => [...new Set([...Samples.balance().filter(x => x.left > 0).map(x => x.name), ...this.products()])], ph: 'Namuna berilmagan' },
             { k: 'joint', label: 'Dvoynoy vizit (menejer bilan)', type: 'switch', onChange: (x, st, api) => { if (x && !st.manager) {
                     st.manager = this.managers()[0] || '';
                 } api.render(); } },
             { k: 'manager', label: 'Menejer', list: () => this.managers(), show: s => !!s.joint, ph: 'Menejer ismi' },
-            { k: 'note', label: 'Izoh', type: 'textarea', ph: 'Nima kelishildi, e\'tirozlar, keyingi qadam…' },
+            { k: 'note', label: 'Izoh', type: 'textarea', voice: true, ph: 'Nima kelishildi, e\'tirozlar, keyingi qadam…' },
             { k: 'geo', label: 'Joylashuvni qayd etish', type: 'switch', hint: 'Tashrif joyida ekanligingiz tasdiqlanadi', show: () => !v },
             { k: 'nextDate', label: 'Keyingi tashrif (eslatma yaratiladi)', type: 'date', show: () => !v }
         ], vals, { extraBtn: v ? { label: 'O\'chirish', cls: 'danger' } : null });
@@ -3688,10 +3791,11 @@ const TourPlan = {
         v.innerHTML = `<div class="stats" style="margin-bottom:10px">
         <div class="stat"><div class="k">Ish kunlari</div><div class="v">${work.length}</div><div class="x">${p.days.filter(d => d.joint).length} ta dvoynoy</div></div>
         <div class="stat"><div class="k">Bajarildi</div><div class="v ${past && done < past ? 'c-amber' : 'c-green'}">${done}/${past || 0}</div><div class="x">o'tgan ish kunlaridan</div></div></div>
-      <div class="btn-row" style="margin-bottom:10px"><button class="btn sm" id="tpImp">${ic('upload')}Qayta yuklash</button><button class="btn sm" id="tpXl">${ic('download')}Excel</button><button class="btn sm" id="tpPr">${ic('print')}PDF</button></div>
+      <div class="btn-row" style="margin-bottom:10px"><button class="btn sm" id="tpImp">${ic('upload')}Qayta yuklash</button><button class="btn sm" id="tpIcs">📅 Kalendarga</button><button class="btn sm" id="tpXl">${ic('download')}Excel</button><button class="btn sm" id="tpPr">${ic('print')}PDF</button></div>
       <div class="list">${p.days.map((d, i) => this.rowHTML(month, d, i, factBy[`${month}-${pad(d.d)}`] || 0)).join('')}</div>`;
         $('#tpImp', v).onclick = () => this.importMenu(month);
         $('#tpXl', v).onclick = () => ReportsCenter.excel('plan', month);
+        $('#tpIcs', v).onclick = () => exportICS(month);
         $('#tpPr', v).onclick = () => ReportsCenter.show('plan', month);
         $$('[data-row]', v).forEach(b => b.onclick = () => this.openDay(month, p.days[+b.dataset.row]));
         const t = $('.tp-today', v);
@@ -3778,7 +3882,7 @@ const VisitsView = {
     itemHTML(x, showDate) {
         const c = byId('contacts', x.contactId);
         return `<button class="item" data-vid="${x.id}">${avatar(c)}<span class="body"><span class="t">${esc(c ? c.name : '(o\'chirilgan kontakt)')}</span>
-      <span class="s">${showDate ? fmtD(x.date) + ' · ' : ''}${x.time ? esc(x.time) + ' · ' : ''}${esc(lbl(VISIT_PURPOSE, x.purpose))}${(x.products || []).length ? ' · 💊 ' + esc(x.products.slice(0, 2).join(', ')) + (x.products.length > 2 ? '…' : '') : ''}</span></span>
+      <span class="s">${showDate ? fmtD(x.date) + ' · ' : ''}${x.time ? esc(x.time) + ' · ' : ''}${esc(lbl(VISIT_PURPOSE, x.purpose))}${(x.samples || []).length ? ' · 📦 ' + x.samples.reduce((s, y) => s + num(y.qty), 0) : ''}${(x.products || []).length ? ' · 💊 ' + esc(x.products.slice(0, 2).join(', ')) + (x.products.length > 2 ? '…' : '') : ''}</span></span>
       <span class="r">${x.joint ? `<span class="tag violet">👥</span><br>` : ''}<span class="tiny ${x.result === 'muvaffaqiyatli' ? 'c-green' : x.result === 'rad_etildi' ? 'c-red' : 'c-amber'}">${esc(lbl(VISIT_RESULT, x.result))}</span>${x.dist != null && x.dist <= 150 ? '<div class="tiny c-green">📍 joyida</div>' : ''}</span></button>`;
     }
 };
@@ -3814,6 +3918,7 @@ const SalesA = {
         const drugsAll = [...new Set([...A.drugs.map(x => x.k), ...Object.keys(plan)])];
         const rowsD = drugsAll.map(k => { const x = A.drugs.find(d => d.k === k) || { k, qty: 0, sum: 0 }; return Object.assign(Object.assign({}, x), { plan: num(plan[k]), prev: prevBy.get(k) }); }).sort((a, b) => b.sum - a.sum || b.plan - a.plan);
         v.innerHTML = `<div class="month-nav"><button class="icon-btn" id="saP">${ic('back')}</button><b>${TourPlan.monthLabel(m)}</b><button class="icon-btn" id="saN" style="transform:scaleX(-1)">${ic('back')}</button></div>
+      <div style="margin:6px 0 10px" id="bonusBox">${Bonus.cardHTML(m)}</div>
       <div class="stats" style="margin:6px 0 10px">
         <div class="stat"><div class="k">Sotuv summasi</div><div class="v">${short(A.sum)}</div>${this.delta(A.sum, P.sum)}</div>
         <div class="stat"><div class="k">Dona</div><div class="v">${fmtNum(A.qty)}</div>${planQty ? `<div class="x">reja ${fmtNum(planQty)} · ${Math.round(A.qty / planQty * 100)}%</div>` : this.delta(A.qty, P.qty)}</div>
@@ -3821,7 +3926,7 @@ const SalesA = {
         <div class="stat"><div class="k">Preparatlar</div><div class="v">${A.drugs.length}</div><div class="x">${A.rows.length} ta yozuv</div></div></div>
       <div class="section-h"><h2>Preparatlar bo'yicha</h2><button class="link" id="saPlan">Reja kiritish</button></div>
       <div class="card" style="overflow-x:auto"><table class="tbl"><thead><tr><th>Preparat</th><th class="n">Dona</th><th class="n">Summa</th><th class="n">Ulush</th><th class="n">Reja</th><th class="n">O'tgan oy</th></tr></thead>
-        <tbody>${rowsD.map(x => `<tr data-drug="${esc(x.k)}"><td>${esc(x.k)}</td><td class="n">${fmtNum(x.qty)}</td><td class="n">${fmtNum(x.sum)}</td><td class="n">${A.sum ? Math.round(x.sum / A.sum * 100) : 0}%</td>
+        <tbody>${rowsD.map(x => `<tr data-drug="${esc(x.k)}"><td>${Bonus.focus(m).includes(x.k) ? '⭐ ' : ''}${esc(x.k)}</td><td class="n">${fmtNum(x.qty)}</td><td class="n">${fmtNum(x.sum)}</td><td class="n">${A.sum ? Math.round(x.sum / A.sum * 100) : 0}%</td>
           <td class="n">${x.plan ? `<span class="${x.qty >= x.plan ? 'c-green' : 'c-amber'}">${Math.round(x.qty / x.plan * 100)}%</span><div class="tiny c-mute">${fmtNum(x.plan)}</div>` : '<span class="c-mute">＋</span>'}</td>
           <td class="n">${x.prev ? fmtNum(x.prev.qty) : '—'} ${this.delta(x.qty, x.prev ? x.prev.qty : 0)}</td></tr>`).join('') || '<tr><td colspan="6" class="c-mute" style="text-align:center;padding:18px">Bu oyda sotuv yo\'q</td></tr>'}</tbody>
         ${rowsD.length ? `<tfoot><tr><td>Jami</td><td class="n">${fmtNum(A.qty)}</td><td class="n">${fmtNum(A.sum)}</td><td class="n">100%</td><td class="n">${planQty ? Math.round(A.qty / planQty * 100) + '%' : ''}</td><td class="n">${fmtNum(P.qty)}</td></tr></tfoot>` : ''}</table></div>
@@ -3829,6 +3934,7 @@ const SalesA = {
       <div class="section"><div class="section-h"><h2>Mijozlar bo'yicha</h2></div><div class="card pad">${A.contacts.length ? hbars(A.contacts.slice(0, 10).map(x => ({ l: contactName(x.k) || '—', v: x.sum, id: x.k }))) : '<div class="small muted">Ma\'lumot yo\'q</div>'}</div></div>
       <div class="section"><div class="section-h"><h2>6 oylik dinamika</h2></div><div class="card pad">${barChart(months.map(k => SH[+k.slice(5) - 1]), [{ name: 'Sotuv', color: 'var(--brand)', data: months.map(k => this.agg(k).sum) }])}</div></div>
       <div class="section btn-row"><button class="btn" id="saX">${ic('download')}Excel</button><button class="btn" id="saPr">${ic('print')}PDF</button></div>`;
+        Bonus.wire(v, m);
         $('#saP', v).onclick = () => { this.month = pm; Router.render(); };
         $('#saN', v).onclick = () => { this.month = TourPlan.shiftMonth(m, 1); Router.render(); };
         $$('[data-drug]', v).forEach(tr => tr.onclick = () => this.editPlan(m, tr.dataset.drug));
@@ -3837,17 +3943,17 @@ const SalesA = {
         $('#saX', v).onclick = () => ReportsCenter.excel('salesDrug', m);
         $('#saPr', v).onclick = () => ReportsCenter.show('salesDrug', m);
     },
-    async editPlan(m, drug) { const r = await formSheet(drug, [{ k: 'q', label: `${TourPlan.monthLabel(m)} uchun reja (dona)`, type: 'number' }], { q: this.plan(m)[drug] || '' }); if (r)
-        this.setPlan(m, drug, r.q); },
+    async editPlan(m, drug) { const F = Bonus.focus(m); const r = await formSheet(drug, [{ k: 'q', label: `${TourPlan.monthLabel(m)} uchun reja (dona)`, type: 'number' }, { k: 'f', label: '⭐ Fokus preparat', type: 'switch', hint: 'Kam sotilayotgan — bonus uchun alohida hisoblanadi' }], { q: this.plan(m)[drug] || '', f: F.includes(drug) }); if (!r)
+        return; this.setPlan(m, drug, r.q); Bonus.setFocus(m, r.f ? [...new Set([...F, drug])] : F.filter(x => x !== drug)); },
     async planSheet(m) {
-        const names = [...new Set([...Object.keys(this.plan(m)), ...DB.expired.map(e => e.name), ...DB.sales.map(s => s.drug)].filter(Boolean))].sort((a, b) => a.localeCompare(b));
+        const names = [...new Set([...Object.keys(this.plan(m)), ...DB.catalog.map(c => c.name), ...DB.expired.map(e => e.name), ...DB.sales.map(s => s.drug)].filter(Boolean))].sort((a, b) => a.localeCompare(b));
         const r = await pickMany('Rejadagi preparatlar', names, Object.keys(this.plan(m)));
         if (!r)
             return;
         const fields = r.map((n, i) => ({ k: 'p' + i, label: n, type: 'number', half: false }));
         const vals = {};
         r.forEach((n, i) => vals['p' + i] = this.plan(m)[n] || '');
-        const q = await formSheet(`Reja — ${TourPlan.monthLabel(m)}`, fields, vals);
+        const q = await formSheet(`Reja — ${TourPlan.monthLabel(m)} (dona)`, fields, vals);
         if (!q)
             return;
         const all = Object.assign({}, (getMeta('salesPlan', {}) || {}));
@@ -3855,6 +3961,9 @@ const SalesA = {
         r.forEach((n, i) => { if (num(q['p' + i]))
             all[m][n] = num(q['p' + i]); });
         setMeta('salesPlan', all);
+        const f = await pickMany('⭐ Fokus preparatlar', Object.keys(all[m]), Bonus.focus(m).filter(x => all[m][x]));
+        if (f)
+            Bonus.setFocus(m, f);
         UI.toast('Reja saqlandi', 'ok');
     }
 };
@@ -3934,6 +4043,8 @@ const ReportsCenter = {
         salesDrug: { icon: '💊', title: 'Sotuv: preparatlar bo\'yicha', sub: 'Dona, summa, ulush, reja %', monthly: true },
         salesClient: { icon: '🏥', title: 'Sotuv: mijozlar bo\'yicha', sub: 'Har bir apteka/vrach qancha oldi', monthly: true },
         doctors: { icon: '👨‍⚕️', title: 'Vrachlar qamrovi', sub: 'Kimga necha marta borildi, kim qolib ketdi', monthly: true },
+        expenses: { icon: '🧾', title: 'Avans hisobot (xarajatlar)', sub: 'Sana, turi, summa, chek — kompaniyaga topshirish uchun', monthly: true },
+        samples: { icon: '📦', title: 'Namunalar hisoboti', sub: 'Kimga qaysi namuna berildi, qoldiq', monthly: true },
         debts: { icon: '💰', title: 'Qarzdorlar ro\'yxati', sub: 'Faol qarzlar, muddatlar' },
         stock: { icon: '📦', title: 'Dorilar va muddatlar', sub: 'Qoldiq, narx, yaroqlilik' }
     },
@@ -3964,6 +4075,16 @@ const ReportsCenter = {
             const lv = lastVisitMap();
             return { head: ['Vrach', 'Toifa', 'Bu oy tashrif', 'Oxirgi tashrif', 'Holat'], rows: DB.contacts.filter(c => c.type !== 'dorixona').map(c => { const n = vis.filter(v => v.contactId === c.id).length; const d = visitDue(c, lv); return [c.name, c.cat || '', n, lv[c.id] ? fmtD(lv[c.id], 'always') : '—', d && d.days >= 0 ? 'tashrif kerak' : n ? 'qamrab olingan' : '—']; }).sort((a, b) => b[2] - a[2]), num: [2] };
         }
+        if (key === 'expenses') {
+            const l = DB.expenses.filter(e => monthKey(e.date) === m).sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+            return { head: ['Sana', 'Turi', 'Izoh', 'Km', 'Chek', 'Qoplanadi', 'Summa'], rows: l.map(e => [fmtD(e.date, 'always'), lbl(EXP_CAT, e.cat).replace(/^\S+\s/, ''), e.note || '', e.km || '', (e.files || []).length ? 'bor' : '', e.reimb === false ? 'yo\'q' : 'ha', num(e.amount)]), num: [6], total: ['Jami', '', '', '', '', '', l.reduce((s, e) => s + num(e.amount), 0)] };
+        }
+        if (key === 'samples') {
+            const rows = [];
+            DB.visits.filter(v => monthKey(v.date) === m).forEach(v => (v.samples || []).forEach(s => rows.push([fmtD(v.date, 'always'), contactName(v.contactId), s.name, num(s.qty)])));
+            DB.samples.filter(s => s.kind === 'out' && monthKey(s.date) === m).forEach(s => rows.push([fmtD(s.date, 'always'), contactName(s.contactId) || s.note || '', s.product, num(s.qty)]));
+            return { head: ['Sana', 'Kimga', 'Preparat', 'Soni'], rows: rows.sort((a, b) => a[0].localeCompare(b[0])), num: [3], total: ['Jami', '', '', rows.reduce((s, r) => s + r[3], 0)] };
+        }
         if (key === 'debts') {
             const o = DB.debts.filter(d => Debts.isOpen(d) && !d.personal);
             return { head: ['Kontakt', 'Turi', 'Jami', 'To\'langan', 'Qoldiq', 'Muddat'], rows: o.map(d => [debtWho(d), d.type === 'olgan' ? 'Men qarzdor' : 'Menga qarzdor', Debts.due(d), Debts.paid(d), Debts.left(d), d.dueDate ? fmtD(d.dueDate, 'always') : '']), num: [2, 3, 4] };
@@ -3984,8 +4105,9 @@ const ReportsCenter = {
             const p = TourPlan.get(m);
             const work = p ? p.days.filter(d => d.type === 'work').length : 0;
             const daysWithVisits = new Set(vis.map(v => v.date)).size;
-            return hdr + `<div class="box"><div>Tashriflar<b>${vis.length}</b>${new Set(vis.map(v => v.contactId)).size} ta kontakt</div><div>Dvoynoy vizit<b>${vis.filter(v => v.joint).length}</b></div><div>Tur plan<b>${daysWithVisits}/${work || '—'}</b>ish kuni bajarildi</div><div>Sotuv<b>${money(A.sum)}</b>${fmtNum(A.qty)} dona</div></div>
-        <h2>Sotuv: preparatlar</h2>${tbl('salesDrug')}<h2>Tur plan va fakt</h2>${tbl('plan')}<h2>Tashriflar</h2>${tbl('visits')}<h2>Qarzlar</h2>${tbl('debts')}`;
+            const B = Bonus.calc(m);
+            return hdr + `<div class="box">${B.planPct != null ? `<div>Bonus<b>${B.pay}%</b>plan ${Math.round(B.planPct)}%${B.focusPct != null ? ' · fokus ' + Math.round(B.focusPct) + '%' : ''}</div>` : ''}<div>Tashriflar<b>${vis.length}</b>${new Set(vis.map(v => v.contactId)).size} ta kontakt</div><div>Dvoynoy vizit<b>${vis.filter(v => v.joint).length}</b></div><div>Tur plan<b>${daysWithVisits}/${work || '—'}</b>ish kuni bajarildi</div><div>Sotuv<b>${money(A.sum)}</b>${fmtNum(A.qty)} dona</div></div>
+        <h2>Sotuv: preparatlar</h2>${tbl('salesDrug')}<h2>Tur plan va fakt</h2>${tbl('plan')}<h2>Tashriflar</h2>${tbl('visits')}<h2>Qarzlar</h2>${tbl('debts')}<h2>Xarajatlar</h2>${tbl('expenses')}`;
         }
         return hdr + tbl(key);
     },
@@ -3994,7 +4116,7 @@ const ReportsCenter = {
         try {
             const XLSX = await loadLib('xlsx');
             const wb = XLSX.utils.book_new();
-            const keys = key === 'monthly' ? ['salesDrug', 'plan', 'visits', 'salesClient', 'debts'] : [key];
+            const keys = key === 'monthly' ? ['salesDrug', 'plan', 'visits', 'salesClient', 'samples', 'expenses', 'debts'] : [key];
             keys.forEach(k => { const d = this.data(k, m); const ws = XLSX.utils.aoa_to_sheet([d.head, ...d.rows, ...(d.total ? [d.total] : [])]); ws['!cols'] = d.head.map((h, i) => ({ wch: Math.min(45, Math.max(8, h.length + 2, ...d.rows.slice(0, 100).map(r => { var _a; return String((_a = r[i]) !== null && _a !== void 0 ? _a : '').length + 1; }))) })); XLSX.utils.book_append_sheet(wb, ws, this.T[k].title.replace(/[:\\/?*[\]]/g, '').slice(0, 31)); });
             XLSX.writeFile(wb, `farmapro_${key}_${this.T[key].monthly ? m : today()}.xlsx`);
             UI.toast('Excel yuklab olindi', 'ok');
@@ -4014,6 +4136,331 @@ const ReportsCenter = {
         $$('[data-x]', v).forEach(b => b.onclick = () => this.excel(b.dataset.x, m));
     }
 };
+/* ═════════ BONUS: plan + focus products ═════════ */
+const Bonus = {
+    rules() { return Object.assign({ base: 0, planMin: 100, focusMin: 85, payLow: 75, payHigh: 100, measure: 'qty', focusMode: 'total' }, (getMeta('bonusRules', {}) || {})); },
+    focus(m) { return ((getMeta('focus', {}) || {})[m]) || []; },
+    setFocus(m, list) { const all = Object.assign({}, (getMeta('focus', {}) || {})); all[m] = list; setMeta('focus', all); },
+    price(name) { const c = DB.catalog.find(x => norm(x.name) === norm(name)); if (c && num(c.price))
+        return num(c.price); const e = DB.expired.find(x => norm(x.name) === norm(name)); return e ? num(e.price) : 0; },
+    calc(m) {
+        const R = this.rules(), plan = SalesA.plan(m), A = SalesA.agg(m), F = this.focus(m).filter(n => num(plan[n]) > 0);
+        const val = (name, qty) => R.measure === 'sum' ? qty * this.price(name) : qty;
+        const factOf = name => { const x = A.drugs.find(d => norm(d.k) === norm(name)); return x ? (R.measure === 'sum' ? x.sum : x.qty) : 0; };
+        const names = Object.keys(plan);
+        const planT = names.reduce((s, n) => s + val(n, num(plan[n])), 0);
+        const factT = R.measure === 'sum' ? A.sum : names.reduce((s, n) => s + factOf(n), 0);
+        const planPct = planT ? factT / planT * 100 : null;
+        const items = F.map(n => { const p = val(n, num(plan[n])), f = factOf(n); return { name: n, plan: p, fact: f, pct: p ? f / p * 100 : 0 }; });
+        const fp = items.reduce((s, x) => s + x.plan, 0), ff = items.reduce((s, x) => s + x.fact, 0);
+        const focusPct = !items.length ? null : R.focusMode === 'each' ? Math.min(...items.map(x => x.pct)) : (fp ? ff / fp * 100 : 0);
+        let pay = 0;
+        if (planPct != null && planPct >= R.planMin)
+            pay = focusPct != null && focusPct >= R.focusMin ? R.payHigh : R.payLow;
+        // forecast by elapsed working days of the tour plan (or calendar days)
+        const tp = TourPlan.get(m);
+        const dim = TourPlan.daysIn(m);
+        const tday = m === thisMonth() ? +today().slice(8) : m < thisMonth() ? dim : 0;
+        let el = tday / dim;
+        if (tp) {
+            const w = tp.days.filter(d => d.type === 'work');
+            const done = w.filter(d => d.d <= tday).length;
+            if (w.length)
+                el = done / w.length;
+        }
+        const fc = x => x == null || el < 0.2 ? null : Math.min(300, x / el);
+        const needPlan = planPct != null ? Math.max(0, R.planMin / 100 * planT - factT) : 0;
+        const needFocus = R.focusMode === 'each' ? items.filter(x => x.pct < R.focusMin).map(x => ({ name: x.name, need: Math.ceil(R.focusMin / 100 * x.plan - x.fact) })) : (focusPct != null && focusPct < R.focusMin ? [{ name: 'fokus jami', need: Math.ceil(R.focusMin / 100 * fp - ff) }] : []);
+        return { R, planT, factT, planPct, focusPct, items, pay, amount: R.base ? Math.round(R.base * pay / 100) : 0, elapsed: el, planFc: fc(planPct), focusFc: fc(focusPct), needPlan, needFocus };
+    },
+    unit(R) { return R.measure === 'sum' ? 'so\'m' : 'dona'; },
+    cardHTML(m) {
+        const b = this.calc(m);
+        const R = b.R;
+        const u = this.unit(R);
+        if (b.planPct == null)
+            return `<div class="bonus"><div class="small" style="opacity:.85">Bonus — ${TourPlan.monthLabel(m)}</div><div style="font-size:17px;font-weight:700;margin:6px 0">Oylik reja kiritilmagan</div><div class="hint2">Preparatlar bo'yicha reja va fokus preparatlarni kiriting — bonus foizi va nimalar yetishmayotgani shu yerda chiqadi.</div><button class="hbtn" style="margin-top:10px" data-bplan>${ic('edit')}Reja kiritish</button></div>`;
+        const bar = (p, min) => `<div class="bar" style="height:8px;position:relative"><i style="width:${Math.min(100, p || 0)}%"></i><span style="position:absolute;left:${Math.min(100, min)}%;top:-3px;bottom:-3px;width:2px;background:#fff;opacity:.9"></span></div>`;
+        return `<div class="bonus"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="small" style="opacity:.85">Bonus — ${TourPlan.monthLabel(m)}</div><div class="big">${b.pay}%</div>${b.amount ? `<div class="small">${money(b.amount)}</div>` : ''}</div><button class="hbtn" data-brules>${ic('gear')}Qoidalar</button></div>
+      <div class="row"><span>Plan</span><b>${Math.round(b.planPct)}% <span style="opacity:.75;font-weight:500">/ ${R.planMin}%</span></b></div>${bar(b.planPct, R.planMin)}
+      <div class="row"><span>Fokus (${b.items.length})</span><b>${b.focusPct == null ? 'belgilanmagan' : Math.round(b.focusPct) + '%'} <span style="opacity:.75;font-weight:500">/ ${R.focusMin}%</span></b></div>${b.focusPct != null ? bar(b.focusPct, R.focusMin) : ''}
+      <div class="hint2">${b.planPct < R.planMin ? `Plan uchun yana <b>${fmtNum(b.needPlan)} ${u}</b> kerak. ` : ''}${b.needFocus.length ? `100% bonus uchun: ${b.needFocus.map(x => `<b>${esc(x.name)}</b> +${fmtNum(x.need)} ${u}`).join(', ')}. ` : b.focusPct != null && b.focusPct >= R.focusMin ? 'Fokus bajarildi ✓ ' : ''}${b.planFc != null && m === thisMonth() ? `Hozirgi tempda oy oxirida: plan ~${Math.round(b.planFc)}%${b.focusFc != null ? `, fokus ~${Math.round(b.focusFc)}%` : ''}.` : ''}</div>
+      <div class="pt-act"><button class="hbtn" data-bplan>${ic('edit')}Reja va fokus</button></div></div>`;
+    },
+    wire(root, m) {
+        $$('[data-bplan]', root).forEach(b => b.onclick = () => SalesA.planSheet(m));
+        $$('[data-brules]', root).forEach(b => b.onclick = () => this.editRules());
+    },
+    async editRules() {
+        const r = await formSheet('Bonus qoidalari', [
+            { type: 'html', html: '<p class="small muted">Plan chegarasiga yetsangiz — past foiz. Fokus chegarasidan ham o\'tsangiz — yuqori foiz. Kompaniya qoidasi o\'zgarsa, shu yerda o\'zgartiring.</p>' },
+            { k: 'planMin', label: 'Plan chegarasi, %', type: 'number', half: true }, { k: 'focusMin', label: 'Fokus chegarasi, %', type: 'number', half: true },
+            { k: 'payLow', label: 'Faqat plan bajarilsa, bonus %', type: 'number', half: true }, { k: 'payHigh', label: 'Plan + fokus bajarilsa, %', type: 'number', half: true },
+            { k: 'base', label: 'To\'liq bonus summasi (ixtiyoriy)', type: 'money', hint: 'Kiritsangiz, so\'mda ham hisoblab beradi' },
+            { k: 'measure', label: 'Plan nimada o\'lchanadi', type: 'select', opts: [['qty', 'Dona (qadoq) bo\'yicha'], ['sum', 'Summa bo\'yicha']] },
+            { k: 'focusMode', label: 'Fokus qanday hisoblanadi', type: 'select', opts: [['total', 'Barcha fokuslar jami'], ['each', 'Har bir fokus alohida (eng pasti)']] }
+        ], this.rules());
+        if (r)
+            setMeta('bonusRules', Object.assign(Object.assign({}, r), { planMin: num(r.planMin), focusMin: num(r.focusMin), payLow: num(r.payLow), payHigh: num(r.payHigh), base: num(r.base) }));
+    }
+};
+/* ═════════ EXPENSES ═════════ */
+const EXP_CAT = [['benzin', '⛽ Benzin'], ['taksi', '🚕 Taksi / transport'], ['telefon', '📱 Aloqa'], ['ovqat', '🍽️ Ovqat'], ['mehmon', '☕ Mehmondorchilik'], ['sovga', '🎁 Sovg\'a / promo'], ['parkovka', '🅿️ Parkovka'], ['boshqa', '📦 Boshqa']];
+const Expenses = {
+    title: 'Xarajatlar', month: null,
+    render(v) {
+        var _a;
+        const m = this.month = this.month || thisMonth();
+        const list = DB.expenses.filter(e => monthKey(e.date) === m).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+        const tot = list.reduce((s, e) => s + num(e.amount), 0), comp = list.filter(e => e.reimb !== false).reduce((s, e) => s + num(e.amount), 0);
+        const byCat = EXP_CAT.map(([k, l]) => ({ l, v: list.filter(e => e.cat === k).reduce((s, e) => s + num(e.amount), 0) })).filter(x => x.v).sort((a, b) => b.v - a.v);
+        v.innerHTML = `<div class="month-nav"><button class="icon-btn" id="exP">${ic('back')}</button><b>${TourPlan.monthLabel(m)}</b><button class="icon-btn" id="exN" style="transform:scaleX(-1)">${ic('back')}</button></div>
+      <div class="stats" style="margin:6px 0 10px"><div class="stat"><div class="k">Jami xarajat</div><div class="v">${short(tot)}</div><div class="x">${list.length} ta chek</div></div>
+        <div class="stat"><div class="k">Kompaniya qoplaydi</div><div class="v c-green">${short(comp)}</div><div class="x">${list.filter(e => e.km).reduce((s, e) => s + num(e.km), 0) || 0} km</div></div></div>
+      ${byCat.length ? `<div class="card pad" style="margin-bottom:10px">${hbars(byCat)}</div>` : ''}
+      <div class="btn-row" style="margin-bottom:10px"><button class="btn sm" id="exX">${ic('download')}Excel</button><button class="btn sm" id="exPr">${ic('print')}Avans hisobot (PDF)</button></div>
+      <div class="list">${list.map(e => `<button class="item" data-id="${e.id}"><span class="av sq" style="font-size:19px">${(lbl(EXP_CAT, e.cat) || '📦').split(' ')[0]}</span><span class="body"><span class="t">${esc(lbl(EXP_CAT, e.cat).replace(/^\S+\s/, ''))}${e.note ? ' · ' + esc(e.note) : ''}</span><span class="s">${fmtD(e.date)}${(e.files || []).length ? ' · 🧾 chek' : ''}${e.reimb === false ? ' · shaxsiy' : ''}${e.km ? ' · ' + e.km + ' km' : ''}</span></span><span class="r"><div class="v small">${fmtNum(e.amount)}</div></span></button>`).join('') || emptyState('🧾', 'Bu oyda xarajat yo\'q. Benzin, taksi, aloqa — chek rasmi bilan yozib boring, oy oxirida hisobot tayyor bo\'ladi.', { label: 'Xarajat qo\'shish', attr: 'id="exAdd"' })}</div>`;
+        $('#exP', v).onclick = () => { this.month = TourPlan.shiftMonth(m, -1); Router.render(); };
+        $('#exN', v).onclick = () => { this.month = TourPlan.shiftMonth(m, 1); Router.render(); };
+        $$('[data-id]', v).forEach(b => b.onclick = () => this.edit(b.dataset.id));
+        (_a = $('#exAdd', v)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => this.edit());
+        $('#exX', v).onclick = () => ReportsCenter.excel('expenses', m);
+        $('#exPr', v).onclick = () => ReportsCenter.show('expenses', m);
+    },
+    async edit(id) {
+        const e = id ? byId('expenses', id) : null;
+        const r = await formSheet(e ? 'Xarajat' : 'Yangi xarajat', [
+            { k: 'cat', label: 'Turi', type: 'select', opts: EXP_CAT }, { k: 'amount', label: 'Summa', type: 'money', req: true },
+            { k: 'date', label: 'Sana', type: 'date', half: true }, { k: 'km', label: 'Masofa, km', type: 'number', half: true, show: s => s.cat === 'benzin' || s.cat === 'taksi' },
+            { k: 'note', label: 'Izoh', ph: 'Masalan: Qarshi–Kasbi', voice: true },
+            { k: 'files', label: 'Chek rasmi', type: 'files', accept: 'image/*,application/pdf' },
+            { k: 'reimb', label: 'Kompaniya qoplaydi', type: 'switch' }
+        ], e ? Object.assign({}, e) : { cat: 'benzin', date: today(), reimb: true, files: [] }, { extraBtn: e ? { label: 'O\'chirish', cls: 'danger' } : null });
+        if (!r)
+            return;
+        if (r.__extra) {
+            remove('expenses', [e.id]);
+            return;
+        }
+        upsert('expenses', Object.assign(Object.assign(Object.assign({}, (e || {})), r), { amount: num(r.amount), km: num(r.km) || '', id: e ? e.id : uid() }));
+        UI.toast('Saqlandi', 'ok');
+    }
+};
+/* ═════════ SAMPLES (namunalar): received vs given ═════════ */
+const Samples = {
+    title: 'Namunalar', seg: 'bal',
+    balance() {
+        const m = new Map();
+        const g = n => { const k = String(n).trim(); if (!m.has(k))
+            m.set(k, { name: k, in: 0, out: 0 }); return m.get(k); };
+        DB.samples.forEach(s => { const x = g(s.product); if (s.kind === 'in')
+            x.in += num(s.qty);
+        else
+            x.out += num(s.qty); });
+        DB.visits.forEach(v => (v.samples || []).forEach(s => { g(s.name).out += num(s.qty); }));
+        return [...m.values()].map(x => (Object.assign(Object.assign({}, x), { left: x.in - x.out }))).sort((a, b) => a.name.localeCompare(b.name));
+    },
+    moves() {
+        const a = DB.samples.map(s => ({ date: s.date, name: s.product, qty: num(s.qty), kind: s.kind, who: s.kind === 'in' ? 'Qabul qilindi' : (contactName(s.contactId) || s.note || 'Berildi'), id: s.id }));
+        DB.visits.forEach(v => (v.samples || []).forEach(s => a.push({ date: v.date, name: s.name, qty: num(s.qty), kind: 'out', who: contactName(v.contactId), vid: v.id })));
+        return a.sort((x, y) => (y.date || '').localeCompare(x.date || ''));
+    },
+    render(v) {
+        var _a;
+        const bal = this.balance();
+        const mv = this.moves();
+        const mon = mv.filter(x => x.kind === 'out' && monthKey(x.date) === thisMonth());
+        v.innerHTML = `<div class="seg" style="margin-top:8px"><button data-s="bal" class="${this.seg === 'bal' ? 'on' : ''}">Qo'limdagi qoldiq</button><button data-s="mv" class="${this.seg === 'mv' ? 'on' : ''}">Harakatlar</button></div>
+      <div class="stats" style="margin-bottom:10px"><div class="stat"><div class="k">Bu oy berildi</div><div class="v">${fmtNum(mon.reduce((s, x) => s + x.qty, 0))}</div><div class="x">${new Set(mon.map(x => x.who)).size} ta vrachga</div></div><div class="stat"><div class="k">Qo'limda</div><div class="v">${fmtNum(bal.reduce((s, x) => s + Math.max(0, x.left), 0))}</div><div class="x">${bal.filter(x => x.left > 0).length} ta preparat</div></div></div>
+      ${this.seg === 'bal' ? `<div class="list">${bal.map(x => `<div class="item"><span class="av sq">💊</span><span class="body"><span class="t" style="white-space:normal">${esc(x.name)}</span><span class="s">olindi ${fmtNum(x.in)} · berildi ${fmtNum(x.out)}</span></span><span class="r"><div class="v ${x.left < 0 ? 'c-red' : x.left <= 3 ? 'c-amber' : ''}">${fmtNum(x.left)}</div><span class="tiny c-mute">qoldiq</span></span></div>`).join('') || emptyState('📦', 'Namunalar yo\'q. Kompaniyadan olgan namunalarni "Qabul qilish" bilan kiriting, vrachlarga berganlaringiz tashrif paytida yoziladi.', { label: 'Namuna qabul qilish', attr: 'id="smIn"' })}</div>`
+            : `<div class="list">${mv.slice(0, 300).map(x => `<button class="item" ${x.vid ? `data-v="${x.vid}"` : `data-s2="${x.id}"`}><span class="av sq">${x.kind === 'in' ? '📥' : '📤'}</span><span class="body"><span class="t" style="white-space:normal">${esc(x.name)}</span><span class="s">${fmtD(x.date)} · ${esc(x.who)}</span></span><span class="r"><div class="v ${x.kind === 'in' ? 'c-green' : ''}">${x.kind === 'in' ? '+' : '−'}${fmtNum(x.qty)}</div></span></button>`).join('') || '<div class="empty small">Harakat yo\'q</div>'}</div>`}`;
+        $$('[data-s]', v).forEach(b => b.onclick = () => { this.seg = b.dataset.s; Router.render(); });
+        (_a = $('#smIn', v)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => this.edit(null, 'in'));
+        $$('[data-v]', v).forEach(b => b.onclick = () => Visits.edit(b.dataset.v));
+        $$('[data-s2]', v).forEach(b => b.onclick = () => this.edit(b.dataset.s2));
+    },
+    async edit(id, kind = 'in') {
+        const s = id ? byId('samples', id) : null;
+        kind = s ? s.kind : kind;
+        const r = await formSheet(kind === 'in' ? 'Namuna qabul qilish' : 'Namuna berish', [
+            { k: 'product', label: 'Preparat', req: true, list: () => Visits.products() }, { k: 'qty', label: 'Soni', type: 'number', req: true, half: true }, { k: 'date', label: 'Sana', type: 'date', half: true },
+            { k: 'contactId', label: 'Kimga', type: 'contact', show: () => kind === 'out' }, { k: 'note', label: 'Izoh' }
+        ], s ? Object.assign({}, s) : { date: today(), qty: '' }, { extraBtn: s ? { label: 'O\'chirish', cls: 'danger' } : null });
+        if (!r)
+            return;
+        if (r.__extra) {
+            remove('samples', [s.id]);
+            return;
+        }
+        upsert('samples', Object.assign(Object.assign(Object.assign({}, (s || {})), r), { kind, qty: num(r.qty), id: s ? s.id : uid() }));
+        UI.toast('Saqlandi', 'ok');
+    }
+};
+/* pick products with quantities (for samples given at a visit) */
+function pickQty(title, options, current) {
+    return new Promise(res => {
+        let done = false, q = '';
+        const val = new Map((current || []).map(x => [x.name, num(x.qty)]));
+        const bal = new Map(Samples.balance().map(x => [x.name, x.left]));
+        const body = document.createElement('div');
+        const L = UI.open({ title, body, cls: 'full', foot: `<button class="btn primary" data-ok>Tayyor</button>`, onClose: () => { if (!done)
+                res(null); } });
+        const draw = () => {
+            const nq = norm(q);
+            const all = [...new Set([...val.keys(), ...options])].filter(o => !nq || norm(o).includes(nq));
+            body.innerHTML = `<div class="search" style="margin-bottom:8px">${ic('search')}<input id="pqQ" placeholder="Qidirish" value="${esc(q)}"></div>
+        <div class="list">${all.slice(0, 200).map(o => {
+                const n = val.get(o) || 0;
+                return `<div class="item" style="padding:8px 12px"><span class="body"><span class="t" style="white-space:normal;font-size:14px">${esc(o)}</span>${bal.has(o) ? `<span class="s">qo'limda ${fmtNum(bal.get(o))}</span>` : ''}</span>
+          <span style="display:flex;align-items:center;gap:6px"><button class="btn sm" data-m="${esc(o)}">−</button><b class="num" style="min-width:22px;text-align:center">${n}</b><button class="btn sm" data-p="${esc(o)}">＋</button></span></div>`;
+            }).join('')}</div>`;
+            const qi = $('#pqQ', body);
+            qi.addEventListener('input', debounce(() => { q = qi.value; draw(); const n = $('#pqQ', body); n.focus(); n.setSelectionRange(n.value.length, n.value.length); }, 200));
+            $$('[data-p]', body).forEach(b => b.onclick = () => { val.set(b.dataset.p, (val.get(b.dataset.p) || 0) + 1); draw(); });
+            $$('[data-m]', body).forEach(b => b.onclick = () => { const n = Math.max(0, (val.get(b.dataset.m) || 0) - 1); n ? val.set(b.dataset.m, n) : val.delete(b.dataset.m); draw(); });
+        };
+        draw();
+        $('[data-ok]', L.el).onclick = () => { done = true; L.close(); res([...val.entries()].filter(([, n]) => n > 0).map(([name, qty]) => ({ name, qty }))); };
+    });
+}
+/* ═════════ PRODUCT CATALOG + PRESENTATION (e-detailing) ═════════ */
+const Catalog = {
+    title: 'Preparatlar katalogi', q: '',
+    render(v) {
+        var _a;
+        const q = norm(this.q);
+        const m = thisMonth();
+        const F = new Set(Bonus.focus(m).map(norm));
+        const list = DB.catalog.filter(c => !q || norm(c.name).includes(q) || norm(c.inn).includes(q) || norm(c.group).includes(q)).sort((a, b) => (F.has(norm(b.name)) - F.has(norm(a.name))) || a.name.localeCompare(b.name));
+        v.innerHTML = `<div class="toolbar"><label class="search">${ic('search')}<input id="ctQ" placeholder="Nomi, xalqaro nomi, guruhi" value="${esc(this.q)}"></label><button class="btn" id="ctImp">${ic('download')}Dorilardan</button></div>
+      <div class="list">${list.map(c => { const img = (c.files || []).find(f => /^image\//.test(f.type || '')); return `<button class="item" data-id="${c.id}"><span class="av sq" style="width:52px;height:52px">${img ? `<img data-fid="${esc(img.fid)}" alt="" hidden>` : '💊'}</span><span class="body"><span class="t" style="white-space:normal">${F.has(norm(c.name)) ? '⭐ ' : ''}${esc(c.name)}</span><span class="s">${esc([c.inn, c.form, c.group].filter(Boolean).join(' · ') || '—')}</span></span><span class="r">${c.price ? `<div class="v small">${short(c.price)}</div>` : ''}</span></button>`; }).join('') || emptyState('📚', 'Katalog bo\'sh. Har bir preparatga asosiy argumentlar, dozalash va buklet rasmini qo\'shing — vrach oldida telefonda ko\'rsatasiz.', { label: 'Preparat qo\'shish', attr: 'id="ctAdd"' })}</div>`;
+        const qi = $('#ctQ', v);
+        qi.addEventListener('input', debounce(() => { this.q = qi.value; Router.render({ keepFocus: 'ctQ' }); }, 200));
+        $$('[data-id]', v).forEach(b => b.onclick = () => this.present(b.dataset.id));
+        (_a = $('#ctAdd', v)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => this.edit());
+        $('#ctImp', v).onclick = () => this.fromDrugs();
+    },
+    fromDrugs() {
+        const have = new Set(DB.catalog.map(c => norm(c.name)));
+        let n = 0;
+        const now = Date.now();
+        const base = new Map();
+        DB.expired.forEach(e => { const k = String(e.name).trim(); if (!base.has(norm(k)))
+            base.set(norm(k), e); });
+        base.forEach((e, k) => { if (have.has(k))
+            return; DB.catalog.push({ id: uid(), name: String(e.name).trim(), price: num(e.price), maker: e.maker || '', files: [], createdAt: now, _ts: now }); n++; });
+        commit();
+        UI.toast(n ? `${n} ta preparat katalogga qo'shildi` : 'Hammasi katalogda bor', 'ok');
+    },
+    async edit(id) {
+        const c = id ? byId('catalog', id) : null;
+        const r = await formSheet(c ? 'Preparatni tahrirlash' : 'Yangi preparat', [
+            { k: 'name', label: 'Savdo nomi', req: true }, { k: 'inn', label: 'Xalqaro nomi (MNN)', half: true }, { k: 'group', label: 'Guruh', half: true, ph: 'Antibiotik, NSAID…' },
+            { k: 'form', label: 'Shakli va dozasi', ph: 'tab. 5 mg №100' }, { k: 'price', label: 'Narxi', type: 'money', half: true }, { k: 'maker', label: 'Ishlab chiqaruvchi', half: true },
+            { k: 'key', label: 'Asosiy argumentlar (har biri yangi qatordan)', type: 'textarea', ph: 'Tez ta\'sir qiladi — 30 daqiqada\nKuniga 1 marta\nNarxi analoglardan arzon', voice: true },
+            { k: 'ind', label: 'Ko\'rsatmalar', type: 'textarea' }, { k: 'dose', label: 'Dozalash', type: 'textarea' },
+            { k: 'contra', label: 'Qarshi ko\'rsatmalar', type: 'textarea' }, { k: 'comp', label: 'Raqobatchilar va farqimiz', type: 'textarea' },
+            { k: 'files', label: 'Buklet, rasm, PDF', type: 'files' }
+        ], c ? Object.assign({}, c) : { files: [] }, { extraBtn: c ? { label: 'O\'chirish', cls: 'danger' } : null });
+        if (!r)
+            return;
+        if (r.__extra) {
+            remove('catalog', [c.id]);
+            return;
+        }
+        upsert('catalog', Object.assign(Object.assign(Object.assign({}, (c || {})), r), { price: num(r.price), id: c ? c.id : uid() }));
+        UI.toast('Saqlandi', 'ok');
+    },
+    present(id) {
+        const c = byId('catalog', id);
+        if (!c)
+            return;
+        const imgs = (c.files || []).filter(f => /^image\//.test(f.type || ''));
+        const docs = (c.files || []).filter(f => !/^image\//.test(f.type || ''));
+        const keys = String(c.key || '').split('\n').map(s => s.trim()).filter(Boolean);
+        const sec = (t, x) => x ? `<h4 style="margin-top:16px;font-size:15px;color:var(--ink2)">${t}</h4><div style="white-space:pre-line">${esc(x)}</div>` : '';
+        const body = document.createElement('div');
+        body.className = 'pres';
+        body.innerHTML = `<h2>${esc(c.name)}</h2><div class="muted">${esc([c.inn, c.form, c.maker].filter(Boolean).join(' · '))}</div>
+      ${imgs.length ? `<div class="gallery">${imgs.map(f => `<img data-fid="${esc(f.fid)}" alt="" hidden>`).join('')}</div>` : ''}
+      ${keys.length ? `<ul class="km">${keys.map(k => `<li>✓ ${esc(k)}</li>`).join('')}</ul>` : ''}
+      ${sec('Ko\'rsatmalar', c.ind)}${sec('Dozalash', c.dose)}${sec('Qarshi ko\'rsatmalar', c.contra)}${sec('Raqobatchilar', c.comp)}
+      ${c.price ? `<h4 style="margin-top:16px;font-size:15px;color:var(--ink2)">Narxi</h4><b>${money(c.price)}</b>` : ''}
+      ${docs.length ? `<div class="btn-row" style="margin-top:14px">${docs.map((f, i) => `<button class="btn sm" data-doc="${i}">📄 ${esc(f.name)}</button>`).join('')}</div>` : ''}`;
+        const L = UI.open({ title: 'Taqdimot', body, cls: 'full wide', foot: `<button class="btn" data-e>${ic('edit')}</button><button class="btn primary" data-v>${ic('check')}Tashrifga yozish</button>` });
+        $$('[data-doc]', body).forEach(b => b.onclick = () => { const f = docs[+b.dataset.doc]; viewFile(f.fid, f.name); });
+        $('[data-e]', L.el).onclick = () => { L.close(); setTimeout(() => this.edit(id), 300); };
+        $('[data-v]', L.el).onclick = () => { L.close(); setTimeout(() => Visits.edit(null, '', { products: [c.name] }), 300); };
+        hydrate(body);
+    }
+};
+/* ═════════ VOICE NOTES (speech → text) ═════════ */
+const Voice = {
+    ok() { return !!(window.SpeechRecognition || window.webkitSpeechRecognition); },
+    start(btn, ta) {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) {
+            UI.toast('Bu brauzerda ovozli yozish yo\'q. iPhone klaviaturasidagi 🎤 tugmasidan foydalaning.', 'err', 6000);
+            return;
+        }
+        if (this.rec) {
+            this.rec.stop();
+            return;
+        }
+        const lang = SETS.voiceLang || 'uz-UZ';
+        const r = new SR();
+        r.lang = lang;
+        r.interimResults = true;
+        r.continuous = true;
+        const base = ta.value ? ta.value.replace(/\s*$/, ' ') : '';
+        let fin = '';
+        r.onresult = e => { let interim = ''; for (let i = e.resultIndex; i < e.results.length; i++) {
+            const t = e.results[i][0].transcript;
+            if (e.results[i].isFinal)
+                fin += t + ' ';
+            else
+                interim += t;
+        } ta.value = base + fin + interim; ta.dispatchEvent(new Event('input')); };
+        r.onerror = e => { if (e.error === 'language-not-supported' && lang !== 'ru-RU') {
+            SETS.voiceLang = 'ru-RU';
+            saveSets();
+            UI.toast('O\'zbek tili qo\'llab-quvvatlanmadi — rus tiliga o\'tdim. Qayta bosing.', 'err', 5000);
+        }
+        else if (e.error !== 'no-speech' && e.error !== 'aborted')
+            UI.toast('Ovoz: ' + e.error, 'err'); };
+        r.onend = () => { this.rec = null; btn.classList.remove('rec'); };
+        try {
+            r.start();
+            this.rec = r;
+            btn.classList.add('rec');
+            try {
+                navigator.vibrate && navigator.vibrate(20);
+            }
+            catch (_a) { }
+        }
+        catch (e) {
+            UI.toast(e.message, 'err');
+        }
+    }
+};
+/* ═════════ TOUR PLAN → phone calendar (.ics) ═════════ */
+function exportICS(m) {
+    const p = TourPlan.get(m);
+    if (!p) {
+        UI.toast('Bu oy uchun reja yo\'q', 'err');
+        return;
+    }
+    const e = s => String(s || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
+    const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+    const ev = p.days.filter(d => d.type !== 'off').map(d => {
+        const dt = `${m.replace('-', '')}${pad(d.d)}`;
+        const nx = addDays(`${m}-${pad(d.d)}`, 1).replace(/-/g, '');
+        return ['BEGIN:VEVENT', `UID:farmapro-${m}-${d.d}@farmapro`, `DTSTAMP:${stamp}`, `DTSTART;VALUE=DATE:${dt}`, `DTEND;VALUE=DATE:${nx}`, `SUMMARY:${e((d.type === 'work' ? (d.district || 'Ish kuni') : lbl(PLAN_TYPES, d.type)) + (d.joint ? ' · dvoynoy' : ''))}`, d.objects ? `DESCRIPTION:${e(d.objects)}` : '', 'END:VEVENT'].filter(Boolean).join('\r\n');
+    });
+    const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//FarmaPro//Tur plan//UZ', 'CALSCALE:GREGORIAN', ...ev, 'END:VCALENDAR'].join('\r\n');
+    download(`tur_plan_${m}.ics`, new Blob([ics], { type: 'text/calendar' }));
+    UI.toast('Faylni oching — iPhone kalendariga qo\'shiladi', 'ok', 5000);
+}
 /* ═════════ FACE ID / TOUCH ID (WebAuthn platform authenticator) ═════════ */
 const Bio = {
     b64u(buf) { return btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); },
@@ -4923,29 +5370,31 @@ const Home = {
         const workDays = tp ? tp.days.filter(x => x.type === 'work').length : 0;
         const visTarget = num(kpi.visits) || (workDays ? workDays * 8 : 0);
         const salesPct = planQty ? A.qty / planQty * 100 : num(kpi.sales) ? A.sum / num(kpi.sales) * 100 : null;
+        const B = Bonus.calc(m);
         const td = TourPlan.today();
         const tVis = DB.visits.filter(x => x.date === today());
         const ag = this.agenda();
         v.innerHTML = `
       <div class="hero" style="margin-top:6px"><svg class="cross" viewBox="0 0 24 24" fill="currentColor"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/></svg>
         <div class="d">${WEEKDAYS[d.getDay()]}, ${d.getDate()}-${MONTHS[d.getMonth()]}</div>
-        <div class="greet">${greet}${pf.name ? ', ' + esc(pf.name) : ''}!</div>
+        <div class="greet-row">${meAvatar()}<div class="greet">${greet}${pf.name ? ', ' + esc(pf.name) : ''}!</div></div>
         ${td ? `<div class="plan-today"><span class="pt-l">Bugungi reja</span><b>${esc(td.district || lbl(PLAN_TYPES, td.type))}${td.joint ? ' · 👥 dvoynoy' : ''}</b>${td.objects ? `<span>${esc(td.objects)}</span>` : ''}
           <div class="pt-act"><button class="hbtn" data-q="route">${ic('nav')}Marshrut</button><button class="hbtn" data-q="visit">${ic('plus')}Tashrif${tVis.length ? ` · ${tVis.length}` : ''}</button></div></div>`
             : `<div class="plan-today"><span class="pt-l">Bugun</span><b>${tVis.length ? tVis.length + ' ta tashrif qilindi' : 'Tur plan kiritilmagan'}</b><div class="pt-act"><button class="hbtn" data-tp>${ic('upload')}Tur planni yuklash</button></div></div>`}
       </div>
       <div class="rings">
         ${ring(visTarget ? vis.length / visTarget * 100 : null, 'Tashrif', `${vis.length}${visTarget ? '/' + visTarget : ''}`, 'var(--blue)', 'visits')}
-        ${ring(salesPct, 'Sotuv', short(A.sum), 'var(--brand)', 'sales')}
-        ${ring(null, 'Sizga qarz', short(owed), 'var(--red)', 'debts')}
+        ${ring(B.planPct != null ? B.planPct : salesPct, 'Plan', short(A.sum), 'var(--brand)', 'sales')}
+        ${ring(B.focusPct, 'Fokus', B.items.length ? B.items.length + ' ta' : '—', 'var(--amber)', 'sales')}
       </div>
+      ${B.planPct != null ? `<button class="card pad" data-ring="sales" style="margin-top:8px;width:100%;display:flex;justify-content:space-between;align-items:center;text-align:left"><span><span class="small muted">Bonus (hozircha)</span><br><b style="font-size:20px">${B.pay}%</b>${B.amount ? ` <span class="small muted">· ${money(B.amount)}</span>` : ''}</span><span class="small ${B.needFocus.length ? 'c-amber' : 'c-green'}" style="text-align:right;max-width:60%">${B.planPct < B.R.planMin ? `Plan uchun yana ${fmtNum(B.needPlan)} ${Bonus.unit(B.R)}` : B.needFocus.length ? `100% uchun fokusdan yana ${B.needFocus.map(x => fmtNum(x.need)).join('+')} ${Bonus.unit(B.R)}` : 'Hammasi bajarildi ✓'}</span></button>` : ''}
       <div class="section"><div class="actions">
         <button class="act" data-q="visit"><span class="i">📍</span>Tashrif</button>
         <button class="act" data-q="order"><span class="i">🧾</span>Buyurtma</button>
         <button class="act" data-q="pay"><span class="i">💳</span>To'lov</button>
         <button class="act" data-q="debt"><span class="i">💰</span>Qarz</button>
         <button class="act" data-q="contact"><span class="i">👤</span>Kontakt</button>
-        <button class="act" data-q="note"><span class="i">🗒️</span>Qayd</button>
+        <button class="act" data-q="exp"><span class="i">🧾</span>Xarajat</button>
         <button class="act" data-q="route"><span class="i">🧭</span>Marshrut</button>
         <button class="act" data-q="day"><span class="i">📋</span>Kun yakuni</button>
       </div></div>
@@ -4972,6 +5421,7 @@ const Home = {
             Router.go(k); });
     }
 };
+function meAvatar() { const pf = getMeta('profile', {}); return `<span class="me-av">${pf.photo ? `<img data-fid="${esc(pf.photo)}" alt="" hidden>` : esc(initials(pf.name || 'FP'))}</span>`; }
 function ring(pct, label, value, color, key) {
     const r = 30, c = 2 * Math.PI * r;
     const p = pct == null ? null : Math.max(0, Math.min(100, pct));
@@ -4990,7 +5440,7 @@ const Quick = {
         if (r)
             Debts.pay(r);
     },
-    order: () => Order.open(), note: () => Personal.editNote(),
+    order: () => Order.open(), note: () => Personal.editNote(), exp: () => Expenses.edit(),
     debt: () => Debts.edit(), sale: () => Sales.edit(), contact: () => Contacts.edit(), rem: () => Reminders.edit(), route: () => Route.open(), day: () => DaySum.open()
 };
 /* ═════════ SVG charts (no external library, work offline) ═════════ */
@@ -5477,6 +5927,9 @@ const Excel = {
         reminders: ['Eslatmalar', () => DB.reminders.map(r => ({ 'Sarlavha': r.title, 'Kontakt': contactName(r.contactId), 'Sana': r.remindDate || '', 'Vaqt': r.remindTime || '', 'Takror': lbl(RECUR, r.recur), 'Holat': r.done ? 'Bajarildi' : 'Kutilmoqda', 'Tafsilot': r.desc || '' }))],
         projects: ['Sayohatlar', () => DB.projects.map(p => ({ 'Vrach': contactName(p.contactId), "Yo'nalish": lbl(DESTS, p.destination) || p.destination, 'Ketish': p.depDate || '', 'Qaytish': p.retDate || '', 'Holat': lbl(TRIP_ST, p.status), 'Xarajat': num(p.cost), 'Izoh': p.note || '' }))],
         notes: ['Shaxsiy qaydlar', () => DB.notes.map(n => ({ 'Turi': n.kind === 'promise' ? 'Va\'da' : 'Qayd', 'Sarlavha': n.title || '', 'Kim': n.person || '', 'Sana': n.due || n.remind || '', 'Holat': n.kind === 'promise' ? (n.done ? 'bajarildi' : 'kutilmoqda') : '', 'Matn': n.text || '', 'Fayllar': (n.files || []).map(f => f.name).join(', ') }))],
+        expenses: ['Xarajatlar', () => DB.expenses.map(e => ({ 'Sana': e.date, 'Turi': lbl(EXP_CAT, e.cat).replace(/^\S+\s/, ''), 'Summa': num(e.amount), 'Km': e.km || '', 'Izoh': e.note || '', 'Qoplanadi': e.reimb === false ? 'yo\'q' : 'ha', 'Chek': (e.files || []).length ? 'bor' : '' }))],
+        samples: ['Namunalar', () => Samples.balance().map(x => ({ 'Preparat': x.name, 'Olindi': x.in, 'Berildi': x.out, 'Qoldiq': x.left }))],
+        catalog: ['Katalog', () => DB.catalog.map(c => ({ 'Nomi': c.name, 'MNN': c.inn || '', 'Shakli': c.form || '', 'Guruh': c.group || '', 'Narx': num(c.price) || '', 'Argumentlar': c.key || '' }))],
         events: ['Tadbirlar', () => DB.events.map(e => ({ 'Nomi': e.name, 'Sana': e.date || '', 'Vaqt': e.time || '', 'Joyi': e.location || '', 'Holat': lbl(EVT_ST, e.status), 'Taklif': (e.invitees || []).length, 'Tasdiqladi': (e.invitees || []).filter(i => i.confirmed).length }))]
     },
     async build(keys) {
@@ -5770,11 +6223,11 @@ const Notify = {
     }
 };
 /* ═════════ SETTINGS ═════════ */
-const APP_VERSION = '21.0';
+const APP_VERSION = '22.0';
 const Settings = {
     title: 'Sozlamalar', noAuto: true,
     render(v) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         const s = SETS;
         v.innerHTML = `
       <div class="section"><div class="section-h"><h2>Profil</h2></div><div class="card pad" id="profBox"></div></div>
@@ -5798,8 +6251,11 @@ const Settings = {
         <div class="f"><label>Chat ID</label><div class="inp-group"><input class="inp" id="tgChat" value="${esc(s.tgChatId)}" inputmode="numeric"><button class="btn" id="tgFind">Aniqlash</button></div></div></div>
         <div class="btn-row" style="margin-top:10px"><button class="btn" id="tgSave">Saqlash va sinash</button><button class="btn" id="tgRep" ${TG.on() ? '' : 'disabled'}>Hisobot yuborish</button></div></div></div>
       <div class="section"><div class="section-h"><h2>Ko'rinish va xavfsizlik</h2></div><div class="card pad">
+        <div class="f" style="margin-bottom:12px"><label class="lbl" style="margin-bottom:6px">Rang</label><div class="swatches">${[['mint', '#0B7A63', 'Yalpiz'], ['ocean', '#1765C8', 'Okean'], ['lavender', '#6B4CD6', 'Lavanda'], ['peach', '#D35A3A', 'Shaftoli'], ['graphite', '#334450', 'Grafit']].map(([k, c, l]) => `<button class="sw ${getMeta('accent', SETS.accent || 'mint') === k ? 'on' : ''}" data-acc="${k}" style="background:linear-gradient(135deg,${c},${c}AA)" aria-label="${l}" title="${l}"></button>`).join('')}</div></div>
+        <label class="switch" style="margin-bottom:6px"><input type="checkbox" id="solidSw" ${s.solid ? 'checked' : ''}><span class="tr"></span><span class="sl">Shaffoflikni kamaytirish<br><span class="hint">Eski telefonda sekin ishlasa yoqing</span></span></label>
         <div class="fgrid"><div class="f half"><label>Mavzu</label><select class="inp" id="theme"><option value="auto" ${s.theme === 'auto' ? 'selected' : ''}>Telefonga moslash</option><option value="light" ${s.theme === 'light' ? 'selected' : ''}>Yorug'</option><option value="dark" ${s.theme === 'dark' ? 'selected' : ''}>Qorong'i</option></select></div>
         ${AUTH ? `<div class="f half"><label>PIN so'rash</label><select class="inp" id="lockMode"><option value="remember" ${s.lockMode !== 'ask' ? 'selected' : ''}>Faqat qulflaganda</option><option value="ask" ${s.lockMode === 'ask' ? 'selected' : ''}>Har safar ochilganda</option></select></div>` : ''}</div>
+        <div class="f" style="margin-top:10px"><label>Ovozli yozish tili</label><select class="inp" id="voiceLang"><option value="uz-UZ" ${(s.voiceLang || 'uz-UZ') === 'uz-UZ' ? 'selected' : ''}>O'zbekcha</option><option value="ru-RU" ${s.voiceLang === 'ru-RU' ? 'selected' : ''}>Ruscha</option></select></div>
         <div class="small muted" style="margin-top:10px">${AUTH ? 'PIN-kod yoqilgan.' : 'PIN-kod yo\'q — ilova darhol ochiladi. Telefoningiz Face ID yoki kod bilan qulflangan bo\'lsa, bu yetarli.'}</div>
         ${AUTH ? `<label class="switch" style="margin-top:8px"><input type="checkbox" id="bioSw" ${Bio.on() ? 'checked' : ''}><span class="tr"></span><span class="sl">${Bio.name()} bilan ochish<br><span class="hint">PIN o'rniga yuzingiz yoki barmoq izingiz bilan</span></span></label>` : ''}
         <div class="btn-row" style="margin-top:10px"><button class="btn" id="pwCh">${ic('lock')}${AUTH ? 'PIN-kod sozlamalari' : 'PIN-kod qo\'yish'}</button>${AUTH ? '<button class="btn" id="lockNow">Hozir qulflash</button>' : ''}</div></div></div>
@@ -5807,8 +6263,8 @@ const Settings = {
         <div class="btn-row" style="margin-top:10px"><button class="btn" id="install" hidden>${ic('download')}Telefonga o'rnatish</button><button class="btn danger" id="wipe">${ic('trash')}Hamma ma'lumotni o'chirish</button></div></div></div>`;
         this.ghBox($('#ghBox', v));
         const pf = getMeta('profile', {});
-        $('#profBox', v).innerHTML = `<div class="det-head" style="margin:0"><span class="av" style="width:52px;height:52px">${esc(initials(pf.name || '?'))}</span><div><b>${esc(pf.name || 'Ismingizni kiriting')}</b><div class="small muted">${esc([pf.role, pf.company].filter(Boolean).join(' · ') || 'Lavozim, kompaniya')}</div>${pf.manager ? `<div class="tiny c-violet">Menejer: ${esc(pf.manager)}</div>` : ''}</div></div><button class="btn block sm" id="profEd" style="margin-top:10px">${ic('edit')}Tahrirlash</button>`;
-        $('#profEd', v).onclick = async () => { const r = await formSheet('Profil', [{ k: 'name', label: 'Ismingiz', ph: 'Masalan: Islombek' }, { k: 'role', label: 'Lavozim', ph: 'Tibbiy vakil' }, { k: 'company', label: 'Kompaniya', ph: 'Kusum Healthcare' }, { k: 'manager', label: 'Menejeringiz', hint: 'Dvoynoy vizitlarda avtomatik qo\'yiladi' }, { k: 'area', label: 'Hududingiz', ph: 'Qarshi' }], pf); if (r) {
+        $('#profBox', v).innerHTML = `<div class="det-head" style="margin:0"><span style="transform:scale(1.5);margin:0 10px">${meAvatar()}</span><div><b>${esc(pf.name || 'Ismingizni kiriting')}</b><div class="small muted">${esc([pf.role, pf.company].filter(Boolean).join(' · ') || 'Lavozim, kompaniya')}</div>${pf.manager ? `<div class="tiny c-violet">Menejer: ${esc(pf.manager)}</div>` : ''}</div></div><button class="btn block sm" id="profEd" style="margin-top:10px">${ic('edit')}Tahrirlash</button>`;
+        $('#profEd', v).onclick = async () => { const r = await formSheet('Profil', [{ k: 'photo', label: 'Profil rasmi', type: 'image', max: 480 }, { k: 'name', label: 'Ismingiz', ph: 'Masalan: Islombek' }, { k: 'role', label: 'Lavozim', ph: 'Tibbiy vakil' }, { k: 'company', label: 'Kompaniya', ph: 'Kusum Healthcare' }, { k: 'manager', label: 'Menejeringiz', hint: 'Dvoynoy vizitlarda avtomatik qo\'yiladi' }, { k: 'area', label: 'Hududingiz', ph: 'Qarshi' }], pf); if (r) {
             setMeta('profile', r);
             Router.render();
         } };
@@ -5835,7 +6291,10 @@ const Settings = {
         $('#remDays', v).onchange = e => { s.remDays = +e.target.value; sv(); };
         $('#expWarn', v).onchange = e => { s.expWarn = +e.target.value; sv(); };
         $('#theme', v).onchange = e => { s.theme = e.target.value; sv(); applyTheme(); };
-        (_b = $('#lockMode', v)) === null || _b === void 0 ? void 0 : _b.addEventListener('change', e => { s.lockMode = e.target.value; sv(); });
+        $$('[data-acc]', v).forEach(b => b.onclick = () => { setMeta('accent', b.dataset.acc); applyTheme(); $$('[data-acc]', v).forEach(x => x.classList.toggle('on', x === b)); });
+        $('#solidSw', v).onchange = e => { s.solid = e.target.checked; sv(); applyTheme(); };
+        (_b = $('#voiceLang', v)) === null || _b === void 0 ? void 0 : _b.addEventListener('change', e => { s.voiceLang = e.target.value; sv(); });
+        (_c = $('#lockMode', v)) === null || _c === void 0 ? void 0 : _c.addEventListener('change', e => { s.lockMode = e.target.value; sv(); });
         $('#tgFind', v).onclick = async () => { SETS.tgToken = $('#tgTok', v).value.trim(); if (!SETS.tgToken) {
             UI.toast('Avval token kiriting', 'err');
             return;
@@ -5867,7 +6326,7 @@ const Settings = {
         };
         $('#tgRep', v).onclick = () => TG.report();
         $('#pwCh', v).onclick = () => Lock.settings();
-        (_c = $('#lockNow', v)) === null || _c === void 0 ? void 0 : _c.addEventListener('click', () => Lock.lock());
+        (_d = $('#lockNow', v)) === null || _d === void 0 ? void 0 : _d.addEventListener('click', () => Lock.lock());
         $('#bkDl', v).onclick = () => Backup.download();
         $('#bkUp', v).onclick = () => Backup.restoreFile();
         $('#bkList', v).onclick = () => Backup.list();
@@ -6442,11 +6901,11 @@ const Lock = {
     back() { $('#lock').hidden = true; $('#app').hidden = false; Router.render(); }
 };
 /* ═════════ MORE page ═════════ */
-const MORE = [['drugs', 'Dorilar', 'pill'], ['sales', 'Sotuvlar va tahlil', 'cart'], ['personal', 'Shaxsiy', 'lock'], ['reports', 'Hisobotlar', 'print'], ['reminders', 'Eslatmalar', 'bell'], ['gifts', "Sovg'alar", 'gift'], ['map', 'Xarita va marshrut', 'map'], ['returned', 'Qaytarilgan dorilar', 'ret'], ['projects', 'Sayohat, tadbir', 'plane'], ['stats', 'Statistika', 'chart'], ['settings', 'Sozlamalar', 'gear']];
+const MORE = [['sales', 'Sotuv, plan va bonus', 'cart'], ['drugs', 'Dorilar (ombor)', 'pill'], ['catalog', 'Preparatlar katalogi', 'box'], ['samples', 'Namunalar', 'gift'], ['expenses', 'Xarajatlar', 'wallet'], ['personal', 'Shaxsiy', 'lock'], ['reports', 'Hisobotlar', 'print'], ['reminders', 'Eslatmalar', 'bell'], ['gifts', "Sovg'alar", 'gift'], ['map', 'Xarita va marshrut', 'map'], ['returned', 'Qaytarilgan dorilar', 'ret'], ['projects', 'Sayohat, tadbir', 'plane'], ['stats', 'Statistika', 'chart'], ['settings', 'Sozlamalar', 'gear']];
 const More = {
     title: 'Boshqa bo\'limlar',
     render(v) {
-        const cnt = { drugs: DB.expired.length, personal: DB.notes.length + DB.debts.filter(d => d.personal).length, reminders: DB.reminders.filter(r => !r.done).length, sales: DB.sales.length, gifts: DB.gifts.length, map: DB.contacts.filter(c => c.lat != null).length, returned: DB.returned.length, projects: DB.projects.length + DB.events.length };
+        const cnt = { catalog: DB.catalog.length, expenses: DB.expenses.filter(e => monthKey(e.date) === thisMonth()).length, samples: Samples.balance().filter(x => x.left > 0).length, drugs: DB.expired.length, personal: DB.notes.length + DB.debts.filter(d => d.personal).length, reminders: DB.reminders.filter(r => !r.done).length, sales: DB.sales.length, gifts: DB.gifts.length, map: DB.contacts.filter(c => c.lat != null).length, returned: DB.returned.length, projects: DB.projects.length + DB.events.length };
         const late = DB.reminders.filter(r => !r.done && dLeft(r.remindDate) !== null && dLeft(r.remindDate) <= 0).length;
         v.innerHTML = `<div class="list" style="margin-top:8px">${MORE.map(([k, l, i]) => `<a class="item" href="#/${k}" style="text-decoration:none;color:inherit"><span class="av sq" style="background:var(--surface2);color:var(--ink2)"><svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round">${IC[i]}</svg></span><span class="body"><span class="t">${l}</span>${k === 'settings' ? `<span class="s">${Sync.on() ? 'Sinxron yoqilgan' : 'Sinxron, zaxira, Telegram, PIN-kod'}</span>` : ''}</span><span class="r">${k === 'reminders' && late ? `<span class="tag red">${late} bugun</span>` : cnt[k] != null ? `<span class="small muted">${cnt[k]}</span>` : ''}</span></a>`).join('')}</div>
     ${Sync.on() ? '' : `<div class="card pad" style="margin-top:16px"><b>Ma'lumotlaringiz faqat shu telefonda</b><p class="small muted" style="margin:4px 0 10px">Telefon yo'qolsa yoki brauzer tozalansa, hammasi yo'qoladi. GitHub sinxronini yoqing — 2 daqiqa vaqt oladi.</p><a class="btn primary sm" href="#/settings">Sinxronni yoqish</a></div>`}`;
@@ -6523,6 +6982,10 @@ function openSearch() {
             res.push({ icon: '🛒', t: s.drug, s: `${contactName(s.contactId)} · ${fmtD(s.date)} · ${money(s.total)}`, go: () => Sales.edit(s.id) }); });
         DB.reminders.forEach(r => { if (has(r.title, r.desc))
             res.push({ icon: '🔔', t: r.title, s: `${fmtD(r.remindDate)}${r.done ? ' · bajarilgan' : ''}`, go: () => Reminders.edit(r.id) }); });
+        DB.catalog.forEach(c => { if (has(c.name, c.inn, c.group, c.key))
+            res.push({ icon: '📚', t: c.name, s: [c.inn, c.form].filter(Boolean).join(' · ') || 'Katalog', go: () => Catalog.present(c.id) }); });
+        DB.expenses.forEach(e => { if (has(e.note, lbl(EXP_CAT, e.cat)))
+            res.push({ icon: '🧾', t: lbl(EXP_CAT, e.cat), s: `${fmtD(e.date)} · ${money(e.amount)}${e.note ? ' · ' + e.note : ''}`, go: () => Expenses.edit(e.id) }); });
         DB.notes.forEach(n => { if (has(n.title, n.text, n.person))
             res.push({ icon: n.kind === 'promise' ? '🤞' : '🗒️', t: n.title || 'Qayd', s: n.kind === 'promise' ? `Va'da${n.due ? ' · ' + fmtD(n.due) : ''}` : (n.text || '').slice(0, 60), go: () => n.kind === 'promise' ? Personal.editPromise(n.id) : Personal.editNote(n.id) }); });
         DB.visits.forEach(v => { if (has(v.note, ...(v.products || []), v.manager))
@@ -6556,11 +7019,14 @@ function openSearch() {
     setTimeout(() => $('#gsQ', body).focus(), 250);
 }
 /* ═════════ ROUTER ═════════ */
-const ROUTES = { home: Home, visits: VisitsView, personal: Personal, reports: ReportsCenter, contacts: Contacts, debts: Debts, drugs: Drugs, more: More, gifts: Gifts, sales: Sales, returned: Returned, reminders: Reminders, map: MapView, projects: Projects, stats: Stats, settings: Settings };
+const ROUTES = { home: Home, catalog: Catalog, samples: Samples, expenses: Expenses, visits: VisitsView, personal: Personal, reports: ReportsCenter, contacts: Contacts, debts: Debts, drugs: Drugs, more: More, gifts: Gifts, sales: Sales, returned: Returned, reminders: Reminders, map: MapView, projects: Projects, stats: Stats, settings: Settings };
 const NAV = [['home', 'Asosiy', 'home'], ['visits', 'Tashriflar', 'check'], ['contacts', 'Kontaktlar', 'users'], ['debts', 'Qarzlar', 'wallet'], ['more', 'Boshqa', 'more']];
 const FAB = { home: { l: 'Qo\'shish', fn: () => UI.menu('Nima qo\'shamiz?', [{ icon: '📍', label: 'Tashrif', value: Quick.visit }, { icon: '💳', label: 'To\'lov', value: Quick.pay }, { icon: '💰', label: 'Qarz', value: Quick.debt }, { icon: '🧾', label: 'Buyurtma', value: () => Order.open() }, { icon: '👤', label: 'Kontakt', value: Quick.contact }, { icon: '🔔', label: 'Eslatma', value: Quick.rem }, { icon: '🧭', label: 'Marshrut', value: Quick.route }, { icon: '📋', label: 'Kun yakuni', value: Quick.day }, { icon: '💊', label: 'Dori', value: () => Drugs.edit() }, { icon: '🎁', label: 'Sovg\'a', value: () => Gifts.edit() }]).then(f => f && f()) },
     visits: { l: 'Tashrif', fn: () => VisitsView.seg === 'plan' ? TourPlan.importMenu(VisitsView.month || thisMonth()) : Visits.edit(null, '', { date: VisitsView.day || today() }) },
     personal: { l: 'Qo\'shish', fn: () => Personal.add() },
+    expenses: { l: 'Xarajat', fn: () => Expenses.edit() },
+    samples: { l: 'Qabul qilish', fn: () => Samples.edit(null, 'in') },
+    catalog: { l: 'Preparat', fn: () => Catalog.edit() },
     contacts: { l: 'Kontakt', fn: () => Contacts.edit() }, debts: { l: 'Qarz', fn: () => Debts.edit() }, drugs: { l: 'Dori', fn: () => Drugs.edit() }, reminders: { l: 'Eslatma', fn: () => Reminders.edit() },
     sales: { l: 'Sotuv', fn: () => UI.menu('Sotuv', [{ icon: '🧾', label: 'Buyurtma (bir nechta dori)', sub: 'Bitta mijozga bir yo\'la', value: 'o' }, { icon: '🛒', label: 'Bitta sotuv', value: 's' }]).then(r => { if (r === 'o')
             Order.open(); if (r === 's')
@@ -6652,6 +7118,12 @@ function applyTheme() {
         delete document.documentElement.dataset.theme;
     else
         document.documentElement.dataset.theme = t;
+    const ac = getMeta('accent', SETS.accent || 'mint');
+    if (ac && ac !== 'mint')
+        document.documentElement.dataset.accent = ac;
+    else
+        delete document.documentElement.dataset.accent;
+    document.documentElement.classList.toggle('solid', !!SETS.solid);
     const dark = t === 'dark' || (t === 'auto' && matchMedia('(prefers-color-scheme:dark)').matches);
     (_a = $('meta[name=theme-color]')) === null || _a === void 0 ? void 0 : _a.setAttribute('content', dark ? '#0C1614' : '#EEF3F1');
 }
@@ -6724,9 +7196,17 @@ async function boot() {
         window.__booted = true;
         buildNav();
         $('#btnSearch').onclick = openSearch;
+        const hdrAv = () => { const el = $('#meHdr'); if (el) {
+            el.innerHTML = meAvatar();
+            hydrate(el);
+        } };
+        hdrAv();
+        listeners.add(debounce(hdrAv, 100));
+        $('#meHdr').onclick = () => Router.go('settings');
         $('#btnSync').onclick = () => Sync.on() ? Sync.sync({ silent: false }) : Router.go('settings');
         const rerender = debounce(() => Router.render({ auto: true }), 60);
         listeners.add(rerender);
+        listeners.add(debounce(applyTheme, 50));
         Sync._listener = () => Sync.schedule();
         listeners.add(Sync._listener);
         window.addEventListener('hashchange', () => { if (!UI.stack.length)
@@ -6738,6 +7218,14 @@ async function boot() {
         catch (e) {
             console.warn(e);
         }
+        try {
+            const act = new URLSearchParams(location.search).get('a');
+            if (act) {
+                history.replaceState(null, '', location.pathname + location.hash);
+                setTimeout(() => ({ visit: Quick.visit, order: Quick.order, exp: Quick.exp, route: Quick.route }[act] || (() => { }))(), 500);
+            }
+        }
+        catch (_d) { }
         window.addEventListener('scroll', () => $('#top').classList.toggle('scrolled', window.scrollY > 4), { passive: true });
         document.addEventListener('keydown', e => { if (e.key === 'Escape' && UI.stack.length)
             UI.close(); if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -6774,7 +7262,7 @@ async function boot() {
             if (navigator.storage && navigator.storage.persist && !(await navigator.storage.persisted()))
                 await navigator.storage.persist();
         }
-        catch (_d) { }
+        catch (_e) { }
         const ios = /iphone|ipad|ipod/i.test(navigator.userAgent), standalone = window.navigator.standalone || matchMedia('(display-mode: standalone)').matches;
         if (ios && !standalone && !SETS.iosHintShown) {
             UI.banner('ios', 'iPhone\'da ma\'lumot o\'chib ketmasligi uchun: Safari → Ulashish ⬆️ → "Uy ekraniga qo\'shish".', 'warn', { label: 'Tushundim', fn: () => { SETS.iosHintShown = true; saveSets(); UI.banner('ios', null); } });

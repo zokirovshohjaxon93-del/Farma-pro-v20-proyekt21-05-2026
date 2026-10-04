@@ -6,11 +6,39 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#EEF3F1",
-  "theme_color": "#0B6E5A",
+  "background_color": "#F2F5F4",
+  "theme_color": "#0B7A63",
   "lang": "uz",
   "icons": [
-    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
-    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Tashrif",
+      "url": "./index.html?a=visit"
+    },
+    {
+      "name": "Buyurtma",
+      "url": "./index.html?a=order"
+    },
+    {
+      "name": "Xarajat",
+      "url": "./index.html?a=exp"
+    },
+    {
+      "name": "Marshrut",
+      "url": "./index.html?a=route"
+    }
   ]
 }
