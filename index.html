@@ -162,7 +162,7 @@ button.item:active{background:var(--surface2)}
 .toolbar .btn{padding:0 12px;flex:none}
 .search{flex:1;min-width:0;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 12px;height:44px}
 .search svg{width:18px;height:18px;stroke:var(--ink3);fill:none;stroke-width:2;flex:none}
-.search input{border:0;background:none;outline:none;flex:1;height:100%;min-width:0}
+.search input{border:0;background:none;outline:none;flex:1;height:100%;min-width:0;font-size:16px}
 .chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 0 4px;margin:0 -16px;padding-left:16px;padding-right:16px}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:none;height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:13px;font-weight:550;color:var(--ink2);white-space:nowrap}
@@ -180,7 +180,8 @@ button.item:active{background:var(--surface2)}
 .btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap}
 .btn-row>.btn{flex:1}
-.actions{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.actions{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px}
+.det-head~.actions,.sheet .actions{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}
 .act{text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:14px;background:var(--surface);border:1px solid var(--line);font-size:12px;font-weight:550;color:var(--ink2);text-align:center}
 .act .i{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:19px;background:var(--brand-soft)}
 
@@ -274,6 +275,8 @@ select.inp{appearance:none;-webkit-appearance:none;background-image:linear-gradi
 /* toasts / banners */
 #toasts{position:fixed;left:0;right:0;top:calc(var(--sat) + 8px);z-index:300;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none;padding:0 12px}
 .toast{max-width:460px;width:100%;background:var(--ink);color:var(--surface);padding:11px 14px;border-radius:13px;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);display:flex;gap:10px;align-items:flex-start;pointer-events:auto;animation:tin .22s ease-out}
+.toast-act{color:var(--brand);font-weight:700;padding:0 4px;white-space:nowrap;font-size:14px}
+:root[data-theme=dark] .toast-act{color:var(--brand2)}
 .toast.err{background:var(--red);color:#fff}
 .toast.ok .ti{color:var(--brand)}
 @keyframes tin{from{transform:translateY(-10px);opacity:0}}
@@ -568,17 +571,47 @@ function upsert(col, o) {
 }
 function touch(col, id, patch) { const o = byId(col, id); if (!o)
     return null; Object.assign(o, patch || {}); o._ts = Date.now(); commit(); return o; }
-function remove(col, ids) {
+/* Delete with undo: records vanish now, photos are only purged after the undo window */
+const Undo = { batch: [], timer: null };
+function remove(col, ids, { undo = true } = {}) {
     ids = [].concat(ids);
     const now = Date.now();
+    const gone = [];
     ids.forEach(id => {
         const o = byId(col, id);
-        if (o)
-            fileIdsOf(o).forEach(f => delFile(f));
+        if (!o)
+            return;
+        gone.push({ col, rec: o });
         DB[col] = DB[col].filter(x => x.id !== id);
         DB._deleted[id] = now;
     });
+    if (!gone.length)
+        return;
+    if (!undo) {
+        gone.forEach(g => fileIdsOf(g.rec).forEach(f => delFile(f)));
+        commit();
+        return;
+    }
+    Undo.batch.push(...gone);
     commit();
+    clearTimeout(Undo.timer);
+    Undo.timer = setTimeout(() => {
+        const b = Undo.batch;
+        Undo.batch = [];
+        const purge = setTimeout(() => b.forEach(g => { if (!byId(g.col, g.rec.id))
+            fileIdsOf(g.rec).forEach(f => delFile(f)); }), 9000);
+        UI.toast(b.length === 1 ? 'O\'chirildi' : `${b.length} ta yozuv o'chirildi`, '', 8000, { label: 'Qaytarish', fn: () => {
+                clearTimeout(purge);
+                const t = Date.now();
+                b.forEach(g => { delete DB._deleted[g.rec.id]; if (!byId(g.col, g.rec.id)) {
+                    DB[g.col].push(Object.assign(Object.assign({}, g.rec), { _ts: t }));
+                    if (g.col === 'sales' && typeof Sales !== 'undefined')
+                        Sales.applyStock(g.rec, 1);
+                } });
+                commit();
+                UI.toast('Qaytarildi', 'ok');
+            } });
+    }, 30);
 }
 function fileIdsOf(o) { return ['imgId', 'fileId'].map(k => o && o[k]).filter(Boolean); }
 function setMeta(key, val) { DB.meta[key] = { v: val, _ts: Date.now() }; commit(); }
@@ -636,14 +669,14 @@ async function flush() {
     }
     saving = true;
     try {
+        SETS._savedAt = Date.now();
+        const m1 = mirrorWrite('fp20_db', DB), m2 = mirrorWrite('fp20_sets', SETS);
         if (IDB.ok) {
             await IDB.put('kv', 'db', DB);
             await IDB.put('kv', 'sets', SETS);
         }
-        else {
-            localStorage.setItem('fp20_db', JSON.stringify(DB));
-            localStorage.setItem('fp20_sets', JSON.stringify(SETS));
-        }
+        else if (!m1 || !m2)
+            throw new Error('telefon xotirasi to\'lgan yoki bloklangan');
         if (saveErr) {
             saveErr = null;
             UI.banner('save', null);
@@ -658,15 +691,54 @@ async function flush() {
         saving = false;
     }
 }
-async function saveSets() { try {
+async function saveSets() { SETS._savedAt = Date.now(); mirrorWrite('fp20_sets', SETS); try {
     if (IDB.ok)
         await IDB.put('kv', 'sets', SETS);
-    else
-        localStorage.setItem('fp20_sets', JSON.stringify(SETS));
 }
 catch (e) {
     console.error(e);
 } }
+/* Second copy in localStorage: protects against iPhone IndexedDB failures */
+let mirrorOff = false;
+function mirrorWrite(key, val) {
+    if (mirrorOff && key === 'fp20_db')
+        return false;
+    try {
+        localStorage.setItem(key, JSON.stringify(val));
+        return true;
+    }
+    catch (e) {
+        if (key === 'fp20_db') {
+            mirrorOff = true;
+            try {
+                localStorage.removeItem(key);
+            }
+            catch (_a) { }
+        }
+        return false;
+    }
+}
+function mirrorRead(key) { try {
+    return JSON.parse(localStorage.getItem(key) || 'null');
+}
+catch (_a) {
+    return null;
+} }
+async function saveAuth(a) {
+    AUTH = a;
+    try {
+        a ? localStorage.setItem('fp20_auth', JSON.stringify(a)) : localStorage.removeItem('fp20_auth');
+    }
+    catch (_a) { }
+    try {
+        if (IDB.ok) {
+            a ? await IDB.put('kv', 'auth', a) : await IDB.del('kv', 'auth');
+        }
+    }
+    catch (e) {
+        console.error(e);
+    }
+}
 /* Files (photos, bank receipts) — stored apart from records */
 async function putFile(dataUrl) {
     const fid = 'f' + uid();
@@ -864,10 +936,12 @@ const ic = (n, cls = '') => `<svg viewBox="0 0 24 24" class="${cls}" aria-hidden
 const CROSS = '<svg viewBox="0 0 24 24"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/></svg>';
 /* ═════════ UI helpers ═════════ */
 const UI = {
-    toast(msg, kind = '', ms = 3200) {
+    toast(msg, kind = '', ms = 3200, action) {
         const t = document.createElement('div');
         t.className = 'toast ' + kind;
-        t.innerHTML = `<span class="ti">${kind === 'err' ? '⚠' : kind === 'ok' ? '✓' : '•'}</span><span>${esc(msg)}</span>`;
+        t.innerHTML = `<span class="ti">${kind === 'err' ? '⚠' : kind === 'ok' ? '✓' : '•'}</span><span style="flex:1">${esc(msg)}</span>${action ? `<button class="toast-act">${esc(action.label)}</button>` : ''}`;
+        if (action)
+            t.querySelector('.toast-act').onclick = e => { e.stopPropagation(); rm(); action.fn(); };
         const box = $('#toasts');
         box.appendChild(t);
         while (box.children.length > 3)
@@ -1629,8 +1703,14 @@ const SPECS = ['Terapevt', 'Pediatr', 'Kardiolog', 'Nevrolog', 'Ginekolog', 'End
 const VISIT_PURPOSE = [['uchrashuv', 'Uchrashuv'], ['prezentatsiya', 'Prezentatsiya'], ['nazorat', 'Nazorat'], ['buyurtma', 'Buyurtma'], ['tolov', "To'lov"], ['boshqa', 'Boshqa']];
 const VISIT_RESULT = [['muvaffaqiyatli', 'Muvaffaqiyatli'], ['kutilmoqda', 'Kutilmoqda'], ['rad_etildi', 'Rad etildi'], ['keyinga_qoldirildi', 'Keyinga qoldirildi']];
 const lbl = (arr, k) => (arr.find(x => x[0] === k) || [, k || ''])[1];
+const VF = () => (Object.assign({ A: 7, B: 14, C: 30 }, getMeta('visitFreq', {})));
+function lastVisitMap() { const m = {}; DB.visits.forEach(v => { if (!m[v.contactId] || v.date > m[v.contactId])
+    m[v.contactId] = v.date; }); return m; }
+/* when the next visit is due for a contact with an A/B/C category */
+function visitDue(c, lv) { const f = VF()[c.cat]; if (!f)
+    return null; const last = (lv || lastVisitMap())[c.id] || ''; const due = last ? addDays(last, f) : today(); return { due, days: -dLeft(due), last, freq: f }; }
 const Contacts = {
-    q: '', type: '', region: '', sort: null, limit: 150, here: null,
+    q: '', type: '', region: '', due: false, sort: null, limit: 150, here: null,
     title: 'Kontaktlar',
     stats(c) {
         const id = c.id;
@@ -1644,7 +1724,8 @@ const Contacts = {
     },
     filtered() {
         const q = norm(this.q), qd = this.q.replace(/\D/g, '');
-        let l = DB.contacts.filter(c => (!this.type || c.type === this.type) && (!this.region || (c.region || '') === this.region) && (!q || norm(c.name).includes(q) || norm(c.spec).includes(q) || norm(c.address).includes(q) || (qd.length >= 3 && (phoneDigits(c.phone) + ' ' + phoneDigits(c.phone2)).includes(qd))));
+        const lv = this._lv = lastVisitMap();
+        let l = DB.contacts.filter(c => (!this.due || ((visitDue(c, lv) || {}).days >= 0)) && (!this.type || c.type === this.type) && (!this.region || (c.region || '') === this.region) && (!q || norm(c.name).includes(q) || norm(c.spec).includes(q) || norm(c.address).includes(q) || (qd.length >= 3 && (phoneDigits(c.phone) + ' ' + phoneDigits(c.phone2)).includes(qd))));
         const sort = this.sort || SETS.contactSort || 'az';
         if (sort === 'near' && this.here)
             l = l.map(c => ({ c, d: Geo.dist(this.here, c) })).sort((a, b) => { var _a, _b; return ((_a = a.d) !== null && _a !== void 0 ? _a : 1e12) - ((_b = b.d) !== null && _b !== void 0 ? _b : 1e12); }).map(x => x.c);
@@ -1661,7 +1742,7 @@ const Contacts = {
         return l;
     },
     render(v) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         const all = DB.contacts;
         const regs = [...new Set(all.map(c => c.region).filter(Boolean))];
         const list = this.filtered();
@@ -1674,6 +1755,7 @@ const Contacts = {
         <button class="chip ${!this.type ? 'on' : ''}" data-t="">Hammasi<span class="n">${all.length}</span></button>
         <button class="chip ${this.type === 'vrach' ? 'on' : ''}" data-t="vrach">Vrachlar<span class="n">${all.filter(c => c.type !== 'dorixona').length}</span></button>
         <button class="chip ${this.type === 'dorixona' ? 'on' : ''}" data-t="dorixona">Dorixonalar<span class="n">${all.filter(c => c.type === 'dorixona').length}</span></button>
+        ${(() => { const lv = lastVisitMap(); const n = all.filter(c => { const d = visitDue(c, lv); return d && d.days >= 0; }).length; return n || this.due ? `<button class="chip ${this.due ? 'on' : ''}" id="cDue">Tashrif kerak<span class="n">${n}</span></button>` : ''; })()}
         ${regs.length ? `<button class="chip ${this.region ? 'on' : ''}" id="cReg">${this.region ? esc(regionLabel(this.region)) : 'Hudud'} ▾</button>` : ''}
         <button class="chip" id="cSort">${{ az: 'A–Z', new: 'Yangilari', near: 'Yaqinlari', visit: 'Ko\'p borilmagan' }[sort]} ▾</button>
       </div>
@@ -1683,10 +1765,11 @@ const Contacts = {
         const qi = $('#cQ', v);
         qi.addEventListener('input', debounce(() => { this.q = qi.value; this.limit = 150; Router.render({ keepFocus: 'cQ' }); }, 200));
         $$('[data-t]', v).forEach(b => b.onclick = () => { this.type = b.dataset.t; Router.render(); });
+        (_a = $('#cDue', v)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => { this.due = !this.due; Router.render(); });
         $('#cImp', v).onclick = () => this.importMenu();
-        (_a = $('#cImp2', v)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => this.importMenu());
+        (_b = $('#cImp2', v)) === null || _b === void 0 ? void 0 : _b.addEventListener('click', () => this.importMenu());
         $('#cMore', v).onclick = () => this.moreMenu();
-        (_b = $('#cReg', v)) === null || _b === void 0 ? void 0 : _b.addEventListener('click', async () => { const r = await UI.menu('Hudud', [{ label: 'Barcha hududlar', value: '', icon: '🌍' }, ...regs.map(k => ({ label: regionLabel(k), value: k, icon: '📍' }))]); if (r !== null) {
+        (_c = $('#cReg', v)) === null || _c === void 0 ? void 0 : _c.addEventListener('click', async () => { const r = await UI.menu('Hudud', [{ label: 'Barcha hududlar', value: '', icon: '🌍' }, ...regs.map(k => ({ label: regionLabel(k), value: k, icon: '📍' }))]); if (r !== null) {
             this.region = r;
             Router.render();
         } });
@@ -1711,10 +1794,10 @@ const Contacts = {
             }
             Router.render();
         };
-        (_c = $('#cMoreItems', v)) === null || _c === void 0 ? void 0 : _c.addEventListener('click', () => { this.limit += 300; Router.render(); });
+        (_d = $('#cMoreItems', v)) === null || _d === void 0 ? void 0 : _d.addEventListener('click', () => { this.limit += 300; Router.render(); });
         Sel.wire(v, 'contacts', id => this.open(id), {
             del: ids => this.removeMany(ids),
-            extra: [{ label: 'VCF', fn: ids => this.exportVCF(DB.contacts.filter(c => ids.includes(c.id))) }],
+            extra: [{ label: 'Marshrut', fn: ids => Route.open(ids) }, { label: 'VCF', fn: ids => this.exportVCF(DB.contacts.filter(c => ids.includes(c.id))) }],
             all: () => list.map(c => c.id)
         });
     },
@@ -1724,7 +1807,9 @@ const Contacts = {
         const sub = [c.spec, c.region ? regionLabel(c.region) : '', c.phone ? fmtPhone(c.phone) : ''].filter(Boolean).join(' · ');
         const right = d != null ? `<div class="v small">${Geo.fmtDist(d)}</div>` : st.lastVisit ? `<div class="s">${relD(st.lastVisit.date)}</div>` : '';
         const owe = st.bergan > 0 ? `<div class="tiny c-red num">−${short(st.bergan)}</div>` : '';
-        return Sel.item('contacts', c.id, `${avatar(c)}<span class="body"><span class="t">${esc(c.name)}${c.lat ? ' <span class="c-green tiny">●</span>' : ''}</span><span class="s">${esc(sub || (c.type === 'dorixona' ? 'Dorixona' : 'Vrach'))}</span></span><span class="r">${right}${owe}</span>`);
+        const vd = visitDue(c, this._lv);
+        const due = vd && vd.days >= 0 ? `<div class="tiny c-amber">tashrif kerak</div>` : '';
+        return Sel.item('contacts', c.id, `${avatar(c)}<span class="body"><span class="t">${c.cat ? `<span class="tag ${c.cat === 'A' ? 'green' : c.cat === 'B' ? 'blue' : ''}" style="padding:0 6px;margin-right:5px;font-size:11px">${c.cat}</span>` : ''}${esc(c.name)}${c.lat ? ' <span class="c-green tiny">●</span>' : ''}</span><span class="s">${esc(sub || (c.type === 'dorixona' ? 'Dorixona' : 'Vrach'))}</span></span><span class="r">${right}${owe}${due}</span>`);
     },
     fields() {
         return [
@@ -1735,7 +1820,8 @@ const Contacts = {
             { k: 'phone2', label: 'Qo\'shimcha telefon', type: 'tel', half: true },
             { k: 'spec', label: 'Mutaxassisligi / lavozimi', list: SPECS, half: true },
             { k: 'birthday', label: 'Tug\'ilgan kuni', type: 'date', half: true, hint: 'Bosh sahifada oldindan eslatiladi' },
-            { k: 'workplace', label: 'Ish joyi (klinika, apteka)' },
+            { k: 'cat', label: 'Toifa', type: 'select', half: true, opts: () => { const f = VF(); return [['', '— (rejasiz)'], ['A', `A — har ${f.A} kunda`], ['B', `B — har ${f.B} kunda`], ['C', `C — har ${f.C} kunda`]]; }, hint: 'Tashrif muddati kelsa eslatadi' },
+            { k: 'workplace', label: 'Ish joyi', half: true, ph: 'Klinika, apteka' },
             { k: 'address', label: 'Manzil', ph: 'Ko\'cha, mahalla, tuman' },
             { k: 'loc', label: 'Xaritadagi joylashuvi', type: 'location', hint: 'Kontakt oldida turgan bo\'lsangiz — "Hozirgi joyim", aks holda xaritadan belgilang yoki Google/Yandex havolasini qo\'ying.' },
             { k: 'imgId', label: 'Rasm', type: 'image', max: 480 },
@@ -1785,7 +1871,6 @@ const Contacts = {
             ['gifts', 'debts', 'sales', 'visits', 'reminders', 'returned', 'projects'].forEach(col => { const r = DB[col].filter(x => ids.includes(x.contactId)).map(x => x.id); if (r.length)
                 remove(col, r); });
         remove('contacts', ids);
-        UI.toast('O\'chirildi', 'ok');
         return true;
     },
     /* ── Contact card ── */
@@ -1821,6 +1906,7 @@ const Contacts = {
           ${c.phone2 ? `<div><span>Qo'shimcha</span><span><a href="tel:${esc(normPhone(c.phone2))}">${esc(fmtPhone(c.phone2))}</a></span></div>` : ''}
           <div><span>Manzil</span><span>${esc([c.address, regionLabel(c.region)].filter(Boolean).join(', ') || '—')}</span></div>
           <div><span>Joylashuv</span><span>${c.lat != null ? `<span class="c-green">Belgilangan</span>` : `<button class="btn sm" data-setloc>${ic('pin')}Belgilash</button>`}</span></div>
+          ${c.cat ? (() => { const d = visitDue(c); return `<div><span>Tashrif rejasi</span><span>${c.cat} · har ${d.freq} kunda · <span class="${d.days >= 0 ? 'c-amber' : 'c-green'}">${d.days > 0 ? d.days + ' kun kechikdi' : d.days === 0 ? 'bugun borish kerak' : relD(d.due)}</span></span></div>`; })() : ''}
           ${c.note ? `<div><span>Izoh</span><span style="font-weight:400">${esc(c.note)}</span></div>` : ''}
         </div></div>
         <div class="stats" style="margin-bottom:6px">
@@ -2069,6 +2155,7 @@ const Contacts = {
         const r = await UI.menu('Kontaktlar', [
             { icon: '☑️', label: 'Bir nechtasini tanlash', sub: 'O\'chirish yoki .vcf ga eksport uchun', value: 'sel' },
             { icon: '🗺️', label: 'Hammasi xaritada', value: 'map' },
+            { icon: '🧭', label: 'Marshrut tuzish', sub: 'Tanlangan joylarni eng qisqa tartibda', value: 'route' },
             { icon: '📇', label: 'Hammasini telefonga saqlash (.vcf)', value: 'vcf' },
             { icon: '📊', label: 'Excelga eksport', value: 'xlsx' },
             { icon: '🖨️', label: 'Ro\'yxatni chop etish / PDF', value: 'print' }
@@ -2077,6 +2164,8 @@ const Contacts = {
             Sel.start('contacts');
         if (r === 'map')
             Router.go('map');
+        if (r === 'route')
+            Route.open();
         if (r === 'vcf')
             this.exportVCF(DB.contacts);
         if (r === 'xlsx')
@@ -2266,10 +2355,12 @@ const MapView = {
         const withLoc = DB.contacts.filter(c => c.lat != null && c.lat !== '');
         const noLoc = DB.contacts.length - withLoc.length;
         v.innerHTML = `<div class="chips" style="margin-top:6px"><button class="chip ${!this.filter ? 'on' : ''}" data-f="">Hammasi<span class="n">${withLoc.length}</span></button><button class="chip ${this.filter === 'vrach' ? 'on' : ''}" data-f="vrach">Vrachlar</button><button class="chip ${this.filter === 'dorixona' ? 'on' : ''}" data-f="dorixona">Dorixonalar</button><button class="chip" id="mvMe">🎯 Yaqinimdagilar</button></div>
-      <div class="map tall" id="mvMap" style="margin-top:6px"><div class="map-msg">Xarita yuklanmoqda…</div></div>
+      <button class="btn primary block" id="mvRoute" style="margin-top:8px">${ic('nav')}Bugungi marshrutni tuzish</button>
+      <div class="map tall" id="mvMap" style="margin-top:8px"><div class="map-msg">Xarita yuklanmoqda…</div></div>
       ${noLoc ? `<p class="small muted" style="margin-top:8px">${noLoc} ta kontaktda joylashuv belgilanmagan. Kontaktni ochib "Joylashuv → Belgilash"ni bosing yoki tashrif paytida joyingizni saqlang.</p>` : ''}
       <div class="section" id="mvNear"></div>`;
         $$('[data-f]', v).forEach(b => b.onclick = () => { this.filter = b.dataset.f; Router.render(); });
+        $('#mvRoute', v).onclick = () => Route.open();
         $('#mvMe', v).onclick = async () => { try {
             UI.toast('Joylashuv aniqlanmoqda…');
             this.here = await Geo.here();
@@ -2327,6 +2418,203 @@ const MapView = {
             $('#msMap', body).innerHTML = `<div class="map-msg">Joylashuv belgilanmagan</div>`;
         $('[data-nav]', body).onclick = () => Geo.navigate(c);
         $('[data-set]', body).onclick = () => { L0.close(); Contacts.setLocation(c.id); };
+    }
+};
+/* ═════════ ROUTE PLANNER: shortest visiting order + navigation ═════════ */
+const Route = {
+    /* nearest-neighbour start, then 2-opt improvement (open path, fixed start) */
+    optimize(start, pts) {
+        if (pts.length < 2)
+            return pts.slice();
+        const D = (a, b) => Geo.dist(a, b) || 0;
+        const rest = pts.slice();
+        const order = [];
+        let cur = start || rest[0];
+        if (!start) {
+            order.push(rest.shift());
+            cur = order[0];
+        }
+        while (rest.length) {
+            let bi = 0, bd = Infinity;
+            rest.forEach((p, i) => { const d = D(cur, p); if (d < bd) {
+                bd = d;
+                bi = i;
+            } });
+            cur = rest.splice(bi, 1)[0];
+            order.push(cur);
+        }
+        const path = start ? [start, ...order] : order;
+        const len = p => p.reduce((s, x, i) => i ? s + D(p[i - 1], x) : 0, 0);
+        let improved = true, guard = 0;
+        while (improved && guard++ < 60) {
+            improved = false;
+            for (let i = 1; i < path.length - 1; i++)
+                for (let j = i + 1; j < path.length; j++) {
+                    const a = path[i - 1], b = path[i], c = path[j], d = path[j + 1];
+                    const before = D(a, b) + (d ? D(c, d) : 0), after = D(a, c) + (d ? D(b, d) : 0);
+                    if (after + 1 < before) {
+                        path.splice(i, j - i + 1, ...path.slice(i, j + 1).reverse());
+                        improved = true;
+                    }
+                }
+        }
+        return start ? path.slice(1) : path;
+    },
+    candidates() {
+        const lv = lastVisitMap();
+        return DB.contacts.filter(c => c.lat != null && c.lat !== '').map(c => ({ c, vd: visitDue(c, lv) }));
+    },
+    async open(preIds) {
+        const all = this.candidates();
+        if (!all.length) {
+            UI.toast('Joylashuvi belgilangan kontakt yo\'q. Avval kontaktlarga joylashuv qo\'shing.', 'err', 5000);
+            return;
+        }
+        const sel = new Set(preIds && preIds.length ? preIds : all.filter(x => x.vd && x.vd.days >= 0).sort((a, b) => b.vd.days - a.vd.days).slice(0, 8).map(x => x.c.id));
+        let q = '';
+        const body = document.createElement('div');
+        const L = UI.open({ title: 'Bugungi marshrut', body, cls: 'full', foot: `<button class="btn primary" data-go></button>` });
+        const draw = () => {
+            const nq = norm(q);
+            const list = all.filter(x => !nq || norm(x.c.name).includes(nq) || norm(x.c.address).includes(nq))
+                .sort((a, b) => (sel.has(b.c.id) - sel.has(a.c.id)) || ((b.vd && b.vd.days >= 0) - (a.vd && a.vd.days >= 0)) || a.c.name.localeCompare(b.c.name, 'uz'));
+            body.innerHTML = `<p class="small muted" style="margin-bottom:10px">Boradigan joylaringizni belgilang — eng qisqa tartib avtomatik tuziladi. Tashrif vaqti kelganlar oldindan belgilangan.</p>
+        <div class="search" style="margin-bottom:8px">${ic('search')}<input id="rtQ" placeholder="Qidirish" value="${esc(q)}"></div>
+        <div class="list">${list.slice(0, 300).map(({ c, vd }) => `<div class="item ${sel.has(c.id) ? 'sel' : ''}" data-id="${c.id}" style="cursor:pointer"><span class="chk"></span><span class="body"><span class="t">${esc(c.name)}</span><span class="s">${esc(c.address || regionLabel(c.region) || '')}</span></span>${vd && vd.days >= 0 ? '<span class="tag amber">vaqti keldi</span>' : ''}</div>`).join('')}</div>`;
+            $('[data-go]', L.el).textContent = sel.size ? `Marshrut tuzish (${sel.size})` : 'Joylarni belgilang';
+            $('[data-go]', L.el).disabled = !sel.size;
+            const qi = $('#rtQ', body);
+            qi.addEventListener('input', debounce(() => { q = qi.value; draw(); const n = $('#rtQ', body); n.focus(); n.setSelectionRange(n.value.length, n.value.length); }, 200));
+            $$('[data-id]', body).forEach(el => el.onclick = () => { const id = el.dataset.id; sel.has(id) ? sel.delete(id) : sel.add(id); el.classList.toggle('sel'); $('[data-go]', L.el).textContent = sel.size ? `Marshrut tuzish (${sel.size})` : 'Joylarni belgilang'; $('[data-go]', L.el).disabled = !sel.size; });
+        };
+        draw();
+        $('[data-go]', L.el).onclick = async () => {
+            const pts = [...sel].map(id => byId('contacts', id)).filter(Boolean).map(c => ({ lat: +c.lat, lng: +c.lng, c }));
+            let start = null;
+            $('[data-go]', L.el).textContent = 'Joylashuvingiz aniqlanmoqda…';
+            try {
+                const h = await Geo.here();
+                start = { lat: h.lat, lng: h.lng };
+            }
+            catch (e) {
+                UI.toast('Joylashuvingiz olinmadi — marshrut birinchi joydan boshlanadi', '', 4500);
+            }
+            L.close();
+            this.show(start, this.optimize(start, pts));
+        };
+    },
+    show(start, order) {
+        const legs = order.map((p, i) => Geo.dist(i ? order[i - 1] : start, p));
+        const total = legs.reduce((s, d) => s + (d || 0), 0);
+        const body = document.createElement('div');
+        body.innerHTML = `<div class="map" id="rtMap" style="height:260px"><div class="map-msg">Xarita yuklanmoqda…</div></div>
+      <div class="card pad" style="margin:10px 0;display:flex;justify-content:space-between;gap:10px"><span><b>${order.length}</b> ta joy</span><span>yo'l taxminan <b>${Geo.fmtDist(total * 1.3)}</b></span></div>
+      <div class="list">${order.map((p, i) => `<button class="item" data-c="${p.c.id}"><span class="av sq" style="width:34px;height:34px;font-size:14px">${i + 1}</span><span class="body"><span class="t">${esc(p.c.name)}</span><span class="s">${esc(p.c.address || '')}</span></span><span class="r"><div class="s">${legs[i] != null ? '+' + Geo.fmtDist(legs[i]) : ''}</div></span></button>`).join('')}</div>
+      ${order.length > 10 ? '<p class="small c-amber" style="margin-top:8px">Google Maps bir yo\'la 10 tagacha joyni oladi — qolganlari uchun Yandex\'ni oching yoki marshrutni ikkiga bo\'ling.</p>' : ''}`;
+        const L = UI.open({ title: 'Marshrut tayyor', body, cls: 'full', foot: `<button class="btn" data-sh>${ic('share')}</button><button class="btn" data-y>Yandex</button><button class="btn primary" data-g>${ic('nav')}Google Maps</button>` });
+        $$('[data-c]', body).forEach(b => b.onclick = () => Contacts.open(b.dataset.c));
+        const ll = p => `${p.lat},${p.lng}`;
+        $('[data-g]', L.el).onclick = () => {
+            const pts = order.slice(0, 10);
+            const dest = pts[pts.length - 1];
+            const wp = pts.slice(0, -1).map(ll).join('|');
+            window.open(`https://www.google.com/maps/dir/?api=1${start ? '&origin=' + ll(start) : ''}&destination=${ll(dest)}${wp ? '&waypoints=' + encodeURIComponent(wp) : ''}&travelmode=driving`, '_blank');
+        };
+        $('[data-y]', L.el).onclick = () => window.open(`https://yandex.uz/maps/?rtext=${start ? ll(start) : ''}~${order.map(ll).join('~')}&rtt=auto`, '_blank');
+        $('[data-sh]', L.el).onclick = () => shareText('Bugungi marshrut', order.map((p, i) => `${i + 1}. ${p.c.name}${p.c.address ? ' — ' + p.c.address : ''}${p.c.phone ? ' (' + fmtPhone(p.c.phone) + ')' : ''}`).join('\n'));
+        (async () => {
+            try {
+                const Lf = await loadLib('leaflet');
+                const box = $('#rtMap', body);
+                box.innerHTML = '';
+                const map = Lf.map(box);
+                Geo.tiles(Lf, map);
+                const line = [];
+                if (start) {
+                    Lf.marker([start.lat, start.lng], { icon: Lf.divIcon({ className: '', html: '<div class="mk me"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }) }).addTo(map);
+                    line.push([start.lat, start.lng]);
+                }
+                order.forEach((p, i) => { Lf.marker([p.lat, p.lng], { icon: Lf.divIcon({ className: '', html: `<div style="width:26px;height:26px;border-radius:50%;background:#0B6E5A;color:#fff;font-weight:700;font-size:13px;display:grid;place-items:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35)">${i + 1}</div>`, iconSize: [26, 26], iconAnchor: [13, 13] }) }).addTo(map).bindPopup(esc(p.c.name)); line.push([p.lat, p.lng]); });
+                Lf.polyline(line, { color: '#0B6E5A', weight: 3, opacity: .7, dashArray: '6 6' }).addTo(map);
+                map.fitBounds(line, { padding: [24, 24], maxZoom: 15 });
+                setTimeout(() => map.invalidateSize(), 250);
+            }
+            catch (e) {
+                const b = $('#rtMap', body);
+                if (b)
+                    b.innerHTML = `<div class="map-msg">${esc(e.message)}</div>`;
+            }
+        })();
+    }
+};
+/* ═════════ END OF DAY SUMMARY ═════════ */
+async function shareText(title, text) {
+    try {
+        if (navigator.share) {
+            await navigator.share({ title, text });
+            return;
+        }
+    }
+    catch (e) {
+        if (e && e.name === 'AbortError')
+            return;
+    }
+    try {
+        await navigator.clipboard.writeText(text);
+        UI.toast('Matn nusxalandi — xohlagan joyga qo\'ying', 'ok');
+    }
+    catch (_a) {
+        UI.open({ title, foot: null, body: `<pre style="white-space:pre-wrap;font:inherit">${esc(text)}</pre>` });
+    }
+}
+const DaySum = {
+    build(day = today()) {
+        const vis = DB.visits.filter(v => v.date === day).sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+        const pays = DB.debts.flatMap(d => (d.payments || []).filter(p => p.date === day).map(p => ({ d, p })));
+        const sales = DB.sales.filter(s => s.date === day);
+        const newDebts = DB.debts.filter(d => d.date === day);
+        const gifts = DB.gifts.filter(g => g.date === day);
+        const inSum = pays.filter(x => x.d.type !== 'olgan').reduce((s, x) => s + num(x.p.amount), 0);
+        const outSum = pays.filter(x => x.d.type === 'olgan').reduce((s, x) => s + num(x.p.amount), 0);
+        const L = [`📋 Kun yakuni — ${fmtD(day, 'always')}`, ''];
+        L.push(`📍 Tashriflar: ${vis.length}`);
+        vis.forEach(v => L.push(`   • ${v.time ? v.time + ' ' : ''}${contactName(v.contactId)} — ${lbl(VISIT_PURPOSE, v.purpose)}, ${lbl(VISIT_RESULT, v.result).toLowerCase()}${v.note ? ' (' + v.note + ')' : ''}`));
+        if (sales.length) {
+            L.push('', `🛒 Sotuv: ${money(sales.reduce((s, x) => s + num(x.total), 0))}`);
+            sales.forEach(s => L.push(`   • ${contactName(s.contactId)}: ${s.drug} × ${fmtNum(s.qty)} = ${money(s.total)}`));
+        }
+        if (inSum)
+            L.push('', `💰 Qarzdan tushdi: ${money(inSum)}`);
+        pays.filter(x => x.d.type !== 'olgan').forEach(x => L.push(`   • ${contactName(x.d.contactId)}: ${money(x.p.amount)}`));
+        if (outSum)
+            L.push(`📤 Men to'ladim: ${money(outSum)}`);
+        if (newDebts.length)
+            L.push('', `🧾 Yangi qarzlar: ${newDebts.map(d => `${contactName(d.contactId)} ${money(d.amount)}`).join('; ')}`);
+        if (gifts.length)
+            L.push('', `🎁 Sovg'alar: ${gifts.map(g => `${contactName(g.contactId)} — ${g.name}`).join('; ')}`);
+        const tom = DB.reminders.filter(r => !r.done && r.remindDate === addDays(day, 1));
+        if (tom.length)
+            L.push('', `🔔 Ertaga: ${tom.map(r => r.title).join('; ')}`);
+        return L.join('\n');
+    },
+    open() {
+        var _a;
+        let day = today();
+        const body = document.createElement('div');
+        const L0 = UI.open({ title: 'Kun yakuni', body, cls: 'full', foot: `${TG.on() ? '<button class="btn" data-tg>Telegramga</button>' : ''}<button class="btn primary" data-sh>${ic('share')}Ulashish</button>` });
+        const draw = () => {
+            body.innerHTML = `<div class="f" style="margin-bottom:10px"><label>Sana</label><input class="inp" type="date" id="dsD" value="${day}"></div><div class="card pad"><pre style="white-space:pre-wrap;font:inherit;font-size:14px">${esc(this.build(day))}</pre></div>`;
+            $('#dsD', body).onchange = e => { day = e.target.value || today(); draw(); };
+        };
+        draw();
+        $('[data-sh]', L0.el).onclick = () => shareText('Kun yakuni', this.build(day));
+        (_a = $('[data-tg]', L0.el)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', async () => { try {
+            await TG.call('sendMessage', { chat_id: SETS.tgChatId.trim(), text: this.build(day) });
+            UI.toast('Yuborildi', 'ok');
+        }
+        catch (e) {
+            UI.toast(e.message, 'err');
+        } });
     }
 };
 /* ═════════ DEBTS (payment history, schedule, interest) ═════════ */
@@ -3029,7 +3317,7 @@ const Reminders = {
         else {
             const nx = r.nextId && byId('reminders', r.nextId);
             if (nx && !nx.done)
-                remove('reminders', [nx.id]);
+                remove('reminders', [nx.id], { undo: false });
             upsert('reminders', Object.assign(Object.assign({}, r), { done: false, doneAt: null, nextId: null }));
         }
     },
@@ -3187,6 +3475,13 @@ const Home = {
             if (n <= 7)
                 items.push({ cls: 'blue', icon: '🎂', t: `${c.name} — tug'ilgan kun`, s: n === 0 ? 'Bugun!' : relD(ymd(nb)), sort: n - .5, act: () => Contacts.open(c.id) });
         });
+        {
+            const lv = lastVisitMap();
+            const due = DB.contacts.map(c => ({ c, vd: visitDue(c, lv) })).filter(x => x.vd && x.vd.days >= 0).sort((a, b) => b.vd.days - a.vd.days);
+            due.slice(0, 6).forEach(({ c, vd }) => items.push({ cls: 'green', icon: '📍', t: `Tashrif: ${c.name}`, s: vd.last ? `Oxirgi ${fmtD(vd.last)} · ${vd.days ? vd.days + ' kun kechikdi' : 'bugun'}` : 'Hali borilmagan', sort: 2 + Math.min(vd.days, 30) / 100, act: () => Contacts.open(c.id) }));
+            if (due.length > 6)
+                items.push({ cls: 'green', icon: '🧭', t: `Yana ${due.length - 6} ta tashrif kerak`, s: 'Marshrut tuzish', sort: 2.5, act: () => Route.open() });
+        }
         DB.projects.forEach(p => { if (p.status === 'ketdi' && p.retDate && dLeft(p.retDate) <= 1)
             items.push({ cls: 'blue', icon: '✈️', t: `${contactName(p.contactId)} qaytadi`, s: relD(p.retDate), sort: dLeft(p.retDate), act: () => Projects.editTrip(p.id) }); });
         DB.events.forEach(e => { if (e.status === 'rejalashtirilgan' && dLeft(e.date) >= 0 && dLeft(e.date) <= 2)
@@ -3218,6 +3513,8 @@ const Home = {
         <button class="act" data-q="sale"><span class="i">🛒</span>Sotuv</button>
         <button class="act" data-q="contact"><span class="i">👤</span>Kontakt</button>
         <button class="act" data-q="rem"><span class="i">🔔</span>Eslatma</button>
+        <button class="act" data-q="route"><span class="i">🧭</span>Marshrut</button>
+        <button class="act" data-q="day"><span class="i">📋</span>Kun yakuni</button>
       </div></div>
       <div class="section"><div class="section-h"><h2>Bugun e'tibor bering</h2>${ag.length ? `<span class="small muted">${ag.length} ta</span>` : ''}</div>
         <div class="list agenda">${ag.slice(0, 12).map((a, i) => `<div class="item ${a.cls}" data-a="${i}" style="cursor:pointer"><span style="font-size:20px;width:26px;text-align:center">${a.icon}</span><span class="body"><span class="t">${esc(a.t)}</span><span class="s">${esc(a.s)}</span></span>${a.done ? `<button class="btn sm" data-ad="${a.done}">Bajarildi</button>` : '<span class="c-mute">›</span>'}</div>`).join('') || `<div class="card pad" style="text-align:center;color:var(--ink2)">Shoshilinch ish yo'q. Yaqin atrofdagi vrachlarga tashrif rejalashtirish uchun <a href="#/map">xaritani</a> oching.</div>`}
@@ -3248,7 +3545,7 @@ const Quick = {
         if (r)
             Debts.pay(r);
     },
-    debt: () => Debts.edit(), sale: () => Sales.edit(), contact: () => Contacts.edit(), rem: () => Reminders.edit()
+    debt: () => Debts.edit(), sale: () => Sales.edit(), contact: () => Contacts.edit(), rem: () => Reminders.edit(), route: () => Route.open(), day: () => DaySum.open()
 };
 /* ═════════ SVG charts (no external library, work offline) ═════════ */
 function barChart(labels, series, { h = 180, fmt = short } = {}) {
@@ -3996,10 +4293,11 @@ const Notify = {
     }
 };
 /* ═════════ SETTINGS ═════════ */
-const APP_VERSION = '20.0';
+const APP_VERSION = '20.2';
 const Settings = {
     title: 'Sozlamalar',
     render(v) {
+        var _a, _b;
         const s = SETS;
         v.innerHTML = `
       <div class="section"><div class="section-h"><h2>Sinxron (GitHub)</h2></div><div class="card pad" id="ghBox"></div></div>
@@ -4007,6 +4305,9 @@ const Settings = {
         <p class="small muted" style="margin-bottom:10px">Telefon har kuni avtomatik nusxa oladi (oxirgi 7 kun). Faylga yuklab olingan nusxani istalgan qurilmada tiklash mumkin.</p>
         <div class="btn-row"><button class="btn" id="bkDl">${ic('download')}Faylga saqlash</button><button class="btn" id="bkUp">${ic('upload')}Fayldan tiklash</button></div>
         <button class="btn block ghost" id="bkList" style="margin-top:6px">Avtomatik nusxalar</button></div></div>
+      <div class="section"><div class="section-h"><h2>Tashrif rejasi</h2></div><div class="card pad">
+        <p class="small muted" style="margin-bottom:10px">Kontaktga A, B yoki C toifa bersangiz, shu kunlar o'tgach "tashrif kerak" deb eslatadi.</p>
+        <div class="fgrid" style="grid-template-columns:repeat(3,1fr)">${['A', 'B', 'C'].map(k => `<div class="f half" style="grid-column:span 1"><label>${k} toifa, kun</label><input class="inp num" inputmode="numeric" data-vf="${k}" value="${VF()[k]}"></div>`).join('')}</div></div></div>
       <div class="section"><div class="section-h"><h2>Bildirishnomalar</h2></div><div class="card pad">
         <label class="switch"><input type="checkbox" id="nIn" ${s.nInApp !== false ? 'checked' : ''}><span class="tr"></span><span class="sl">Ilova ichida xabar</span></label>
         <label class="switch"><input type="checkbox" id="nBr" ${s.nBrowser ? 'checked' : ''}><span class="tr"></span><span class="sl">Telefon bildirishnomasi<br><span class="hint">Ilova yopiq bo'lsa ham chiqishi uchun uni uy ekraniga o'rnating</span></span></label>
@@ -4020,11 +4321,13 @@ const Settings = {
         <div class="btn-row" style="margin-top:10px"><button class="btn" id="tgSave">Saqlash va sinash</button><button class="btn" id="tgRep" ${TG.on() ? '' : 'disabled'}>Hisobot yuborish</button></div></div></div>
       <div class="section"><div class="section-h"><h2>Ko'rinish va xavfsizlik</h2></div><div class="card pad">
         <div class="fgrid"><div class="f half"><label>Mavzu</label><select class="inp" id="theme"><option value="auto" ${s.theme === 'auto' ? 'selected' : ''}>Telefonga moslash</option><option value="light" ${s.theme === 'light' ? 'selected' : ''}>Yorug'</option><option value="dark" ${s.theme === 'dark' ? 'selected' : ''}>Qorong'i</option></select></div>
-        <div class="f half"><label>Parol so'rash</label><select class="inp" id="lockMode"><option value="remember" ${s.lockMode !== 'ask' ? 'selected' : ''}>Faqat chiqqanda</option><option value="ask" ${s.lockMode === 'ask' ? 'selected' : ''}>Har safar ochilganda</option></select></div></div>
-        <div class="btn-row" style="margin-top:10px"><button class="btn" id="pwCh">${ic('lock')}Parolni o'zgartirish</button><button class="btn" id="lockNow">Chiqish</button></div></div></div>
+        ${AUTH ? `<div class="f half"><label>PIN so'rash</label><select class="inp" id="lockMode"><option value="remember" ${s.lockMode !== 'ask' ? 'selected' : ''}>Faqat qulflaganda</option><option value="ask" ${s.lockMode === 'ask' ? 'selected' : ''}>Har safar ochilganda</option></select></div>` : ''}</div>
+        <div class="small muted" style="margin-top:10px">${AUTH ? 'PIN-kod yoqilgan.' : 'PIN-kod yo\'q — ilova darhol ochiladi. Telefoningiz Face ID yoki kod bilan qulflangan bo\'lsa, bu yetarli.'}</div>
+        <div class="btn-row" style="margin-top:10px"><button class="btn" id="pwCh">${ic('lock')}${AUTH ? 'PIN-kod sozlamalari' : 'PIN-kod qo\'yish'}</button>${AUTH ? '<button class="btn" id="lockNow">Hozir qulflash</button>' : ''}</div></div></div>
       <div class="section"><div class="section-h"><h2>Ilova haqida</h2></div><div class="card pad"><div class="kv" id="about"></div>
         <div class="btn-row" style="margin-top:10px"><button class="btn" id="install" hidden>${ic('download')}Telefonga o'rnatish</button><button class="btn danger" id="wipe">${ic('trash')}Hamma ma'lumotni o'chirish</button></div></div></div>`;
         this.ghBox($('#ghBox', v));
+        $$('[data-vf]', v).forEach(i => i.onchange = () => { const f = VF(); const n = Math.max(1, Math.min(365, Math.round(num(i.value)) || f[i.dataset.vf])); i.value = n; f[i.dataset.vf] = n; setMeta('visitFreq', f); UI.toast('Saqlandi', 'ok'); });
         const sv = () => { saveSets(); };
         $('#nIn', v).onchange = e => { s.nInApp = e.target.checked; sv(); };
         $('#nBr', v).onchange = async (e) => { if (e.target.checked) {
@@ -4042,7 +4345,7 @@ const Settings = {
         $('#remDays', v).onchange = e => { s.remDays = +e.target.value; sv(); };
         $('#expWarn', v).onchange = e => { s.expWarn = +e.target.value; sv(); };
         $('#theme', v).onchange = e => { s.theme = e.target.value; sv(); applyTheme(); };
-        $('#lockMode', v).onchange = e => { s.lockMode = e.target.value; sv(); };
+        (_a = $('#lockMode', v)) === null || _a === void 0 ? void 0 : _a.addEventListener('change', e => { s.lockMode = e.target.value; sv(); });
         $('#tgFind', v).onclick = async () => { SETS.tgToken = $('#tgTok', v).value.trim(); if (!SETS.tgToken) {
             UI.toast('Avval token kiriting', 'err');
             return;
@@ -4073,8 +4376,8 @@ const Settings = {
             }
         };
         $('#tgRep', v).onclick = () => TG.report();
-        $('#pwCh', v).onclick = () => Lock.change();
-        $('#lockNow', v).onclick = () => Lock.lock();
+        $('#pwCh', v).onclick = () => Lock.settings();
+        (_b = $('#lockNow', v)) === null || _b === void 0 ? void 0 : _b.addEventListener('click', () => Lock.lock());
         $('#bkDl', v).onclick = () => Backup.download();
         $('#bkUp', v).onclick = () => Backup.restoreFile();
         $('#bkList', v).onclick = () => Backup.list();
@@ -4364,143 +4667,227 @@ async function migrateFromV16() {
     }
     catch (_c) { }
     try {
-        const a = JSON.parse(localStorage.getItem('fp5a') || 'null');
-        if (a && a.pass && a.pass !== 'farma2024') {
-            const salt = uid();
-            AUTH = Object.assign(Object.assign({ salt }, await hashPass(a.pass, salt)), { migrated: true });
-            await IDB.put('kv', 'auth', AUTH);
-        }
-    }
-    catch (_d) { }
-    try {
         localStorage.setItem('fp5_migrated_v20', new Date().toISOString());
     }
-    catch (_e) { }
+    catch (_d) { }
     dirty = true;
     await flush();
     return true;
 }
-/* ═════════ LOCK / PASSWORD ═════════ */
+/* ═════════ LOCK: optional PIN (no password by default) ═════════ */
 const Lock = {
     screen(html) { const el = $('#lock'); el.hidden = false; $('#app').hidden = true; el.innerHTML = `<div class="lock-box"><div class="brand"><span class="brand-mark">${CROSS}</span>FarmaPro</div>${html}</div>`; return el; },
-    async setup() {
-        return new Promise(res => {
-            const el = this.screen(`<p>Ma'lumotlaringizni himoyalash uchun parol o'rnating. U faqat shu qurilmada saqlanadi.</p>
-        <div class="f"><label>Yangi parol</label><input class="inp" type="password" id="p1" autocomplete="new-password"></div>
-        <div class="f"><label>Parolni takrorlang</label><input class="inp" type="password" id="p2" autocomplete="new-password"></div>
-        <button class="btn primary block" id="ok">Davom etish</button>
-        <button class="btn ghost block" id="rest" style="margin-top:8px">Zaxira fayldan tiklash</button>`);
-            $('#ok', el).onclick = async () => {
-                const a = $('#p1', el).value, b = $('#p2', el).value;
-                if (a.length < 4) {
-                    UI.toast('Parol kamida 4 belgi bo\'lsin', 'err');
-                    return;
-                }
-                if (a !== b) {
-                    UI.toast('Parollar mos emas', 'err');
-                    return;
-                }
-                const salt = uid();
-                AUTH = Object.assign({ salt }, await hashPass(a, salt));
-                if (IDB.ok)
-                    await IDB.put('kv', 'auth', AUTH);
-                else {
-                    try {
-                        localStorage.setItem('fp20_auth', JSON.stringify(AUTH));
-                    }
-                    catch (_a) { }
-                }
-                await this.setUnlocked(true);
-                res();
-            };
-            $('#p2', el).addEventListener('keydown', e => { if (e.key === 'Enter')
-                $('#ok', el).click(); });
-            $('#rest', el).onclick = () => Backup.restoreFile();
-        });
-    },
-    async setUnlocked(v) { try {
-        sessionStorage.setItem('fp20_unlock', v ? '1' : '');
-    }
-    catch (_a) { } SETS.unlocked = v; await saveSets(); },
     needs() {
         if (!AUTH)
-            return 'setup';
+            return SETS.welcomed ? null : 'welcome';
         let ses = '';
         try {
             ses = sessionStorage.getItem('fp20_unlock');
         }
         catch (_a) { }
+        if (ses)
+            return null;
         if (SETS.lockMode === 'ask')
-            return ses ? null : 'unlock';
-        return SETS.unlocked || ses ? null : 'unlock';
+            return 'unlock';
+        return SETS.unlocked ? null : 'unlock';
     },
-    unlock() {
+    async setUnlocked(v) { try {
+        sessionStorage.setItem('fp20_unlock', v ? '1' : '');
+    }
+    catch (_a) { } SETS.unlocked = v; await saveSets(); },
+    welcome() {
         return new Promise(res => {
-            const el = this.screen(`<p>Davom etish uchun parolni kiriting.</p>
-        <div class="f"><label>Parol</label><input class="inp" type="password" id="pw" autocomplete="current-password" autofocus></div>
-        <button class="btn primary block" id="ok">Kirish</button>
-        <button class="btn ghost block" id="forgot" style="margin-top:8px">Parolni unutdim</button>`);
-            const go = async () => { const b = $('#ok', el); b.disabled = true; if (await checkPass($('#pw', el).value)) {
+            const el = this.screen(`<p>Tibbiy vakil uchun yordamchi: kontaktlar, qarzlar, dorilar, tashriflar. Ma'lumotlar shu telefonda saqlanadi.</p>
+        <button class="btn primary block" id="wGo">Boshlash</button>
+        <button class="btn block" id="wPin" style="margin-top:8px">${ic('lock')}PIN-kod bilan himoyalash</button>
+        <button class="btn ghost block" id="wRest" style="margin-top:8px">Zaxira fayldan tiklash</button>
+        <p class="small muted" style="margin-top:16px">PIN-kodni keyin ham Sozlamalarda qo'yish yoki olib tashlash mumkin.</p>`);
+            const done = async () => { SETS.welcomed = true; await saveSets(); res(); };
+            $('#wGo', el).onclick = done;
+            $('#wPin', el).onclick = async () => { const ok = await this.newPin(); if (ok) {
                 await this.setUnlocked(true);
-                res();
+                await done();
             }
-            else {
-                b.disabled = false;
-                $('#pw', el).value = '';
-                $('#pw', el).classList.add('err');
-                UI.toast('Parol noto\'g\'ri', 'err');
-            } };
-            $('#ok', el).onclick = go;
-            $('#pw', el).addEventListener('keydown', e => { if (e.key === 'Enter')
-                go(); });
-            setTimeout(() => $('#pw', el).focus(), 100);
-            $('#forgot', el).onclick = async () => {
-                if (!(await UI.confirm('Parolni tiklash', `Parolni tiklab bo'lmaydi. Yangi parol o'rnatsangiz, xavfsizlik uchun shu qurilmadagi ma'lumotlar o'chiriladi.${SETS.ghToken ? ' Ular GitHub sinxronidan qayta yuklanadi.' : ' Agar zaxira faylingiz bo\'lsa, keyin tiklashingiz mumkin.'}`, { danger: true, ok: 'Tushundim, davom etish', typed: 'TIKLASH' })))
-                    return;
-                const keepSync = { ghToken: SETS.ghToken, ghGistId: SETS.ghGistId, ghUser: SETS.ghUser, ghAuto: SETS.ghAuto };
-                DB = emptyDB();
-                FILES.clear();
-                if (IDB.ok) {
-                    for (const k of await IDB.keys('files'))
-                        await IDB.del('files', k);
-                    await IDB.del('kv', 'auth');
-                }
-                SETS = Object.assign(Object.assign(Object.assign({}, DEF_SETS), keepSync), { ghSeen: {} });
-                AUTH = null;
-                await flush();
-                try {
-                    localStorage.removeItem('fp5');
-                }
-                catch (_a) { }
-                location.reload();
-            };
+            else
+                this.welcome().then(res); };
+            $('#wRest', el).onclick = () => Backup.restoreFile();
         });
     },
-    async lock() { await this.setUnlocked(false); location.reload(); },
-    async change() {
-        const r = await formSheet('Parolni o\'zgartirish', [{ k: 'old', label: 'Hozirgi parol', type: 'password' }, { k: 'p1', label: 'Yangi parol', type: 'password' }, { k: 'p2', label: 'Yangi parolni takrorlang', type: 'password' }], {});
-        if (!r)
-            return;
-        if (!(await checkPass(r.old))) {
-            UI.toast('Hozirgi parol noto\'g\'ri', 'err');
-            return;
-        }
-        if (r.p1.length < 4 || r.p1 !== r.p2) {
-            UI.toast('Yangi parol kamida 4 belgi va ikkalasi bir xil bo\'lsin', 'err');
-            return;
-        }
+    /* numeric keypad; resolves with the typed code, or null on cancel */
+    keypad({ title, sub = '', len = 4, cancel = true, onCode }) {
+        return new Promise(res => {
+            let code = '', busy = false;
+            const el = this.screen(`<p style="margin-bottom:8px"><b style="color:var(--ink);font-size:17px">${esc(title)}</b><br><span id="kpSub">${esc(sub)}</span></p>
+        <div id="kpDots" style="display:flex;gap:14px;justify-content:center;margin:22px 0 26px"></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:300px;margin:0 auto">
+          ${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => `<button class="btn" style="height:62px;font-size:24px;border-radius:18px" data-k="${n}">${n}</button>`).join('')}
+          ${cancel ? '<button class="btn ghost" data-k="x">Bekor</button>' : '<span></span>'}
+          <button class="btn" style="height:62px;font-size:24px;border-radius:18px" data-k="0">0</button>
+          <button class="btn ghost" data-k="b" aria-label="O'chirish">⌫</button></div>
+        <div id="kpExtra" style="margin-top:16px;text-align:center"></div>`);
+            const dots = () => $('#kpDots', el).innerHTML = Array.from({ length: len }, (_, i) => `<span style="width:16px;height:16px;border-radius:50%;border:2px solid var(--brand);background:${i < code.length ? 'var(--brand)' : 'transparent'}"></span>`).join('');
+            const shake = msg => { code = ''; dots(); $('#kpSub', el).innerHTML = `<span class="c-red">${esc(msg)}</span>`; try {
+                navigator.vibrate && navigator.vibrate(120);
+            }
+            catch (_a) { } };
+            const press = async (k) => {
+                if (busy)
+                    return;
+                if (k === 'x') {
+                    cleanup();
+                    res(null);
+                    return;
+                }
+                if (k === 'b') {
+                    code = code.slice(0, -1);
+                    dots();
+                    return;
+                }
+                if (code.length >= len)
+                    return;
+                code += k;
+                dots();
+                if (code.length === len) {
+                    busy = true;
+                    await sleep(120);
+                    const r = onCode ? await onCode(code) : true;
+                    busy = false;
+                    if (r === true) {
+                        cleanup();
+                        res(code);
+                    }
+                    else
+                        shake(typeof r === 'string' ? r : 'Noto\'g\'ri');
+                }
+            };
+            $$('[data-k]', el).forEach(b => b.onclick = () => press(b.dataset.k));
+            const kd = e => { if (/^\d$/.test(e.key))
+                press(e.key);
+            else if (e.key === 'Backspace')
+                press('b');
+            else if (e.key === 'Escape' && cancel)
+                press('x'); };
+            document.addEventListener('keydown', kd);
+            const cleanup = () => document.removeEventListener('keydown', kd);
+            dots();
+            el._extra = $('#kpExtra', el);
+            this._kpEl = el;
+        });
+    },
+    async newPin() {
+        const a = await this.keypad({ title: 'Yangi PIN-kod', sub: '4 ta raqam o\'ylab toping' });
+        if (!a)
+            return false;
+        const b = await this.keypad({ title: 'PIN-kodni takrorlang', sub: 'Xuddi shu 4 raqamni kiriting', onCode: c => c === a || 'Mos kelmadi, qaytadan' });
+        if (!b)
+            return false;
         const salt = uid();
-        AUTH = Object.assign({ salt }, await hashPass(r.p1, salt));
-        if (IDB.ok)
-            await IDB.put('kv', 'auth', AUTH);
-        else {
+        await saveAuth(Object.assign(Object.assign({ salt }, await hashPass(a, salt)), { kind: 'pin', len: 4 }));
+        return true;
+    },
+    unlock() {
+        return new Promise(async (res) => {
+            let fails = +(SETS.pinFails || 0);
+            const finish = async () => { SETS.pinFails = 0; await this.setUnlocked(true); res(); };
+            if (AUTH.kind !== 'pin') { // password from an earlier build
+                const el = this.screen(`<p>Parolni kiriting.</p><div class="f"><input class="inp" type="password" id="pw" autocomplete="current-password"></div><button class="btn primary block" id="ok" style="margin-top:12px">Kirish</button><button class="btn ghost block" id="forgot" style="margin-top:8px">Parolni unutdim</button>`);
+                const go = async () => { if (await checkPass($('#pw', el).value)) {
+                    await finish();
+                    UI.toast('Sozlamalarda parol o\'rniga qisqa PIN-kod qo\'yishingiz yoki uni olib tashlashingiz mumkin', '', 6000);
+                }
+                else {
+                    $('#pw', el).value = '';
+                    UI.toast('Parol noto\'g\'ri', 'err');
+                } };
+                $('#ok', el).onclick = go;
+                $('#pw', el).addEventListener('keydown', e => { if (e.key === 'Enter')
+                    go(); });
+                $('#forgot', el).onclick = () => this.forgot();
+                setTimeout(() => $('#pw', el).focus(), 100);
+                return;
+            }
+            const p = this.keypad({ title: 'PIN-kodni kiriting', len: AUTH.len || 4, cancel: false, onCode: async (c) => {
+                    if (Date.now() < (SETS.pinWait || 0))
+                        return `Juda ko'p urinish. ${Math.ceil((SETS.pinWait - Date.now()) / 1000)} soniya kuting`;
+                    if (await checkPass(c))
+                        return true;
+                    fails++;
+                    SETS.pinFails = fails;
+                    if (fails % 5 === 0)
+                        SETS.pinWait = Date.now() + 30000;
+                    await saveSets();
+                    return fails % 5 === 0 ? '5 marta noto\'g\'ri. 30 soniya kuting' : `Noto'g'ri PIN (${fails})`;
+                } });
+            const ex = this._kpEl && this._kpEl._extra;
+            if (ex) {
+                ex.innerHTML = '<button class="btn ghost sm" id="kpForgot">PIN-kodni unutdim</button>';
+                $('#kpForgot', ex).onclick = () => this.forgot();
+            }
+            await p;
+            await finish();
+        });
+    },
+    async forgot() {
+        const synced = !!SETS.ghToken;
+        if (!(await UI.confirm('PIN-kodni tiklash', synced ? 'PIN-kod olib tashlanadi, shu telefondagi ma\'lumotlar o\'chiriladi va GitHub sinxronidan qayta yuklanadi.' : 'PIN-kodni tiklab bo\'lmaydi. Davom etsangiz, shu telefondagi ma\'lumotlar o\'chiriladi. Zaxira faylingiz bo\'lsa, keyin tiklaysiz.', { danger: true, ok: 'Davom etish', typed: 'TIKLASH' })))
+            return;
+        const keep = { ghToken: SETS.ghToken, ghGistId: SETS.ghGistId, ghUser: SETS.ghUser, ghAuto: SETS.ghAuto, ghEnc: SETS.ghEnc, ghPassSaved: SETS.ghPassSaved, welcomed: true };
+        DB = emptyDB();
+        FILES.clear();
+        if (IDB.ok) {
             try {
-                localStorage.setItem('fp20_auth', JSON.stringify(AUTH));
+                for (const k of await IDB.keys('files'))
+                    await IDB.del('files', k);
             }
             catch (_a) { }
         }
-        UI.toast('Parol o\'zgartirildi', 'ok');
-    }
+        SETS = Object.assign(Object.assign(Object.assign({}, DEF_SETS), keep), { ghSeen: {} });
+        await saveAuth(null);
+        try {
+            localStorage.removeItem('fp20_db');
+            localStorage.removeItem('fp5');
+        }
+        catch (_b) { }
+        await flush();
+        location.reload();
+    },
+    async lock() { if (!AUTH) {
+        UI.toast('Avval PIN-kod qo\'ying', 'err');
+        return;
+    } await this.setUnlocked(false); location.reload(); },
+    async settings() {
+        if (!AUTH) {
+            if (await this.newPin()) {
+                await this.setUnlocked(true);
+                UI.toast('PIN-kod qo\'yildi', 'ok');
+            }
+            this.back();
+            return;
+        }
+        const r = await UI.menu('PIN-kod', [{ icon: '🔢', label: 'PIN-kodni o\'zgartirish', value: 'ch' }, { icon: '🔓', label: 'PIN-kodni olib tashlash', sub: 'Ilova parolsiz ochiladi', value: 'off' }]);
+        if (!r)
+            return;
+        const ok = await this.verify();
+        if (!ok) {
+            this.back();
+            return;
+        }
+        if (r === 'off') {
+            await saveAuth(null);
+            UI.toast('PIN-kod olib tashlandi', 'ok');
+        }
+        if (r === 'ch' && await this.newPin())
+            UI.toast('PIN-kod o\'zgartirildi', 'ok');
+        this.back();
+    },
+    async verify() {
+        if (AUTH.kind !== 'pin') {
+            const r = await formSheet('Joriy parol', [{ k: 'p', label: 'Parol', type: 'password' }], {});
+            return !!(r && await checkPass(r.p)) || (UI.toast('Parol noto\'g\'ri', 'err'), false);
+        }
+        return !!(await this.keypad({ title: 'Joriy PIN-kod', len: AUTH.len || 4, onCode: async (c) => await checkPass(c) || 'Noto\'g\'ri' }));
+    },
+    back() { $('#lock').hidden = true; $('#app').hidden = false; Router.render(); }
 };
 /* ═════════ MORE page ═════════ */
 const MORE = [['reminders', 'Eslatmalar', 'bell'], ['sales', 'Sotuvlar', 'cart'], ['gifts', "Sovg'alar", 'gift'], ['map', 'Xarita', 'map'], ['returned', 'Qaytarilgan dorilar', 'ret'], ['projects', 'Sayohat, tadbir', 'plane'], ['stats', 'Statistika', 'chart'], ['settings', 'Sozlamalar', 'gear']];
@@ -4617,7 +5004,7 @@ function openSearch() {
 /* ═════════ ROUTER ═════════ */
 const ROUTES = { home: Home, contacts: Contacts, debts: Debts, drugs: Drugs, more: More, gifts: Gifts, sales: Sales, returned: Returned, reminders: Reminders, map: MapView, projects: Projects, stats: Stats, settings: Settings };
 const NAV = [['home', 'Asosiy', 'home'], ['contacts', 'Kontaktlar', 'users'], ['debts', 'Qarzlar', 'wallet'], ['drugs', 'Dorilar', 'pill'], ['more', 'Boshqa', 'more']];
-const FAB = { home: { l: 'Qo\'shish', fn: () => UI.menu('Nima qo\'shamiz?', [{ icon: '📍', label: 'Tashrif', value: Quick.visit }, { icon: '💳', label: 'To\'lov', value: Quick.pay }, { icon: '💰', label: 'Qarz', value: Quick.debt }, { icon: '🛒', label: 'Sotuv', value: Quick.sale }, { icon: '👤', label: 'Kontakt', value: Quick.contact }, { icon: '🔔', label: 'Eslatma', value: Quick.rem }, { icon: '💊', label: 'Dori', value: () => Drugs.edit() }, { icon: '🎁', label: 'Sovg\'a', value: () => Gifts.edit() }]).then(f => f && f()) },
+const FAB = { home: { l: 'Qo\'shish', fn: () => UI.menu('Nima qo\'shamiz?', [{ icon: '📍', label: 'Tashrif', value: Quick.visit }, { icon: '💳', label: 'To\'lov', value: Quick.pay }, { icon: '💰', label: 'Qarz', value: Quick.debt }, { icon: '🛒', label: 'Sotuv', value: Quick.sale }, { icon: '👤', label: 'Kontakt', value: Quick.contact }, { icon: '🔔', label: 'Eslatma', value: Quick.rem }, { icon: '🧭', label: 'Marshrut', value: Quick.route }, { icon: '📋', label: 'Kun yakuni', value: Quick.day }, { icon: '💊', label: 'Dori', value: () => Drugs.edit() }, { icon: '🎁', label: 'Sovg\'a', value: () => Gifts.edit() }]).then(f => f && f()) },
     contacts: { l: 'Kontakt', fn: () => Contacts.edit() }, debts: { l: 'Qarz', fn: () => Debts.edit() }, drugs: { l: 'Dori', fn: () => Drugs.edit() }, reminders: { l: 'Eslatma', fn: () => Reminders.edit() },
     sales: { l: 'Sotuv', fn: () => Sales.edit() }, gifts: { l: 'Sovg\'a', fn: () => Gifts.edit() }, returned: { l: 'Qo\'shish', fn: () => Returned.edit() }, projects: { l: 'Qo\'shish', fn: () => Projects.add() } };
 const Router = {
@@ -4713,47 +5100,39 @@ async function loadState() {
         catch (e) {
             console.error(e);
             IDB.ok = false;
-            UI.banner('idb', 'Telefon xotirasi javob bermadi — vaqtincha cheklangan rejimda. Ilovani yopib qayta oching.', 'err');
-            try {
-                db = JSON.parse(localStorage.getItem('fp20_db') || 'null');
-                sets = JSON.parse(localStorage.getItem('fp20_sets') || 'null');
-                auth = JSON.parse(localStorage.getItem('fp20_auth') || 'null');
-            }
-            catch (_a) { }
         }
     }
-    else {
-        try {
-            db = JSON.parse(localStorage.getItem('fp20_db') || 'null');
-            sets = JSON.parse(localStorage.getItem('fp20_sets') || 'null');
-            auth = JSON.parse(localStorage.getItem('fp20_auth') || 'null');
-        }
-        catch (_b) { }
-        UI.banner('idb', 'Brauzer to\'liq xotira bermadi (shaxsiy rejim?). Ma\'lumot saqlanishi cheklangan — oddiy rejimda oching.', 'err');
-    }
-    SETS = Object.assign(Object.assign({}, DEF_SETS), (sets || {}));
+    /* read the mirror too and keep whatever is newer / merge records */
+    const mDb = mirrorRead('fp20_db'), mSets = mirrorRead('fp20_sets'), mAuth = mirrorRead('fp20_auth');
+    if (!IDB.ok)
+        UI.banner('idb', 'Telefon xotirasi bu safar javob bermadi — zaxira xotirada ishlayapti. Hammasi saqlanadi; ilovani keyinroq qayta oching.', 'warn');
+    SETS = Object.assign(Object.assign({}, DEF_SETS), ((mSets && (!sets || (mSets._savedAt || 0) > (sets._savedAt || 0))) ? mSets : (sets || {})));
     if (!Array.isArray(SETS.dirtyFiles))
         SETS.dirtyFiles = [];
-    AUTH = auth || null;
-    if (db) {
-        DB = normalizeDB(db);
+    AUTH = auth || mAuth || null;
+    if (AUTH && !AUTH.kind) {
+        await saveAuth(null);
+        SETS.welcomed = true;
+        setTimeout(() => UI.toast('Parol olib tashlandi. Xohlasangiz Sozlamalarda qisqa PIN-kod qo\'yishingiz mumkin.', '', 6000), 1200);
+    }
+    if (AUTH && !auth && IDB.ok)
+        IDB.put('kv', 'auth', AUTH).catch(() => { });
+    if (AUTH && !mAuth)
+        try {
+            localStorage.setItem('fp20_auth', JSON.stringify(AUTH));
+        }
+        catch (_a) { }
+    if (db || mDb) {
+        DB = db && mDb ? mergeDB(normalizeDB(db), normalizeDB(mDb)) : normalizeDB(db || mDb);
+        if (!db || !mDb || Sync.canon(DB) !== Sync.canon(normalizeDB(db))) {
+            dirty = dirty || false;
+            setTimeout(flush, 400);
+        }
     }
     else {
         DB = emptyDB();
         if (await migrateFromV16())
             setTimeout(() => UI.toast('Eski versiyadagi ma\'lumotlar ko\'chirildi', 'ok', 5000), 1500);
-    }
-    if (IDB.ok) {
-        try {
-            const fb = JSON.parse(localStorage.getItem('fp20_db') || 'null');
-            if (fb) {
-                DB = mergeDB(DB, normalizeDB(fb));
-                localStorage.removeItem('fp20_db');
-                dirty = true;
-                setTimeout(flush, 500);
-            }
-        }
-        catch (_c) { }
     }
     if (SETS.dirtySince)
         dirty = true;
@@ -4767,8 +5146,8 @@ async function boot() {
         const need = Lock.needs();
         $('#boot') && ($('#boot').hidden = true);
         window.__booted = true;
-        if (need === 'setup')
-            await Lock.setup();
+        if (need === 'welcome')
+            await Lock.welcome();
         else if (need === 'unlock')
             await Lock.unlock();
         $('#lock').hidden = true;
