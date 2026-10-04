@@ -336,7 +336,7 @@ select.inp{appearance:none;-webkit-appearance:none;background-image:linear-gradi
 <script>
 /* Diagnostika: ilova ochilmasa sababini ekranda ko'rsatadi */
 window.__errs=[];window.__booted=false;
-window.addEventListener('error',function(e){window.__errs.push((e.message||'xato')+(e.lineno?' (qator '+e.lineno+')':''));});
+window.addEventListener('error',function(e){if(/^Script error/i.test(e.message||''))return;window.__errs.push((e.message||'xato')+(e.lineno?' (qator '+e.lineno+')':''));});
 setTimeout(function(){
   if(window.__booted)return;var b=document.getElementById('boot');if(!b)return;
   b.style.cssText='min-height:100vh;padding:28px 22px;font-family:system-ui,-apple-system,sans-serif;color:#13251F;background:#EEF3F1';
@@ -837,6 +837,7 @@ function loadLib(name) {
         const s = document.createElement('script');
         s.src = L.url;
         s.async = true;
+        s.crossOrigin = 'anonymous';
         s.onload = () => window[L.g] ? res(window[L.g]) : rej(new Error('kutubxona yuklanmadi'));
         s.onerror = () => { delete _libP[name]; s.remove(); rej(new Error('Internet yo\'q — kerakli modul yuklanmadi. Internetga ulanib qayta urinib ko\'ring.')); };
         document.head.appendChild(s);
@@ -4293,7 +4294,7 @@ const Notify = {
     }
 };
 /* ═════════ SETTINGS ═════════ */
-const APP_VERSION = '20.2';
+const APP_VERSION = '20.3';
 const Settings = {
     title: 'Sozlamalar',
     render(v) {
@@ -4896,7 +4897,7 @@ const More = {
     render(v) {
         const cnt = { reminders: DB.reminders.filter(r => !r.done).length, sales: DB.sales.length, gifts: DB.gifts.length, map: DB.contacts.filter(c => c.lat != null).length, returned: DB.returned.length, projects: DB.projects.length + DB.events.length };
         const late = DB.reminders.filter(r => !r.done && dLeft(r.remindDate) !== null && dLeft(r.remindDate) <= 0).length;
-        v.innerHTML = `<div class="list" style="margin-top:8px">${MORE.map(([k, l, i]) => `<a class="item" href="#/${k}" style="text-decoration:none;color:inherit"><span class="av sq" style="background:var(--surface2);color:var(--ink2)"><svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round">${IC[i]}</svg></span><span class="body"><span class="t">${l}</span>${k === 'settings' ? `<span class="s">${Sync.on() ? 'Sinxron yoqilgan' : 'Sinxron, zaxira, Telegram, parol'}</span>` : ''}</span><span class="r">${k === 'reminders' && late ? `<span class="tag red">${late} bugun</span>` : cnt[k] != null ? `<span class="small muted">${cnt[k]}</span>` : ''}</span></a>`).join('')}</div>
+        v.innerHTML = `<div class="list" style="margin-top:8px">${MORE.map(([k, l, i]) => `<a class="item" href="#/${k}" style="text-decoration:none;color:inherit"><span class="av sq" style="background:var(--surface2);color:var(--ink2)"><svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round">${IC[i]}</svg></span><span class="body"><span class="t">${l}</span>${k === 'settings' ? `<span class="s">${Sync.on() ? 'Sinxron yoqilgan' : 'Sinxron, zaxira, Telegram, PIN-kod'}</span>` : ''}</span><span class="r">${k === 'reminders' && late ? `<span class="tag red">${late} bugun</span>` : cnt[k] != null ? `<span class="small muted">${cnt[k]}</span>` : ''}</span></a>`).join('')}</div>
     ${Sync.on() ? '' : `<div class="card pad" style="margin-top:16px"><b>Ma'lumotlaringiz faqat shu telefonda</b><p class="small muted" style="margin:4px 0 10px">Telefon yo'qolsa yoki brauzer tozalansa, hammasi yo'qoladi. GitHub sinxronini yoqing — 2 daqiqa vaqt oladi.</p><a class="btn primary sm" href="#/settings">Sinxronni yoqish</a></div>`}`;
     }
 };
@@ -5222,10 +5223,27 @@ function showFatal(e) {
     b.style.cssText = 'padding:24px;font-family:system-ui';
     b.innerHTML = `<h3>Ilovani ishga tushirishda xato</h3><p style="margin:8px 0">${esc(e && e.message || e)}</p><p>Sahifani yangilang. Takrorlansa, bu xabarning rasmini yuboring.</p><button onclick="location.reload()" style="margin-top:12px;padding:10px 16px">Yangilash</button>`;
 }
-window.addEventListener('error', e => { console.error(e.error || e.message); if (!$('#app') || $('#app').hidden)
-    return; UI.toast('Kutilmagan xato: ' + (e.message || ''), 'err'); });
-window.addEventListener('unhandledrejection', e => { console.error(e.reason); if ($('#app') && !$('#app').hidden)
-    UI.toast('Xato: ' + ((e.reason && e.reason.message) || e.reason), 'err'); });
+/* Show only OUR errors. "Script error." = foreign script (browser add-ons, Edge/Copilot, CDN) — not actionable */
+function ownError(e) {
+    const m = String(e && e.message || '');
+    if (!m || /^Script error\.?$/i.test(m))
+        return false;
+    if (e.filename) {
+        try {
+            if (new URL(e.filename, location.href).origin !== location.origin)
+                return false;
+        }
+        catch (_a) {
+            return false;
+        }
+    }
+    return true;
+}
+window.addEventListener('error', e => { console.error(e.error || e.message); if (!ownError(e) || !$('#app') || $('#app').hidden)
+    return; UI.toast('Kutilmagan xato: ' + e.message, 'err'); });
+window.addEventListener('unhandledrejection', e => { console.error(e.reason); const m = (e.reason && e.reason.message) || ''; if (!m || /Script error|AbortError|NotAllowedError/i.test(m + (e.reason && e.reason.name || '')))
+    return; if ($('#app') && !$('#app').hidden)
+    UI.toast('Xato: ' + m, 'err'); });
 window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); window._installPrompt = e; });
 try {
     if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) {
