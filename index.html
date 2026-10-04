@@ -3108,11 +3108,11 @@ const Drugs = {
     list() {
         const q = norm(this.q);
         return DB.expired.filter(e => (!this.f || (this.f === 'low' ? lowStock(e) : expStatus(e.expDate) === this.f)) && (!this.who || e.who === this.who) && (!this.cat || e.category === this.cat)
-            && (!q || norm(e.name).includes(q) || String(e.barcode || '').includes(this.q.trim()) || norm(e.note).includes(q)))
+            && (!q || norm(e.name).includes(q) || String(e.barcode || '').includes(this.q.trim()) || String(e.series || '').includes(this.q.trim()) || norm(e.maker).includes(q) || norm(e.note).includes(q)))
             .sort((a, b) => (a.expDate || '9999').localeCompare(b.expDate || '9999'));
     },
     render(v) {
-        var _a;
+        var _a, _b;
         const all = DB.expired;
         const cnt = k => all.filter(e => expStatus(e.expDate) === k).length;
         const list = this.list();
@@ -3131,11 +3131,12 @@ const Drugs = {
       </div>
       ${list.length ? `<div class="small muted" style="margin:4px 2px">${list.length} ta · jami qiymati <b class="num">${money(val)}</b></div>` : ''}
       ${Sel.barHTML('drugs')}
-      <div class="list" style="margin-top:6px">${list.map(e => this.itemHTML(e)).join('') || (all.length ? emptyState('🔍', 'Topilmadi') : emptyState('💊', 'Dorilar hali kiritilmagan. Excel fayldan ham yuklash mumkin.', { label: 'Dori qo\'shish', attr: 'id="eAdd"' }))}</div>`;
+      <div class="list" style="margin-top:6px">${list.map(e => this.itemHTML(e)).join('') || (all.length ? emptyState('🔍', 'Topilmadi') : emptyState('💊', 'Dorilar hali kiritilmagan. Distribyutor prays-listini (.xls, .xlsx) bir bosishda yuklashingiz mumkin.', { label: 'Prays-listdan yuklash', attr: 'id="eImp"' }) + '<button class="btn block" id="eAdd" style="margin-top:-10px">Bittalab qo\'shish</button>')}</div>`;
         $$('[data-f]', v).forEach(b => b.onclick = () => { this.f = b.dataset.f; Router.render(); });
         const qi = $('#eQ', v);
         qi.addEventListener('input', debounce(() => { this.q = qi.value; Router.render({ keepFocus: 'eQ' }); }, 200));
         (_a = $('#eAdd', v)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => this.edit());
+        (_b = $('#eImp', v)) === null || _b === void 0 ? void 0 : _b.addEventListener('click', () => this.importXlsx());
         $('#eScan', v).onclick = () => this.scan();
         $('#eFil', v).onclick = async () => {
             const r = await UI.menu('Filtr', [{ icon: '↺', label: 'Filtrni tozalash', value: 'x' }, ...DRUG_WHO.map(([k, l]) => ({ icon: '👤', label: 'Javobgar: ' + l, value: 'w:' + k })), ...DRUG_CATS.slice(1).map(([k, l]) => ({ icon: '🏷️', label: 'Kategoriya: ' + l, value: 'c:' + k }))]);
@@ -3152,7 +3153,7 @@ const Drugs = {
             Router.render();
         };
         $('#eMore', v).onclick = async () => {
-            const r = await UI.menu('Dorilar', [{ icon: '☑️', label: 'Bir nechtasini tanlash', value: 'sel' }, { icon: '📥', label: 'Excel fayldan yuklash', value: 'imp' }, { icon: '⬇️', label: 'Excel shablon', value: 'tpl' }, { icon: '📊', label: 'Excelga eksport', value: 'x' }, { icon: '🖨️', label: 'Chop etish / PDF', value: 'p' }, { icon: '↩️', label: 'Qaytarilgan dorilar', value: 'ret' }]);
+            const r = await UI.menu('Dorilar', [{ icon: '☑️', label: 'Bir nechtasini tanlash', value: 'sel' }, { icon: '📥', label: 'Excel / prays-listdan yuklash', sub: '.xls, .xlsx, .csv — distribyutor prays-listi ham bo\'ladi', value: 'imp' }, { icon: '⬇️', label: 'Excel shablon', value: 'tpl' }, { icon: '📊', label: 'Excelga eksport', value: 'x' }, { icon: '🖨️', label: 'Chop etish / PDF', value: 'p' }, { icon: '↩️', label: 'Qaytarilgan dorilar', value: 'ret' }]);
             if (r === 'sel')
                 Sel.start('drugs');
             if (r === 'imp')
@@ -3176,8 +3177,8 @@ const Drugs = {
         const [cls, l] = EXP_TAG[st];
         const icon = st === 'expired' ? '⛔' : st === 'ok' ? '💊' : '⏳';
         return Sel.item('drugs', e.id, `<span class="av sq" style="background:var(--${cls === 'green' ? 'brand' : cls}-soft);color:var(--${cls === 'green' ? 'brand' : cls})">${icon}</span>
-      <span class="body"><span class="t">${esc(e.name)}</span><span class="s">${fmtNum(e.qty)} dona${lowStock(e) ? ' · <span class="c-amber">kam qoldi</span>' : ''} · ${e.expDate ? fmtD(e.expDate) + ' (' + relD(e.expDate) + ')' : 'muddatsiz'}</span></span>
-      <span class="r"><div class="v small">${short(num(e.qty) * num(e.price))}</div><span class="tag ${cls}">${l}</span></span>`);
+      <span class="body"><span class="t" style="white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(e.name)}</span><span class="s">${fmtNum(e.qty)} dona${e.price ? ' · ' + fmtNum(e.price) + ' so\'m' : ''}${e.series ? ' · s.' + esc(e.series) : ''}${lowStock(e) ? ' · <span class="c-amber">kam qoldi</span>' : ''} · ${e.expDate ? fmtD(e.expDate) + ' (' + relD(e.expDate) + ')' : 'muddatsiz'}</span></span>
+      <span class="r">${num(e.qty) && num(e.price) ? `<div class="v small">${short(num(e.qty) * num(e.price))}</div>` : ''}<span class="tag ${cls}">${l}</span></span>`);
     },
     async edit(id, preset = {}) {
         const e = id ? byId('expired', id) : null;
@@ -3185,6 +3186,8 @@ const Drugs = {
         const r = await formSheet(e ? 'Dorini tahrirlash' : 'Yangi dori', [
             { k: 'name', label: 'Dori nomi', req: true, list: () => [...new Set(DB.expired.map(x => x.name).concat(DB.sales.map(x => x.drug)))] },
             { k: 'barcode', label: 'Shtrix-kod', type: 'barcode' },
+            { k: 'series', label: 'Seriya', half: true }, { k: 'pack', label: 'Qadoqdagi soni', type: 'number', half: true },
+            { k: 'maker', label: 'Ishlab chiqaruvchi', list: () => [...new Set(DB.expired.map(x => x.maker).filter(Boolean))] },
             { k: 'qty', label: 'Miqdori (dona)', type: 'number', half: true, ph: '0' },
             { k: 'minStock', label: 'Minimal qoldiq', type: 'number', half: true, hint: 'Shundan kamaysa ogohlantiradi' },
             { k: 'price', label: '1 dona narxi', type: 'money', half: true },
@@ -3207,7 +3210,7 @@ const Drugs = {
             if (dup)
                 UI.toast(`Shu kod va muddat bilan "${dup.name}" ham bor`, '', 4500);
         }
-        const o = Object.assign(Object.assign(Object.assign({}, (e || {})), r), { qty: num(r.qty), minStock: num(r.minStock), price: num(r.price), id: e ? e.id : uid() });
+        const o = Object.assign(Object.assign(Object.assign({}, (e || {})), r), { qty: num(r.qty), minStock: num(r.minStock), price: num(r.price), pack: num(r.pack) || '', id: e ? e.id : uid() });
         o.total = o.qty * o.price;
         upsert('expired', o);
         UI.toast('Saqlandi', 'ok');
@@ -3234,33 +3237,214 @@ const Drugs = {
         this.edit(null, { barcode: code });
     },
     importXlsx() {
-        pickFile('.xlsx,.xls,.csv', async (f) => {
-            const XLSX = await loadLib('xlsx');
-            const wb = XLSX.read(await readFileAsBuffer(f), { type: 'array', cellDates: true });
-            const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
-            const get = (row, keys) => { const ks = Object.keys(row); for (const k of keys) {
-                const f = ks.find(x => norm(x).trim() === k);
-                if (f !== undefined && row[f] !== '')
-                    return row[f];
-            } return ''; };
-            let added = 0, skipped = 0;
-            rows.forEach(row => {
-                const name = String(get(row, ['nomi', 'dori', 'dori nomi', 'name', 'название'])).trim();
-                if (!name) {
-                    skipped++;
+        pickFile('.xlsx,.xls,.csv,.ods', async (f) => {
+            UI.toast('Fayl o\'qilmoqda…');
+            let XLSX;
+            try {
+                XLSX = await loadLib('xlsx');
+            }
+            catch (e) {
+                UI.toast(e.message, 'err');
+                return;
+            }
+            let wb;
+            try {
+                wb = XLSX.read(await readFileAsBuffer(f), { type: 'array', cellDates: false });
+            }
+            catch (e) {
+                UI.toast('Faylni ochib bo\'lmadi: ' + e.message, 'err');
+                return;
+            }
+            const sheets = wb.SheetNames.map(n => ({ name: n, aoa: XLSX.utils.sheet_to_json(wb.Sheets[n], { header: 1, raw: true, defval: '' }) }));
+            DrugImport.start(sheets, f.name);
+        });
+    }
+};
+/* ═════════ DRUG IMPORT: price lists from distributors (any layout, RU/UZ/EN headers) ═════════ */
+const DRUG_HDR = {
+    name: ['полное название', 'наименование товара', 'наименование препарата', 'наименование', 'название', 'препарат', 'товар', 'nomi', 'dori nomi', 'dori', 'mahsulot', 'tovar', 'name', 'product'],
+    exp: ['срок годности', 'годен до', 'срок', 'muddat', 'yaroqlilik muddati', 'yaroqlilik', 'amal qilish muddati', 'expdate', 'expiry', 'exp'],
+    price: ['цена', 'narx', 'narxi', 'price', 'стоимость', 'sotish narxi'],
+    qty: ['количество', 'кол-во', 'кол во', 'остаток', 'miqdor', 'miqdori', 'soni', 'qoldiq', 'qty', 'quantity'],
+    pack: ['оригинал упаковка', 'в упаковке', 'упаковка', 'qadoq', 'pack'],
+    series: ['серия', 'партия', 'seriya', 'partiya', 'batch', 'lot'],
+    barcode: ['штрихкод', 'штрих-код', 'штрих код', 'barcode', 'shtrix-kod', 'shtrix kod', 'barkod'],
+    maker: ['производитель', 'ishlab chiqaruvchi', 'manufacturer', 'zavod'],
+    note: ['izoh', 'примечание', 'note']
+};
+const DRUG_FIELD_LBL = { name: 'Nomi', exp: 'Muddat', price: 'Narx', qty: 'Miqdor', pack: 'Qadoqdagi soni', series: 'Seriya', barcode: 'Shtrix-kod', maker: 'Ishlab chiqaruvchi', note: 'Izoh' };
+const DrugImport = {
+    hnorm: s => norm(s).replace(/[®™*:]/g, '').replace(/\s+/g, ' ').trim(),
+    /* find the header row and which column holds what */
+    detect(aoa) {
+        let best = null;
+        for (let r = 0; r < Math.min(aoa.length, 40); r++) {
+            const row = aoa[r] || [];
+            const map = {};
+            row.forEach((cell, ci) => {
+                const h = this.hnorm(cell);
+                if (!h || h.length > 60)
+                    return;
+                for (const [f, keys] of Object.entries(DRUG_HDR)) {
+                    if (map[f] !== undefined)
+                        continue;
+                    if (keys.some(k => h === k || (k.length >= 4 && (h.startsWith(k) || h.includes(' ' + k) || h.includes(k + ' '))))) {
+                        map[f] = ci;
+                        break;
+                    }
+                }
+            });
+            const score = Object.keys(map).length;
+            if (map.name !== undefined && score >= 2 && (!best || score > best.score))
+                best = { row: r, map, score };
+            if (best && best.score >= 4)
+                break;
+        }
+        return best;
+    },
+    rows(aoa, det) {
+        var _a;
+        const out = [];
+        let group = '';
+        const g = (row, f) => det.map[f] === undefined ? '' : row[det.map[f]];
+        for (let r = det.row + 1; r < aoa.length; r++) {
+            const row = aoa[r] || [];
+            const name = String((_a = g(row, 'name')) !== null && _a !== void 0 ? _a : '').replace(/\s+/g, ' ').trim();
+            if (!name)
+                continue;
+            const price = num(g(row, 'price')), exp = parseAnyDate(g(row, 'exp')), qtyRaw = g(row, 'qty'), series = String(g(row, 'series') || '').trim();
+            if (!price && !exp && !series && (qtyRaw === '' || qtyRaw === undefined)) {
+                group = name;
+                continue;
+            } // section title row
+            if (/^(итого|всего|jami|total)/i.test(name))
+                continue;
+            out.push({ name, price, expDate: exp, qty: qtyRaw === '' ? null : num(qtyRaw), pack: num(g(row, 'pack')) || '', series, barcode: String(g(row, 'barcode') || '').trim(), maker: String(g(row, 'maker') || '').trim() || group, note: String(g(row, 'note') || '').trim() });
+        }
+        return out;
+    },
+    start(sheets, fileName) {
+        let pick = null;
+        for (const s of sheets) {
+            const d = this.detect(s.aoa);
+            if (d && (!pick || d.score > pick.det.score))
+                pick = { s, det: d };
+        }
+        if (!pick) {
+            UI.toast('Faylda dori nomi ustuni topilmadi. Ustun nomi "Nomi" yoki "Наименование" bo\'lishi kerak.', 'err', 7000);
+            return;
+        }
+        this.preview(pick.s, pick.det, fileName);
+    },
+    preview(sheet, det, fileName) {
+        let items = this.rows(sheet.aoa, det);
+        const byName = new Map(DB.expired.map(e => [norm(e.name).replace(/\s+/g, ' ').trim(), e]));
+        let mode = 'update', qtyMode = det.map.qty !== undefined ? 'file' : 'zero', who = 'men';
+        const sel = new Set(items.map((_, i) => i));
+        const body = document.createElement('div');
+        const L = UI.open({ title: 'Dorilarni import qilish', body, cls: 'full wide', foot: `<button class="btn" data-map>Ustunlar</button><button class="btn primary" data-go></button>` });
+        const colName = ci => { const h = (sheet.aoa[det.row] || [])[ci]; return h ? String(h).trim() : `${ci + 1}-ustun`; };
+        const draw = () => {
+            items = this.rows(sheet.aoa, det);
+            const exists = it => byName.get(norm(it.name).replace(/\s+/g, ' ').trim());
+            const nNew = items.filter((it, i) => sel.has(i) && !exists(it)).length, nOld = items.filter((it, i) => sel.has(i) && exists(it)).length;
+            body.innerHTML = `
+        <div class="card pad small" style="margin-bottom:10px"><b>${esc(fileName)}</b> · ${items.length} ta dori topildi<br>
+          <span class="muted">${Object.entries(det.map).map(([f, ci]) => `${DRUG_FIELD_LBL[f]}: <b>${esc(colName(ci))}</b>`).join(' · ')}</span></div>
+        <div class="fgrid" style="margin-bottom:10px">
+          <div class="f half"><label>Bazada borlari (${items.filter(exists).length})</label><select class="inp" id="diMode">
+            <option value="update" ${mode === 'update' ? 'selected' : ''}>Narx, seriya, muddatni yangilash</option>
+            <option value="skip" ${mode === 'skip' ? 'selected' : ''}>O'tkazib yuborish</option>
+            <option value="new" ${mode === 'new' ? 'selected' : ''}>Yangi qator qo'shish</option></select></div>
+          <div class="f half"><label>Miqdor (dona)</label><select class="inp" id="diQty">
+            ${det.map.qty !== undefined ? `<option value="file" ${qtyMode === 'file' ? 'selected' : ''}>Fayldagi "${esc(colName(det.map.qty))}"</option>` : ''}
+            <option value="zero" ${qtyMode === 'zero' ? 'selected' : ''}>0 — keyin o'zim kiritaman</option>
+            ${det.map.pack !== undefined ? `<option value="pack" ${qtyMode === 'pack' ? 'selected' : ''}>Qadoqdagi soni ("${esc(colName(det.map.pack))}")</option>` : ''}</select>
+            <span class="hint">Mavjud dorilarning miqdori o'zgarmaydi</span></div>
+          <div class="f"><label>Javobgar</label><select class="inp" id="diWho">${DRUG_WHO.map(([k, l]) => `<option value="${k}" ${who === k ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></div></div>
+        <div class="btn-row" style="margin-bottom:8px"><button class="btn sm" data-all>Hammasini belgilash</button><button class="btn sm" data-none>Belgini olish</button></div>
+        <div class="list">${items.map((it, i) => {
+                const ex = exists(it);
+                return `<div class="item ${sel.has(i) ? 'sel' : ''}" data-i="${i}" style="cursor:pointer"><span class="chk"></span><span class="body"><span class="t" style="white-space:normal;font-size:14px">${esc(it.name)}</span>
+          <span class="s">${it.expDate ? fmtD(it.expDate, 'always') : 'muddatsiz'}${it.series ? ' · seriya ' + esc(it.series) : ''}${it.pack ? ' · qadoqda ' + it.pack : ''}</span></span>
+          <span class="r"><div class="v small">${it.price ? fmtNum(it.price) : '—'}</div>${ex ? `<span class="tag ${mode === 'skip' ? '' : 'blue'}">${mode === 'update' ? 'yangilanadi' : mode === 'skip' ? 'bor' : 'yangi qator'}</span>` : '<span class="tag green">yangi</span>'}</span></div>`;
+            }).join('') || '<div class="empty">Dori qatori topilmadi — "Ustunlar" tugmasi bilan to\'g\'rilang</div>'}</div>`;
+            const go = $('[data-go]', L.el);
+            const total = mode === 'skip' ? nNew : nNew + nOld;
+            go.textContent = total ? `${total} ta dorini saqlash` : 'Tanlanmagan';
+            go.disabled = !total;
+            $('#diMode', body).onchange = e => { mode = e.target.value; draw(); };
+            $('#diQty', body).onchange = e => { qtyMode = e.target.value; };
+            $('#diWho', body).onchange = e => { who = e.target.value; };
+            $('[data-all]', body).onclick = () => { items.forEach((_, i) => sel.add(i)); draw(); };
+            $('[data-none]', body).onclick = () => { sel.clear(); draw(); };
+            $$('[data-i]', body).forEach(el => el.onclick = () => { const i = +el.dataset.i; sel.has(i) ? sel.delete(i) : sel.add(i); draw(); });
+        };
+        draw();
+        $('[data-map]', L.el).onclick = async () => {
+            const hdr = (sheet.aoa[det.row] || []).map((h, ci) => [String(ci), String(h || '').trim() || `${ci + 1}-ustun`]);
+            const opts = [['', '— yo\'q —'], ...hdr];
+            const vals = { hrow: String(det.row + 1) };
+            Object.keys(DRUG_FIELD_LBL).forEach(f => vals[f] = det.map[f] !== undefined ? String(det.map[f]) : '');
+            const r = await formSheet('Ustunlarni moslash', [{ k: 'hrow', label: 'Sarlavha qatori (raqami)', type: 'number', hint: 'Ustun nomlari yozilgan qator' }, ...Object.entries(DRUG_FIELD_LBL).map(([f, l]) => ({ k: f, label: l, type: 'select', half: true, opts: () => opts }))], vals);
+            if (!r)
+                return;
+            const hr = Math.max(1, Math.round(num(r.hrow))) - 1;
+            if (hr !== det.row) {
+                const d = this.detect(sheet.aoa.slice(hr, hr + 1));
+                det.row = hr;
+                det.map = d ? d.map : {};
+            }
+            else {
+                det.map = {};
+                Object.keys(DRUG_FIELD_LBL).forEach(f => { if (r[f] !== '')
+                    det.map[f] = +r[f]; });
+            }
+            if (det.map.name === undefined) {
+                UI.toast('"Nomi" ustunini tanlang', 'err');
+            }
+            sel.clear();
+            this.rows(sheet.aoa, det).forEach((_, i) => sel.add(i));
+            draw();
+        };
+        $('[data-go]', L.el).onclick = async () => {
+            await Backup.snapshot('oldin-dori-import');
+            let added = 0, updated = 0;
+            const now = Date.now();
+            items.forEach((it, i) => {
+                if (!sel.has(i))
+                    return;
+                const ex = byName.get(norm(it.name).replace(/\s+/g, ' ').trim());
+                if (ex && mode === 'skip')
+                    return;
+                if (ex && mode === 'update') {
+                    if (it.price)
+                        ex.price = it.price;
+                    if (it.expDate)
+                        ex.expDate = it.expDate;
+                    if (it.series)
+                        ex.series = it.series;
+                    if (it.pack)
+                        ex.pack = it.pack;
+                    if (it.barcode)
+                        ex.barcode = it.barcode;
+                    if (it.maker)
+                        ex.maker = it.maker;
+                    if (qtyMode === 'file' && it.qty !== null)
+                        ex.qty = it.qty;
+                    ex.total = num(ex.qty) * num(ex.price);
+                    ex._ts = now;
+                    updated++;
                     return;
                 }
-                const qty = num(get(row, ['miqdor', 'miqdori', 'soni', 'qty', 'количество']));
-                const price = num(get(row, ['narx', 'narxi', 'price', 'цена']));
-                const ex = get(row, ['muddat', 'yaroqlilik muddati', 'expdate', 'srok', 'срок годности', 'sana']);
-                const whoRaw = norm(get(row, ['kimboyniga', 'javobgar', 'kim']));
-                DB.expired.push({ id: uid(), name, qty, price, total: qty * price, expDate: parseAnyDate(ex), recDate: today(), barcode: String(get(row, ['shtrix-kod', 'barkod', 'barcode', 'штрихкод']) || '').trim(),
-                    minStock: num(get(row, ['minimal', 'min'])), category: '', who: whoRaw.includes('komp') ? 'kompaniya' : whoRaw.includes('bosh') ? 'boshqa' : 'men', note: String(get(row, ['izoh', 'note']) || ''), createdAt: Date.now(), _ts: Date.now() });
+                const qty = qtyMode === 'file' ? (it.qty || 0) : qtyMode === 'pack' ? (num(it.pack) || 0) : 0;
+                DB.expired.push({ id: uid(), name: it.name, price: it.price, qty, total: qty * it.price, expDate: it.expDate, recDate: today(), series: it.series, pack: it.pack, barcode: it.barcode, maker: it.maker, note: it.note, minStock: 0, category: '', who, createdAt: now, _ts: now });
                 added++;
             });
             commit();
-            UI.toast(`${added} ta dori qo'shildi${skipped ? `, ${skipped} ta qator nomsiz` : ''}`, 'ok');
-        });
+            L.close();
+            UI.toast(`${added} ta qo'shildi${updated ? `, ${updated} ta yangilandi` : ''}`, 'ok', 5000);
+        };
     }
 };
 /* ═════════ RETURNED ═════════ */
@@ -3348,7 +3532,7 @@ const Sales = {
     async edit(id, preset = {}) {
         var _a;
         const s = id ? byId('sales', id) : null;
-        const drugOpts = () => [['', '— Ombordan emas —'], ...DB.expired.filter(e => num(e.qty) > 0 || (s && s.stock && s.stock.drugId === e.id)).sort((a, b) => a.name.localeCompare(b.name)).map(e => [e.id, `${e.name} · ${fmtNum(e.qty)} dona${e.expDate ? ' · ' + fmtD(e.expDate) : ''}`])];
+        const drugOpts = () => [['', '— Ombordan emas —'], ...[...DB.expired].sort((a, b) => a.name.localeCompare(b.name)).map(e => [e.id, `${e.name} · ${fmtNum(e.qty)} dona${e.expDate ? ' · ' + fmtD(e.expDate) : ''}`])];
         const totalHTML = st => `<div id="saleTot" class="card pad" style="display:flex;justify-content:space-between"><span class="muted">Jami</span><b class="num">${money(num(st.qty) * num(st.price))}</b></div>`;
         const upd = (v, st, api) => { const el = $('#saleTot', api.el); if (el)
             el.outerHTML = totalHTML(st); };
@@ -4193,7 +4377,7 @@ const Excel = {
         debts: ['Qarzlar', () => DB.debts.map(d => ({ 'Kontakt': contactName(d.contactId), 'Turi': d.type === 'olgan' ? 'Men qarzdorman' : 'Menga qarzdor', 'Summa': num(d.amount), 'Jami (foiz bilan)': Debts.due(d), "To'langan": Debts.paid(d), 'Qoldiq': Debts.left(d), 'Holat': Debts.isOpen(d) ? (Debts.overdue(d) ? 'Kechikkan' : 'Faol') : 'Yopilgan', 'Sana': d.date || '', 'Muddat': d.dueDate || '', 'Foiz %': d.interest || '', 'Izoh': d.note || '' }))],
         payments: ["To'lovlar", () => DB.debts.flatMap(d => (d.payments || []).map(p => ({ 'Kontakt': contactName(d.contactId), 'Qarz turi': d.type === 'olgan' ? 'Men qarzdorman' : 'Menga qarzdor', 'Sana': p.date, 'Summa': num(p.amount), 'Izoh': p.note || '' })))],
         gifts: ["Sovg'alar", () => DB.gifts.map(g => ({ 'Kontakt': contactName(g.contactId), 'Turi': lbl(GIFT_TYPES, g.type), 'Nomi': g.name, 'Model': g.model || '', 'Qiymati': num(g.amount), 'Sana': g.date || '', 'Izoh': g.note || '' }))],
-        expired: ['Dorilar', () => DB.expired.map(e => ({ 'Nomi': e.name, 'Shtrix-kod': e.barcode || '', 'Miqdor': num(e.qty), 'Narx': num(e.price), 'Jami': num(e.qty) * num(e.price), 'Yaroqlilik muddati': e.expDate || '', 'Holat': EXP_TAG[expStatus(e.expDate)][1], 'Olingan': e.recDate || '', 'Berilgan': e.givenDate || '', 'Minimal': num(e.minStock) || '', 'Kategoriya': lbl(DRUG_CATS, e.category), 'Javobgar': lbl(DRUG_WHO, e.who), 'Izoh': e.note || '' }))],
+        expired: ['Dorilar', () => DB.expired.map(e => ({ 'Nomi': e.name, 'Shtrix-kod': e.barcode || '', 'Seriya': e.series || '', 'Qadoqda': e.pack || '', 'Ishlab chiqaruvchi': e.maker || '', 'Miqdor': num(e.qty), 'Narx': num(e.price), 'Jami': num(e.qty) * num(e.price), 'Yaroqlilik muddati': e.expDate || '', 'Holat': EXP_TAG[expStatus(e.expDate)][1], 'Olingan': e.recDate || '', 'Berilgan': e.givenDate || '', 'Minimal': num(e.minStock) || '', 'Kategoriya': lbl(DRUG_CATS, e.category), 'Javobgar': lbl(DRUG_WHO, e.who), 'Izoh': e.note || '' }))],
         sales: ['Sotuvlar', () => DB.sales.map(s => ({ 'Kontakt': contactName(s.contactId), 'Dori': s.drug, 'Miqdor': num(s.qty), 'Narx': num(s.price), 'Jami': num(s.total), 'Sana': s.date || '', 'Izoh': s.note || '' }))],
         returned: ['Qaytarilgan', () => DB.returned.map(r => ({ 'Dori': r.name, 'Miqdor': num(r.qty), 'Narx': num(r.price), 'Jami': num(r.total), 'Kimdan': contactName(r.contactId), 'Sabab': lbl(RET_REASON, r.reason), 'Holat': lbl(RET_STATUS, r.status), 'Sana': r.date || '', 'Izoh': r.note || '' }))],
         visits: ['Tashriflar', () => DB.visits.map(v => ({ 'Kontakt': contactName(v.contactId), 'Sana': v.date, 'Vaqt': v.time || '', 'Maqsad': lbl(VISIT_PURPOSE, v.purpose), 'Natija': lbl(VISIT_RESULT, v.result), 'Joyida': v.dist != null ? (v.dist <= 150 ? 'ha' : Geo.fmtDist(v.dist) + ' uzoqda') : '', 'Izoh': v.note || '' }))],
@@ -4492,7 +4676,7 @@ const Notify = {
     }
 };
 /* ═════════ SETTINGS ═════════ */
-const APP_VERSION = '20.5';
+const APP_VERSION = '20.6';
 const Settings = {
     title: 'Sozlamalar', noAuto: true,
     render(v) {
