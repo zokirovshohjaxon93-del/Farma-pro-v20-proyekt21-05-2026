@@ -308,8 +308,20 @@ select.inp{appearance:none;-webkit-appearance:none;background-image:linear-gradi
 .legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--ink2);margin-top:8px}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 
-/* print */
-#printFrame{position:fixed;width:0;height:0;border:0;left:-9999px}
+/* print preview */
+#printView{position:fixed;inset:0;z-index:250;background:#fff;color:#13251F;overflow:auto;-webkit-overflow-scrolling:touch}
+#printView .pv-bar{position:sticky;top:0;display:flex;gap:8px;align-items:center;padding:calc(var(--sat) + 8px) 12px 8px;background:#EEF3F1;border-bottom:1px solid #D6E1DD;color:#13251F}
+#printView .pv-bar .btn{background:#fff;color:#13251F;border-color:#C3D2CC}#printView .pv-bar .btn.primary{background:#0B6E5A;color:#fff;border-color:#0B6E5A}
+#printView .pv-doc{padding:18px;max-width:900px;margin:0 auto;overflow-x:auto}
+body.pv-open{overflow:hidden}
+@media print{
+  body.pv-open>*:not(#printView){display:none!important}
+  body.pv-open{overflow:visible;background:#fff}
+  #printView{position:static;overflow:visible}
+  #printView .pv-bar{display:none}
+  #printView .pv-doc{padding:0;max-width:none}
+  @page{margin:14mm}
+}
 
 </style>
 </head>
@@ -987,10 +999,13 @@ const UI = {
         $('.scrim', L).onclick = () => this.close(L);
         $$('[data-close]', L).forEach(x => x.onclick = () => this.close(L));
         this.stack.push(L);
-        try {
-            history.pushState({ layer: this.stack.length }, '');
+        if (!this._armed) {
+            try {
+                history.pushState({ layer: 1 }, '');
+                this._armed = true;
+            }
+            catch (_a) { }
         }
-        catch (_a) { }
         requestAnimationFrame(() => requestAnimationFrame(() => L.classList.add('in')));
         hydrate(L);
         return { el: L, body: b, foot: f, close: () => this.close(L), setTitle: t => $('.sheet-h h3', L).textContent = t };
@@ -1006,15 +1021,20 @@ const UI = {
         this.stack.splice(i, 1);
         L.classList.remove('in');
         setTimeout(() => L.remove(), 260);
-        if (!fromPop) {
+        if (!fromPop && !this.stack.length && this._armed) {
+            this._armed = false;
             this._skipPop++;
             this._skipAt = Date.now();
-            try {
+            setTimeout(() => { if (this.stack.length) {
+                this._skipPop = Math.max(0, this._skipPop - 1);
+                this._armed = true;
+                return;
+            } try {
                 history.back();
             }
             catch (_a) {
                 this._skipPop--;
-            }
+            } }, 0);
         }
         if (L._onClose)
             try {
@@ -1055,15 +1075,30 @@ const UI = {
         });
     }
 };
+/* One history entry while any sheet is open: phone "Back" closes the top sheet */
 window.addEventListener('popstate', () => {
-    if (UI._skipPop > 0) {
+    if (UI._skipPop > 0 && Date.now() - (UI._skipAt || 0) < 1500) {
         UI._skipPop--;
-        if (Date.now() - (UI._skipAt || 0) < 1500)
-            return;
-        UI._skipPop = 0;
+        if (UI.stack.length) {
+            try {
+                history.pushState({ layer: 1 }, '');
+                UI._armed = true;
+            }
+            catch (_a) { }
+        }
+        return;
     }
+    UI._skipPop = 0;
     if (UI.stack.length) {
+        UI._armed = false;
         UI.close(UI.top(), true);
+        if (UI.stack.length) {
+            try {
+                history.pushState({ layer: 1 }, '');
+                UI._armed = true;
+            }
+            catch (_b) { }
+        }
         return;
     }
     Router.fromHash();
@@ -1139,12 +1174,17 @@ function Form(fields, vals = {}) {
             <div class="btn-row"><button type="button" class="btn sm" id="${id}_gps">${ic('target')}Hozirgi joyim</button><button type="button" class="btn sm" id="${id}_map">${ic('map')}Xaritadan</button>${has ? `<button type="button" class="btn sm danger" id="${id}_rm">${ic('x')}</button>` : ''}</div></div>` + hint;
                     break;
                 }
+                case 'secret':
+                    w.innerHTML = lab + `<input type="text" name="username" autocomplete="username" value="${esc(f.user || 'FarmaPro sinxron')}" readonly hidden aria-hidden="true">
+            <div class="inp-group"><input class="inp" id="${id}" type="password" name="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="${esc(f.ph || '')}" value="${esc(v)}">
+            <button type="button" class="btn" id="${id}_eye" aria-label="Ko'rsatish">👁</button></div>` + hint;
+                    break;
                 case 'barcode':
                     w.innerHTML = lab + `<div class="inp-group"><input class="inp" id="${id}" inputmode="numeric" value="${esc(v)}" placeholder="${esc(f.ph || '')}"><button type="button" class="btn" id="${id}_scan" aria-label="Skanerlash">${ic('scan')}</button></div>` + hint;
                     break;
                 default: {
                     const t = f.type === 'tel' ? 'tel' : f.type === 'date' ? 'date' : f.type === 'time' ? 'time' : f.type === 'password' ? 'password' : 'text';
-                    w.innerHTML = lab + `<input class="inp" id="${id}" type="${t}" ${f.type === 'tel' ? 'inputmode="tel"' : ''} ${f.list ? `list="${id}_l"` : ''} autocomplete="off" placeholder="${esc(f.ph || '')}" value="${esc(v)}">${f.list ? `<datalist id="${id}_l">${(typeof f.list === 'function' ? f.list() : f.list).map(x => `<option value="${esc(x)}">`).join('')}</datalist>` : ''}` + hint;
+                    w.innerHTML = lab + `<input class="inp" id="${id}" type="${t}" ${f.type === 'secret' ? 'autocapitalize="none" autocorrect="off" spellcheck="false"' : ''} ${f.type === 'tel' ? 'inputmode="tel"' : ''} ${f.list ? `list="${id}_l"` : ''} autocomplete="off" placeholder="${esc(f.ph || '')}" value="${esc(v)}">${f.list ? `<datalist id="${id}_l">${(typeof f.list === 'function' ? f.list() : f.list).map(x => `<option value="${esc(x)}">`).join('')}</datalist>` : ''}` + hint;
                 }
             }
             el.appendChild(w);
@@ -1262,6 +1302,11 @@ function Form(fields, vals = {}) {
                 };
                 (_c = $('#' + CSS.escape(id) + '_rm', w)) === null || _c === void 0 ? void 0 : _c.addEventListener('click', () => { state.lat = null; state.lng = null; state.acc = null; render(); });
                 break;
+            case 'secret':
+                inp.addEventListener('input', () => set(inp.value));
+                inp.addEventListener('change', () => set(inp.value));
+                $('#' + CSS.escape(id) + '_eye', w).onclick = () => { inp.type = inp.type === 'password' ? 'text' : 'password'; };
+                break;
             case 'barcode':
                 inp.addEventListener('input', () => set(inp.value.trim()));
                 $('#' + CSS.escape(id) + '_scan', w).onclick = async () => { const code = await Scanner.scan(); if (code) {
@@ -1303,7 +1348,7 @@ function Form(fields, vals = {}) {
                 let v = state[f.k];
                 if (f.type === 'money' || f.type === 'number')
                     v = v === '' || v === undefined || v === null ? (f.type === 'money' ? 0 : '') : num(v);
-                if (f.type === 'text' || f.type === 'textarea' || f.type === 'tel' || !f.type)
+                if (f.type === 'text' || f.type === 'textarea' || f.type === 'tel' || f.type === 'secret' || !f.type)
                     v = String(v !== null && v !== void 0 ? v : '').trim();
                 o[f.k] = v;
             });
@@ -1323,11 +1368,18 @@ function formSheet(title, fields, vals, { saveLabel = 'Saqlash', extraBtn } = {}
     return new Promise(res => {
         const form = Form(fields, vals);
         let done = false;
+        if (fields.some(f => f.type === 'secret')) {
+            const fm = document.createElement('form');
+            fm.autocomplete = 'on';
+            fm.onsubmit = e => { e.preventDefault(); };
+            fm.appendChild(form.el);
+            form.wrap = fm;
+        }
         const foot = document.createElement('div');
         foot.style.display = 'contents';
         foot.innerHTML = `${extraBtn ? `<button class="btn ${extraBtn.cls || ''}" data-extra>${esc(extraBtn.label)}</button>` : ''}<button class="btn primary" data-save>${esc(saveLabel)}</button>`;
         const fileKeys = fields.filter(f => f.type === 'image' || f.type === 'file').map(f => f.k);
-        const L = UI.open({ title, body: form.el, foot, cls: 'full', onClose: () => { if (!done) {
+        const L = UI.open({ title, body: form.wrap || form.el, foot, cls: 'full', onClose: () => { if (!done) {
                 form.created.forEach(fid => { if (!Object.values(form.orig).includes(fid))
                     delFile(fid); });
                 res(null);
@@ -1335,6 +1387,12 @@ function formSheet(title, fields, vals, { saveLabel = 'Saqlash', extraBtn } = {}
         $('[data-save]', L.el).onclick = () => {
             if (!form.validate())
                 return;
+            if (form.wrap) {
+                try {
+                    form.wrap.requestSubmit ? form.wrap.requestSubmit() : form.wrap.dispatchEvent(new Event('submit', { cancelable: true }));
+                }
+                catch (_a) { }
+            }
             done = true;
             const v = form.values();
             fileKeys.forEach(k => { const o = form.orig[k]; if (o && o !== v[k])
@@ -1701,7 +1759,7 @@ const Scanner = {
 };
 /* ═════════ CONTACTS ═════════ */
 const SPECS = ['Terapevt', 'Pediatr', 'Kardiolog', 'Nevrolog', 'Ginekolog', 'Endokrinolog', 'Gastroenterolog', 'LOR', 'Okulist', 'Urolog', 'Dermatolog', 'Xirurg', 'Travmatolog', 'Stomatolog', 'Pulmonolog', 'Revmatolog', 'Onkolog', 'Psixiatr', 'Bosh vrach', 'Farmatsevt', 'Zav. apteka'];
-const VISIT_PURPOSE = [['uchrashuv', 'Uchrashuv'], ['prezentatsiya', 'Prezentatsiya'], ['nazorat', 'Nazorat'], ['buyurtma', 'Buyurtma'], ['tolov', "To'lov"], ['boshqa', 'Boshqa']];
+const VISIT_PURPOSE = [['uchrashuv', 'Uchrashuv'], ['qongiroq', 'Telefon orqali'], ['prezentatsiya', 'Prezentatsiya'], ['nazorat', 'Nazorat'], ['buyurtma', 'Buyurtma'], ['tolov', "To'lov"], ['boshqa', 'Boshqa']];
 const VISIT_RESULT = [['muvaffaqiyatli', 'Muvaffaqiyatli'], ['kutilmoqda', 'Kutilmoqda'], ['rad_etildi', 'Rad etildi'], ['keyinga_qoldirildi', 'Keyinga qoldirildi']];
 const lbl = (arr, k) => (arr.find(x => x[0] === k) || [, k || ''])[1];
 const VF = () => (Object.assign({ A: 7, B: 14, C: 30 }, getMeta('visitFreq', {})));
@@ -2152,11 +2210,102 @@ const Contacts = {
         download(`farmapro_kontaktlar_${today()}.vcf`, new Blob([out], { type: 'text/vcard' }));
         UI.toast(`${list.length} ta kontakt .vcf faylga saqlandi. Faylni ochsangiz telefon kontaktlariga qo'shiladi.`, 'ok', 5000);
     },
+    /* group contacts sharing a phone number or the same normalized name */
+    findDuplicates() {
+        const parent = new Map();
+        const find = x => { while (parent.get(x) !== x)
+            x = parent.get(x); return x; };
+        const union = (a, b) => { a = find(a); b = find(b); if (a !== b)
+            parent.set(b, a); };
+        DB.contacts.forEach(c => parent.set(c.id, c.id));
+        const by = new Map();
+        const add = (k, id) => { if (!k)
+            return; if (by.has(k))
+            union(by.get(k), id);
+        else
+            by.set(k, id); };
+        DB.contacts.forEach(c => { [c.phone, c.phone2].forEach(p => { const k = phoneKey(p); if (k.length >= 7)
+            add('p' + k, c.id); }); add('n' + norm(c.name).replace(/\s+/g, ' ').trim(), c.id); });
+        const groups = new Map();
+        DB.contacts.forEach(c => { const r = find(c.id); if (!groups.has(r))
+            groups.set(r, []); groups.get(r).push(c); });
+        return [...groups.values()].filter(g => g.length > 1);
+    },
+    links(id) { return ['gifts', 'debts', 'sales', 'visits', 'reminders', 'returned', 'projects'].reduce((s, col) => s + DB[col].filter(x => x.contactId === id).length, 0); },
+    merge(keep, others) {
+        const k = byId('contacts', keep);
+        const patch = {};
+        others.forEach(id => {
+            const o = byId('contacts', id);
+            if (!o)
+                return;
+            ['phone', 'phone2', 'spec', 'workplace', 'address', 'region', 'note', 'birthday', 'cat', 'imgId'].forEach(f => { if (!k[f] && !patch[f] && o[f])
+                patch[f] = o[f]; });
+            if (k.lat == null && patch.lat == null && o.lat != null) {
+                patch.lat = o.lat;
+                patch.lng = o.lng;
+            }
+            if (!k.phone2 && !patch.phone2 && o.phone && phoneKey(o.phone) !== phoneKey(k.phone || patch.phone))
+                patch.phone2 = o.phone;
+            ['gifts', 'debts', 'sales', 'visits', 'reminders', 'returned', 'projects'].forEach(col => DB[col].forEach(x => { if (x.contactId === id) {
+                x.contactId = keep;
+                x._ts = Date.now();
+            } }));
+            DB.events.forEach(e => { if ((e.invitees || []).some(i => i.id === id)) {
+                e.invitees = e.invitees.filter(i => i.id !== keep).map(i => i.id === id ? Object.assign(Object.assign({}, i), { id: keep, name: k.name }) : i);
+                e._ts = Date.now();
+            } });
+            if (patch.imgId === o.imgId)
+                o.imgId = '';
+        });
+        touch('contacts', keep, patch);
+        remove('contacts', others, { undo: false });
+    },
+    dedupe() {
+        const groups = this.findDuplicates();
+        if (!groups.length) {
+            UI.toast('Takroriy kontakt topilmadi', 'ok');
+            return;
+        }
+        const body = document.createElement('div');
+        const L = UI.open({ title: `${groups.length} ta takroriy guruh`, body, cls: 'full', foot: `<button class="btn primary" data-all>Hammasini birlashtirish</button>` });
+        const draw = () => {
+            const gs = this.findDuplicates();
+            if (!gs.length) {
+                L.close();
+                UI.toast('Hammasi birlashtirildi', 'ok');
+                return;
+            }
+            L.setTitle(`${gs.length} ta takroriy guruh`);
+            body.innerHTML = `<p class="small muted" style="margin-bottom:10px">Har guruhda qoldiriladigan kontaktni bosing — qolganlarining qarz, sovg'a, sotuv va tashriflari unga o'tadi, bo'sh maydonlari to'ldiriladi.</p>` +
+                gs.map((g, gi) => `<div class="card pad" style="margin-bottom:10px"><div class="list">${g.map((c, i) => `<button class="item ${i === 0 ? 'sel' : ''}" data-g="${gi}" data-keep="${c.id}"><span class="chk"></span><span class="body"><span class="t">${esc(c.name)}</span><span class="s">${esc([fmtPhone(c.phone), c.spec, c.address].filter(Boolean).join(' · ') || '—')} · ${this.links(c.id)} ta yozuv</span></span></button>`).join('')}</div>
+          <button class="btn sm block" style="margin-top:8px" data-merge="${gi}">Shu guruhni birlashtirish</button></div>`).join('');
+            $$('[data-keep]', body).forEach(b => b.onclick = () => { $$(`[data-g="${b.dataset.g}"]`, body).forEach(x => x.classList.toggle('sel', x === b)); });
+            $$('[data-merge]', body).forEach(b => b.onclick = () => {
+                const gi = +b.dataset.merge;
+                const sel = $(`[data-g="${gi}"].sel`, body);
+                const keep = sel.dataset.keep;
+                this.merge(keep, gs[gi].map(c => c.id).filter(id => id !== keep));
+                UI.toast('Birlashtirildi', 'ok');
+                draw();
+            });
+        };
+        draw();
+        $('[data-all]', L.el).onclick = async () => {
+            const gs = this.findDuplicates();
+            if (!(await UI.confirm('Hammasini birlashtirish', `${gs.length} ta guruh birlashtiriladi (har guruhda tanlangan yoki birinchi kontakt qoladi). Avval avtomatik zaxira olinadi.`, { ok: 'Birlashtirish' })))
+                return;
+            await Backup.snapshot('oldin-birlashtirish');
+            gs.forEach((g, gi) => { const sel = $(`[data-g="${gi}"].sel`, body); const keep = sel ? sel.dataset.keep : g[0].id; this.merge(keep, g.map(c => c.id).filter(id => id !== keep)); });
+            draw();
+        };
+    },
     async moreMenu() {
         const r = await UI.menu('Kontaktlar', [
             { icon: '☑️', label: 'Bir nechtasini tanlash', sub: 'O\'chirish yoki .vcf ga eksport uchun', value: 'sel' },
             { icon: '🗺️', label: 'Hammasi xaritada', value: 'map' },
             { icon: '🧭', label: 'Marshrut tuzish', sub: 'Tanlangan joylarni eng qisqa tartibda', value: 'route' },
+            { icon: '🧩', label: 'Takroriy kontaktlarni birlashtirish', sub: 'Bir xil telefon yoki ism bilan ikki marta yozilganlar', value: 'dup' },
             { icon: '📇', label: 'Hammasini telefonga saqlash (.vcf)', value: 'vcf' },
             { icon: '📊', label: 'Excelga eksport', value: 'xlsx' },
             { icon: '🖨️', label: 'Ro\'yxatni chop etish / PDF', value: 'print' }
@@ -2169,6 +2318,8 @@ const Contacts = {
             Route.open();
         if (r === 'vcf')
             this.exportVCF(DB.contacts);
+        if (r === 'dup')
+            this.dedupe();
         if (r === 'xlsx')
             Excel.export(['contacts']);
         if (r === 'print')
@@ -2351,7 +2502,7 @@ const Visits = {
 };
 /* ═════════ MAP VIEW (all contacts, nearest) ═════════ */
 const MapView = {
-    title: 'Xarita', filter: '', here: null,
+    title: 'Xarita', noAuto: true, filter: '', here: null,
     render(v) {
         const withLoc = DB.contacts.filter(c => c.lat != null && c.lat !== '');
         const noLoc = DB.contacts.length - withLoc.length;
@@ -2707,7 +2858,9 @@ const Debts = {
         qi.addEventListener('input', debounce(() => { this.q = qi.value; Router.render({ keepFocus: 'dQ' }); }, 200));
         (_b = $('#dAdd', v)) === null || _b === void 0 ? void 0 : _b.addEventListener('click', () => this.edit());
         $('#dMore', v).onclick = async () => {
-            const r = await UI.menu('Qarzlar', [{ icon: '☑️', label: 'Bir nechtasini tanlash', value: 'sel' }, { icon: '📊', label: 'Excelga eksport', value: 'x' }, { icon: '🖨️', label: 'Chop etish / PDF', value: 'p' }]);
+            const r = await UI.menu('Qarzlar', [{ icon: '☑️', label: 'Bir nechtasini tanlash', value: 'sel' }, { icon: '📤', label: 'Qarzdorlar ro\'yxatini ulashish', sub: 'Matn: kim, qancha, qachongacha', value: 'sh' }, { icon: '📊', label: 'Excelga eksport', value: 'x' }, { icon: '🖨️', label: 'Chop etish / PDF', value: 'p' }]);
+            if (r === 'sh')
+                this.shareList();
             if (r === 'sel')
                 Sel.start('debts');
             if (r === 'x')
@@ -2807,6 +2960,21 @@ const Debts = {
         const o = Object.assign(Object.assign({}, d), { payments: (d.payments || []).filter(p => p.id !== pid) });
         this.syncDerived(o);
         upsert('debts', o);
+    },
+    shareList() {
+        const o = DB.debts.filter(d => this.isOpen(d));
+        const part = (type, title) => {
+            const l = o.filter(d => (d.type || 'bergan') === type).sort((a, b) => this.left(b) - this.left(a));
+            if (!l.length)
+                return '';
+            return `${title} — ${money(l.reduce((s, d) => s + this.left(d), 0))}\n` + l.map((d, i) => { const nd = this.nextDue(d); return `${i + 1}. ${contactName(d.contactId) || '—'}: ${money(this.left(d))}${nd ? ` · ${fmtD(nd.date, 'always')}${this.overdue(d) ? ' (kechikkan)' : ''}` : ''}`; }).join('\n');
+        };
+        const t = [`💰 Qarzlar — ${fmtD(today(), 'always')}`, '', part('bergan', 'Menga qarzdorlar'), '', part('olgan', 'Men qarzdorman')].filter((x, i, a) => x || a[i - 1]).join('\n').trim();
+        if (!o.length) {
+            UI.toast('Faol qarz yo\'q');
+            return;
+        }
+        shareText('Qarzlar', t);
     },
     reminderText(d) {
         var _a;
@@ -3704,6 +3872,8 @@ const Sync = {
             throw new Error('Internet yo\'q yoki GitHub ochilmadi');
         }
         if (!r.ok) {
+            if (r.status === 404 && method === 'DELETE')
+                return null;
             let m = '';
             try {
                 m = (await r.json()).message || '';
@@ -3783,8 +3953,45 @@ const Sync = {
         SETS.ghGistId = gistId;
         SETS.ghLastErr = '';
         await saveSets();
-        await this.sync({ silent: false, force: true });
+        await this.sync({ silent: true, force: true });
+        if (SETS.ghLastErr && /paroli|shifrlangan/.test(SETS.ghLastErr)) {
+            const e = new Error(SETS.ghLastErr);
+            e.code = 'BADPASS';
+            throw e;
+        }
+        if (SETS.ghLastErr)
+            throw new Error(SETS.ghLastErr);
         return { user: u.login, gistId };
+    },
+    /* Cloud copy uses an unknown password: delete it and upload this device's data again */
+    async resetCloud(pass) {
+        if (pass)
+            await this.setKey(pass);
+        else {
+            Crypt.key = null;
+            SETS.ghEnc = false;
+            SETS.ghPassSaved = '';
+        }
+        const ids = new Set([SETS.ghGistId].filter(Boolean));
+        try {
+            for (let page = 1; page <= 5; page++) {
+                const list = await this.req('GET', `/gists?per_page=100&page=${page}`);
+                list.filter(x => x.files && x.files[DATA_FILE]).forEach(x => ids.add(x.id));
+                if (list.length < 100)
+                    break;
+            }
+        }
+        catch (_a) { }
+        for (const id of ids)
+            await this.req('DELETE', '/gists/' + id);
+        const g = await this.req('POST', '/gists', { description: GIST_DESC, public: false, files: { [DATA_FILE]: { content: await this.pack(DB) } } });
+        SETS.ghGistId = g.id;
+        SETS.ghSeen = {};
+        SETS.dirtyFiles = [...Array(16).keys()];
+        SETS.ghLastErr = '';
+        await saveSets();
+        UI.banner('sync', null);
+        return this.sync({ silent: true, force: true });
     },
     canon(db) {
         const o = normalizeDB(db);
@@ -4037,29 +4244,20 @@ const Excel = {
 /* ═════════ PRINT / PDF (browser "Save as PDF" — supports Uzbek & Cyrillic) ═════════ */
 const Reports = {
     css: `body{font-family:'Golos Text',Arial,sans-serif;color:#13251F;font-size:12px;margin:24px}h1{font-size:20px;margin:0 0 2px}h2{font-size:15px;margin:22px 0 6px}.m{color:#5a6d66}table{width:100%;border-collapse:collapse;margin-top:6px}th,td{border-bottom:1px solid #d6e1dd;padding:5px 6px;text-align:left;vertical-align:top}th{background:#eef3f1;font-weight:600}td.n,th.n{text-align:right;white-space:nowrap}.tot td{font-weight:700;border-top:2px solid #13251F}.box{display:flex;gap:24px;margin:10px 0;flex-wrap:wrap}.box div b{display:block;font-size:16px}.sign{margin-top:40px;display:flex;justify-content:space-between}@page{margin:14mm}`,
+    /* In-app report preview. Printing the page itself works on iPhone too (iframe printing does not). */
     print(title, html) {
-        let fr = $('#printFrame');
-        if (fr)
-            fr.remove();
-        fr = document.createElement('iframe');
-        fr.id = 'printFrame';
-        document.body.appendChild(fr);
-        const d = fr.contentDocument;
-        d.open();
-        d.write(`<!doctype html><html lang="uz"><head><meta charset="utf-8"><title>${esc(title)}</title><style>${this.css}</style></head><body>${html}<p class="m" style="margin-top:24px">FarmaPro · ${fmtTs(Date.now())}</p></body></html>`);
-        d.close();
-        setTimeout(() => { try {
-            fr.contentWindow.focus();
-            fr.contentWindow.print();
-        }
-        catch (_a) {
-            const w = window.open('', '_blank');
-            if (w) {
-                w.document.write(d.documentElement.outerHTML);
-                w.document.close();
-                w.print();
-            }
-        } }, 350);
+        var _a;
+        (_a = $('#printView')) === null || _a === void 0 ? void 0 : _a.remove();
+        const pv = document.createElement('div');
+        pv.id = 'printView';
+        pv.innerHTML = `<div class="pv-bar"><button class="btn" data-x>${ic('back')}Yopish</button><b style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(title)}</b><button class="btn primary" data-p>${ic('print')}PDF / Chop</button></div>
+      <div class="pv-doc"><style>${this.css.replace(/body\{/, '.pv-doc{').replace(/@page\{[^}]*\}/, '')}</style>${html}<p class="m" style="margin-top:24px">FarmaPro · ${fmtTs(Date.now())}</p></div>`;
+        document.body.appendChild(pv);
+        document.body.classList.add('pv-open');
+        const close = () => { pv.remove(); document.body.classList.remove('pv-open'); };
+        $('[data-x]', pv).onclick = close;
+        $('[data-p]', pv).onclick = () => { document.title = title; window.print(); setTimeout(() => document.title = ROUTES[Router.cur].title + ' · FarmaPro', 1500); };
+        UI.toast('"PDF / Chop" → telefonda "Ulashish" orqali PDF sifatida saqlash mumkin', '', 4500);
     },
     table(head, rows, numCols = [], total) {
         return `<table><thead><tr>${head.map((h, i) => `<th class="${numCols.includes(i) ? 'n' : ''}">${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((c, i) => `<td class="${numCols.includes(i) ? 'n' : ''}">${esc(c)}</td>`).join('')}</tr>`).join('')}${total ? `<tr class="tot">${total.map((c, i) => `<td class="${numCols.includes(i) ? 'n' : ''}">${esc(c)}</td>`).join('')}</tr>` : ''}</tbody></table>`;
@@ -4294,9 +4492,9 @@ const Notify = {
     }
 };
 /* ═════════ SETTINGS ═════════ */
-const APP_VERSION = '20.3';
+const APP_VERSION = '20.5';
 const Settings = {
-    title: 'Sozlamalar',
+    title: 'Sozlamalar', noAuto: true,
     render(v) {
         var _a, _b;
         const s = SETS;
@@ -4391,17 +4589,23 @@ const Settings = {
         this.about($('#about', v));
     },
     ghBox(box) {
+        var _a;
         if (!Sync.on()) {
             box.innerHTML = `<p class="small" style="margin-bottom:10px">Bir nechta qurilmada (telefon, kompyuter) bir xil ma'lumot bo'lishi va telefon yo'qolsa ham saqlanib qolishi uchun.</p>
         <ol class="small muted" style="padding-left:18px;margin-bottom:12px;line-height:1.7">
           <li><a href="https://github.com/signup" target="_blank" rel="noopener">GitHub</a>'da akkaunt oching (bepul).</li>
           <li><a href="https://github.com/settings/tokens/new?scopes=gist&description=FarmaPro" target="_blank" rel="noopener"><b>Shu havola orqali token yarating</b></a>: "Expiration" → <i>No expiration</i>, "gist" belgisi qo'yilgan bo'ladi → pastda <i>Generate token</i>.</li>
           <li>Tokenni nusxalab, quyiga qo'ying. Ikkinchi qurilmada ham <b>shu tokenni</b> kiriting — ma'lumotlar avtomatik birlashadi.</li></ol>
-        <div class="fgrid"><div class="f"><label>GitHub token</label><input class="inp" id="ghTok" placeholder="ghp_…" autocomplete="off"></div>
-        <div class="f"><label>Shifrlash paroli (tavsiya etiladi)</label><input class="inp" id="ghPass" type="password" autocomplete="new-password" placeholder="Ixtiyoriy"><span class="hint">Qarz va telefonlar GitHub'da shifrlangan holda saqlanadi. Barcha qurilmalarda bir xil parol kiriting. Unutsangiz bulutdagi nusxani ocholmaysiz.</span></div></div>
-        <button class="btn primary block" id="ghCon" style="margin-top:12px">Ulash</button>`;
+        <form id="ghForm" autocomplete="on"><div class="fgrid"><div class="f"><label>GitHub token</label><input class="inp" id="ghTok" placeholder="ghp_…" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"></div>
+        <div class="f"><label>Shifrlash paroli (tavsiya etiladi)</label>
+          <input type="text" name="username" autocomplete="username" value="FarmaPro sinxron" readonly hidden aria-hidden="true">
+          <div class="inp-group"><input class="inp" id="ghPass" type="password" name="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="O'zingiz o'ylab toping"><button type="button" class="btn" id="ghEye" aria-label="Ko'rsatish">👁</button></div>
+          <span class="hint">Ixtiyoriy. Klaviatura ustida saqlangan parol chiqsa, faqat <b>o'zingiz o'ylab topgan</b> parolni tanlang. Telefon "saqlaysizmi?" desa — saqlang, boshqa qurilmada bir bosishda qo'yiladi.</span></div></div>
+        <button class="btn primary block" id="ghCon" type="submit" style="margin-top:12px">Ulash</button></form>`;
+            $('#ghEye', box).onclick = () => { const i = $('#ghPass', box); i.type = i.type === 'password' ? 'text' : 'password'; };
+            $('#ghForm', box).onsubmit = e => e.preventDefault();
             $('#ghCon', box).onclick = async () => {
-                const t = $('#ghTok', box).value.trim(), p = $('#ghPass', box).value;
+                const t = $('#ghTok', box).value.trim(), p = $('#ghPass', box).value.trim();
                 if (!t) {
                     UI.toast('Token kiriting', 'err');
                     return;
@@ -4411,7 +4615,7 @@ const Settings = {
                     return;
                 }
                 const b = $('#ghCon', box);
-                b.disabled = true;
+                setTimeout(() => { b.disabled = true; }, 0);
                 b.textContent = 'Ulanmoqda…';
                 try {
                     const r = await Sync.connect(t, p);
@@ -4419,6 +4623,12 @@ const Settings = {
                     Router.render();
                 }
                 catch (e) {
+                    if (e.code === 'BADPASS') {
+                        await Settings.badPass(p);
+                        Router.render();
+                        return;
+                    }
+                    await Sync.disconnect();
                     UI.toast(e.message, 'err', 7000);
                     b.disabled = false;
                     b.textContent = 'Ulash';
@@ -4432,12 +4642,13 @@ const Settings = {
           <div><span>Shifrlash</span><span>${SETS.ghEnc ? '<span class="c-green">Yoqilgan</span>' : 'O\'chiq'}</span></div>
           <div><span>Fayl</span><span><a href="https://gist.github.com/${esc(SETS.ghGistId)}" target="_blank" rel="noopener">Gist'ni ochish</a></span></div></div>
         <label class="switch" style="margin-top:6px"><input type="checkbox" id="ghAuto" ${SETS.ghAuto ? 'checked' : ''}><span class="tr"></span><span class="sl">Avtomatik sinxron<br><span class="hint">Har o'zgarishdan keyin va ilova ochilganda</span></span></label>
-        <div class="btn-row" style="margin-top:10px"><button class="btn primary" id="ghNow">${ic('sync')}Hozir sinxronlash</button><button class="btn" id="ghPw">Shifr paroli</button><button class="btn danger" id="ghOff">Uzish</button></div>`;
+        <div class="btn-row" style="margin-top:10px"><button class="btn primary" id="ghNow">${ic('sync')}Hozir sinxronlash</button><button class="btn" id="ghPw">Shifr paroli</button><button class="btn danger" id="ghOff">Uzish</button></div>
+        ${/paroli|shifrlangan/.test(SETS.ghLastErr || '') ? `<button class="btn block" id="ghFix" style="margin-top:8px">Parol muammosini hal qilish</button>` : ''}`;
             $('#ghAuto', box).onchange = e => { SETS.ghAuto = e.target.checked; saveSets(); };
             $('#ghNow', box).onclick = () => Sync.sync({ silent: false }).then(() => { const s = $('#syncStatus'); if (s)
                 s.innerHTML = Sync.statusHTML(); });
             $('#ghPw', box).onclick = async () => {
-                const r = await formSheet('Shifrlash paroli', [{ type: 'html', html: '<p class="small muted">Boshqa qurilmada qo\'yilgan parolni kiriting. Bo\'sh qoldirsangiz shifrlash o\'chadi va keyingi sinxronda ma\'lumot ochiq saqlanadi.</p>' }, { k: 'p', label: 'Parol', type: 'password' }], {});
+                const r = await formSheet('Shifrlash paroli', [{ type: 'html', html: '<p class="small muted">Boshqa qurilmada qo\'yilgan parolni kiriting. Bo\'sh qoldirsangiz shifrlash o\'chadi va keyingi sinxronda ma\'lumot ochiq saqlanadi.</p>' }, { k: 'p', label: 'Parol', type: 'secret' }], {});
                 if (!r)
                     return;
                 try {
@@ -4450,11 +4661,50 @@ const Settings = {
                     UI.toast(e.message, 'err');
                 }
             };
+            (_a = $('#ghFix', box)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => Settings.badPass(SETS.ghPassSaved || '').then(() => Router.render()));
             $('#ghOff', box).onclick = async () => { if (await UI.confirm('Sinxronni uzish', 'Bu qurilma GitHub bilan sinxronlanmaydi. Ma\'lumotlar telefonda va GitHub\'da qoladi.', { ok: 'Uzish' })) {
                 await Sync.disconnect();
                 Router.render();
             } };
         }
+    },
+    async badPass(pass) {
+        const r = await UI.menu('GitHub\'da boshqa parolli nusxa bor', [
+            { icon: '🔑', label: 'Boshqa parolni kiritish', sub: 'Oldin qo\'ygan parolingizni eslasangiz', value: 'retry' },
+            { icon: '♻️', label: 'Bulutni tozalab, yangidan boshlash', sub: 'GitHub\'dagi eski nusxa o\'chiriladi, shu telefondagi ma\'lumotlar yangi parol bilan yuklanadi', value: 'reset' },
+            { icon: '✖️', label: 'Bekor qilish', value: 'cancel' }
+        ]);
+        if (r === 'retry') {
+            const f = await formSheet('Shifrlash paroli', [{ k: 'p', label: 'Oldingi parol', type: 'secret', hint: 'Saqlangan parollaringiz klaviatura ustida chiqadi' }], {});
+            if (f && f.p) {
+                await Sync.setKey(f.p);
+                UI.banner('sync', null);
+                const ok = await Sync.sync({ silent: true, force: true });
+                if (ok) {
+                    UI.toast('Parol to\'g\'ri — sinxron ishlayapti', 'ok');
+                    return;
+                }
+                UI.toast(SETS.ghLastErr || 'Xato', 'err');
+            }
+            return;
+        }
+        if (r === 'reset') {
+            const np = await formSheet('Yangi shifrlash paroli', [{ type: 'html', html: `<p class="small muted">Shu telefondagi <b>${COLS.reduce((s, c) => s + DB[c].length, 0)} ta yozuv</b> GitHub'ga qayta yuklanadi. Parolni yozib qo'ying. Bo'sh qoldirsangiz shifrlanmaydi.</p>` }, { k: 'p', label: 'Yangi parol', type: 'secret', def: pass || '', hint: 'O\'zingiz o\'ylab toping va yozib qo\'ying' }], { p: pass || '' }, { saveLabel: 'Davom etish' });
+            if (!np)
+                return;
+            if (!(await UI.confirm('Bulutni tozalash', 'GitHub\'dagi eski sinxron nusxasi o\'chiriladi. Boshqa qurilmalarda keyin yangi parolni kiritasiz.', { danger: true, ok: 'Tozalash', typed: 'TOZALASH' })))
+                return;
+            try {
+                const ok = await Sync.resetCloud(np.p || '');
+                UI.toast(ok ? 'Tayyor — sinxron yangi parol bilan ishlayapti' : (SETS.ghLastErr || 'Xato'), ok ? 'ok' : 'err', 6000);
+            }
+            catch (e) {
+                UI.toast(e.message, 'err', 7000);
+            }
+            return;
+        }
+        if (r === 'cancel' && !SETS.ghLastSync)
+            await Sync.disconnect();
     },
     async about(el) {
         let st = '';
@@ -5025,11 +5275,17 @@ const Router = {
         this.cur = next;
         this.render();
     },
-    render({ keepFocus } = {}) {
+    render({ keepFocus, auto } = {}) {
         const sec = ROUTES[this.cur];
         const v = $('#view');
         if (!v || $('#app').hidden)
             return;
+        if (auto && sec.noAuto) {
+            const ss = $('#syncStatus');
+            if (ss)
+                ss.innerHTML = Sync.statusHTML();
+            return;
+        }
         const y = window.scrollY;
         $('#title').textContent = sec.title;
         document.title = sec.title + ' · FarmaPro';
@@ -5158,7 +5414,7 @@ async function boot() {
         buildNav();
         $('#btnSearch').onclick = openSearch;
         $('#btnSync').onclick = () => Sync.on() ? Sync.sync({ silent: false }) : Router.go('settings');
-        const rerender = debounce(() => Router.render(), 60);
+        const rerender = debounce(() => Router.render({ auto: true }), 60);
         listeners.add(rerender);
         Sync._listener = () => Sync.schedule();
         listeners.add(Sync._listener);
