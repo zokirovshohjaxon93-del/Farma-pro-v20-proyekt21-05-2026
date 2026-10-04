@@ -186,7 +186,8 @@ button.item:active{background:var(--surface2)}
 .act .i{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:19px;background:var(--brand-soft)}
 
 /* home */
-.hero{padding:18px 18px 16px;border-radius:20px;background:var(--brand);color:var(--brand-ink);position:relative;overflow:hidden}
+.hero{padding:18px 18px 16px;border-radius:24px;background:linear-gradient(140deg,#0B6E5A 0%,#0E8A70 55%,#16A383 100%);color:#fff;position:relative;overflow:hidden;box-shadow:0 10px 30px -12px rgba(11,110,90,.55)}
+:root[data-theme=dark] .hero{background:linear-gradient(140deg,#0E5546 0%,#11705C 60%,#168C72 100%)}
 .hero .d{font-size:13px;opacity:.85}
 .hero .big{font-size:30px;font-weight:700;letter-spacing:-.8px;margin:2px 0 10px;font-variant-numeric:tabular-nums}
 .hero .row{display:flex;gap:18px;flex-wrap:wrap;font-size:13px}
@@ -322,6 +323,76 @@ body.pv-open{overflow:hidden}
   #printView .pv-doc{padding:0;max-width:none}
   @page{margin:14mm}
 }
+
+/* attachments */
+.att-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.att{position:relative;aspect-ratio:1;border-radius:14px;border:1px solid var(--line2);background:var(--surface2);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px;text-align:center}
+.att img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.att-ic{font-size:30px}
+.att-n{font-size:11px;color:var(--ink2);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;position:relative;z-index:1}
+.att img~.att-n{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.45);color:#fff;padding:2px 4px}
+.att-x{position:absolute;top:4px;right:4px;z-index:3;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;font-size:16px;line-height:1}
+.att-open{position:absolute;inset:0;z-index:2}
+.att-add{border-style:dashed;cursor:pointer;color:var(--brand)}
+
+/* ── v21 design ── */
+.hero .greet{font-size:24px;font-weight:700;letter-spacing:-.5px;margin:2px 0 12px}
+.plan-today{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.plan-today .pt-l{font-size:12px;opacity:.8;text-transform:none}
+.plan-today b{font-size:17px}
+.plan-today>span:not(.pt-l){font-size:13px;opacity:.9}
+.pt-act{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.hbtn{height:36px;padding:0 14px;border-radius:11px;background:#fff;color:#0B6E5A;font-weight:650;font-size:13.5px;display:inline-flex;align-items:center;gap:6px}
+.hbtn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.rings{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.ring{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:10px 6px 12px;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:var(--shadow)}
+.ring b{font-size:15px;margin-top:2px}.ring span{font-size:12px;color:var(--ink2)}
+.month-nav{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.month-nav b{font-size:17px}
+.cal{padding:10px}
+.cal-h,.cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-h span{text-align:center;font-size:11.5px;color:var(--ink3);font-weight:600;padding-bottom:4px}
+.cal-d{aspect-ratio:1/1.05;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;position:relative;font-size:14px;background:var(--surface2)}
+.cal-d b{font-weight:600}
+.cal-d i{font-style:normal;font-size:10.5px;font-weight:700;color:#fff;background:var(--brand);border-radius:8px;padding:0 5px;line-height:15px}
+.cal-d em{font-style:normal;font-size:9px;color:var(--ink3);max-width:100%;overflow:hidden;white-space:nowrap}
+.cal-d.today{box-shadow:inset 0 0 0 2px var(--brand)}
+.cal-d.sel{background:var(--ink);color:var(--surface)}.cal-d.sel em{color:var(--surface)}
+.cal-d.pt-off,.cal-d.pt-vacation{background:transparent;color:var(--ink3)}
+.cal-d.pt-holiday{background:var(--red-soft);color:var(--red)}
+.cal-d.pt-training{background:var(--blue-soft);color:var(--blue)}
+.cal-d.joint::after{content:"";position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--violet)}
+.tp-row{align-items:flex-start}
+.tp-date{width:44px;flex:none;display:flex;flex-direction:column;align-items:center;border-radius:12px;background:var(--surface2);padding:6px 0}
+.tp-date b{font-size:18px;line-height:1.1}.tp-date span{font-size:11px;color:var(--ink3)}
+.tp-today{border-color:var(--brand);box-shadow:0 0 0 2px var(--brand-soft)}
+.tp-today .tp-date{background:var(--brand);color:var(--brand-ink)}.tp-today .tp-date span{color:inherit;opacity:.85}
+.tp-off{opacity:.55}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px}
+.tbl th{text-align:left;font-weight:600;color:var(--ink2);padding:10px 12px;background:var(--surface2);white-space:nowrap}
+.tbl td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+.tbl .n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tbl tbody tr{cursor:pointer}.tbl tbody tr:active{background:var(--surface2)}
+.tbl tfoot td{font-weight:700;border-top:2px solid var(--line2)}
+.hb{margin-bottom:10px;cursor:default}.hb[data-hb]{cursor:pointer}
+.hb-l{display:flex;justify-content:space-between;gap:10px;font-size:13.5px}.hb-l span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.notes-grid{columns:2 160px;column-gap:8px}
+.note{display:block;break-inside:avoid;width:100%;margin-bottom:8px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+.note img{width:100%;display:block;max-height:180px;object-fit:cover}
+.note-b{display:flex;flex-direction:column;gap:4px;padding:10px 12px}
+.note-t{font-size:13px;color:var(--ink2);display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-line}
+.nc-green{background:var(--brand-soft)}.nc-amber{background:var(--amber-soft)}.nc-red{background:var(--red-soft)}.nc-blue{background:var(--blue-soft)}.nc-violet{background:var(--violet-soft)}
+#ptr{position:fixed;top:calc(var(--sat) + 4px);left:50%;transform:translate(-50%,-60px);z-index:60;width:40px;height:40px;border-radius:50%;background:var(--surface);box-shadow:0 4px 14px rgba(0,0,0,.18);display:grid;place-items:center;color:var(--ink3);transition:color .15s;pointer-events:none;opacity:0}
+#ptr.on{opacity:1}#ptr.ready{color:var(--brand)}
+#ptr svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+#ptr.spin span{animation:ptr .8s linear infinite;display:grid;color:var(--brand)}
+@keyframes ptr{to{transform:rotate(360deg)}}
+.item{transition:transform .08s}button.item:active{transform:scale(.99)}
+.stat{box-shadow:var(--shadow)}
+.act{box-shadow:var(--shadow)}
+.act .i{background:linear-gradient(135deg,var(--brand-soft),var(--surface2))}
+.tbl td:first-child{min-width:150px}
+.hb-l span{min-width:0;flex:1}.hb-l b{flex:none}
 
 </style>
 </head>
@@ -548,8 +619,8 @@ const IDB = {
     async entries(s) { const ks = await this.keys(s); const vs = await this._tx(s, 'readonly', st => st.getAll()); return ks.map((k, i) => [k, vs[i]]); }
 };
 /* ═════════ State ═════════ */
-const COLS = ['contacts', 'gifts', 'debts', 'expired', 'reminders', 'sales', 'returned', 'visits', 'projects', 'events'];
-const emptyDB = () => ({ contacts: [], gifts: [], debts: [], expired: [], reminders: [], sales: [], returned: [], visits: [], projects: [], events: [], _deleted: {}, meta: {}, _v: 20 });
+const COLS = ['contacts', 'gifts', 'debts', 'expired', 'reminders', 'sales', 'returned', 'visits', 'projects', 'events', 'notes', 'plans'];
+const emptyDB = () => ({ contacts: [], gifts: [], debts: [], expired: [], reminders: [], sales: [], returned: [], visits: [], projects: [], events: [], notes: [], plans: [], _deleted: {}, meta: {}, _v: 21 });
 let DB = emptyDB();
 const DEF_SETS = { theme: 'auto', nInApp: true, nBrowser: false, nTelegram: false, tgToken: '', tgChatId: '', remDays: 3, expWarn: 90,
     ghToken: '', ghGistId: '', ghUser: '', ghAuto: true, ghLastSync: 0, ghLastErr: '', ghSeen: {},
@@ -625,7 +696,7 @@ function remove(col, ids, { undo = true } = {}) {
             } });
     }, 30);
 }
-function fileIdsOf(o) { return ['imgId', 'fileId'].map(k => o && o[k]).filter(Boolean); }
+function fileIdsOf(o) { return ['imgId', 'fileId'].map(k => o && o[k]).filter(Boolean).concat(((o && o.files) || []).map(x => x.fid).filter(Boolean)); }
 function setMeta(key, val) { DB.meta[key] = { v: val, _ts: Date.now() }; commit(); }
 function getMeta(key, def) { return DB.meta[key] ? DB.meta[key].v : def; }
 /* ═════════ Merge with tombstones (deleted things stay deleted) ═════════ */
@@ -828,6 +899,8 @@ function readFileAsText(file) { return new Promise((res, rej) => { const r = new
 function readFileAsBuffer(file) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(r.error); r.readAsArrayBuffer(file); }); }
 /* Lazy-load external libraries (app works without them) */
 const LIBS = {
+    mammoth: { url: 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js', g: 'mammoth' },
+    tesseract: { url: 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js', g: 'Tesseract' },
     xlsx: { url: 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js', g: 'XLSX' },
     leaflet: { url: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js', css: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css', g: 'L' },
     zxing: { url: 'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js', g: 'ZXing' }
@@ -1174,6 +1247,17 @@ function Form(fields, vals = {}) {
             <div class="btn-row"><button type="button" class="btn sm" id="${id}_gps">${ic('target')}Hozirgi joyim</button><button type="button" class="btn sm" id="${id}_map">${ic('map')}Xaritadan</button>${has ? `<button type="button" class="btn sm danger" id="${id}_rm">${ic('x')}</button>` : ''}</div></div>` + hint;
                     break;
                 }
+                case 'files': {
+                    const arr = Array.isArray(v) ? v : [];
+                    w.innerHTML = lab + `<div class="att-grid">${arr.map((a, i) => `<div class="att">${/^image\//.test(a.type || '') ? `<img data-fid="${esc(a.fid)}" alt="">` : `<span class="att-ic">${/pdf/.test(a.type || '') ? '📕' : /sheet|excel|xls/.test(a.type || '') ? '📗' : /word|doc/.test(a.type || '') ? '📘' : '📄'}</span>`}<span class="att-n">${esc(a.name || 'fayl')}</span><button type="button" class="att-x" data-rm="${i}" aria-label="O'chirish">×</button><button type="button" class="att-open" data-open="${i}" aria-label="Ochish"></button></div>`).join('')}
+            <label class="att att-add"><span style="font-size:24px">＋</span><span class="att-n">Rasm / fayl</span><input type="file" id="${id}" multiple hidden ${f.accept ? `accept="${f.accept}"` : ''}></label></div>` + hint;
+                    break;
+                }
+                case 'multi': {
+                    const arr = Array.isArray(v) ? v : [];
+                    w.innerHTML = lab + `<button type="button" class="picker" id="${id}" style="height:auto;min-height:46px;padding:8px 12px;flex-wrap:wrap">${arr.length ? arr.map(x => `<span class="tag green">${esc(x)}</span>`).join(' ') : `<span class="pv ph">${esc(f.ph || 'Tanlang')}</span>`}</button>` + hint;
+                    break;
+                }
                 case 'secret':
                     w.innerHTML = lab + `<input type="text" name="username" autocomplete="username" value="${esc(f.user || 'FarmaPro sinxron')}" readonly hidden aria-hidden="true">
             <div class="inp-group"><input class="inp" id="${id}" type="password" name="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="${esc(f.ph || '')}" value="${esc(v)}">
@@ -1302,6 +1386,41 @@ function Form(fields, vals = {}) {
                 };
                 (_c = $('#' + CSS.escape(id) + '_rm', w)) === null || _c === void 0 ? void 0 : _c.addEventListener('click', () => { state.lat = null; state.lng = null; state.acc = null; render(); });
                 break;
+            case 'files':
+                inp.addEventListener('change', async () => {
+                    const list = [...(state[f.k] || [])];
+                    for (const file of [...inp.files]) {
+                        try {
+                            let data;
+                            const isImg = file.type.startsWith('image/');
+                            if (isImg)
+                                data = await compressImage(await readFileAsDataURL(file), 1600, .8);
+                            else {
+                                if (file.size > 8 * 1024 * 1024) {
+                                    UI.toast(`${file.name}: 8 MB dan katta`, 'err');
+                                    continue;
+                                }
+                                data = await readFileAsDataURL(file);
+                            }
+                            const fid = await putFile(data);
+                            api.created.push(fid);
+                            list.push({ fid, name: file.name, type: isImg ? 'image/jpeg' : (file.type || 'application/octet-stream'), size: file.size });
+                        }
+                        catch (e) {
+                            UI.toast(file.name + ': ' + e.message, 'err');
+                        }
+                    }
+                    set(list, true);
+                });
+                $$('[data-rm]', w).forEach(b => b.onclick = () => { const list = [...(state[f.k] || [])]; const [x] = list.splice(+b.dataset.rm, 1); if (x && api.created.includes(x.fid))
+                    delFile(x.fid); set(list, true); });
+                $$('[data-open]', w).forEach(b => b.onclick = () => { const a = (state[f.k] || [])[+b.dataset.open]; if (a)
+                    viewFile(a.fid, a.name); });
+                break;
+            case 'multi':
+                inp.onclick = async () => { const r = await pickMany(f.label, typeof f.opts === 'function' ? f.opts(state) : f.opts, state[f.k] || []); if (r)
+                    set(r, true); };
+                break;
             case 'secret':
                 inp.addEventListener('input', () => set(inp.value));
                 inp.addEventListener('change', () => set(inp.value));
@@ -1350,6 +1469,8 @@ function Form(fields, vals = {}) {
                     v = v === '' || v === undefined || v === null ? (f.type === 'money' ? 0 : '') : num(v);
                 if (f.type === 'text' || f.type === 'textarea' || f.type === 'tel' || f.type === 'secret' || !f.type)
                     v = String(v !== null && v !== void 0 ? v : '').trim();
+                if (f.type === 'files' || f.type === 'multi')
+                    v = Array.isArray(v) ? v : [];
                 o[f.k] = v;
             });
             ['lat', 'lng', 'acc', 'address', 'region'].forEach(k => { if (k in state && !(k in o))
@@ -1379,8 +1500,10 @@ function formSheet(title, fields, vals, { saveLabel = 'Saqlash', extraBtn } = {}
         foot.style.display = 'contents';
         foot.innerHTML = `${extraBtn ? `<button class="btn ${extraBtn.cls || ''}" data-extra>${esc(extraBtn.label)}</button>` : ''}<button class="btn primary" data-save>${esc(saveLabel)}</button>`;
         const fileKeys = fields.filter(f => f.type === 'image' || f.type === 'file').map(f => f.k);
+        const multiFileKeys = fields.filter(f => f.type === 'files').map(f => f.k);
         const L = UI.open({ title, body: form.wrap || form.el, foot, cls: 'full', onClose: () => { if (!done) {
-                form.created.forEach(fid => { if (!Object.values(form.orig).includes(fid))
+                const origF = new Set(Object.values(form.orig).flatMap(x => Array.isArray(x) ? x.map(a => a && a.fid) : [x]));
+                form.created.forEach(fid => { if (!origF.has(fid))
                     delFile(fid); });
                 res(null);
             } } });
@@ -1397,6 +1520,8 @@ function formSheet(title, fields, vals, { saveLabel = 'Saqlash', extraBtn } = {}
             const v = form.values();
             fileKeys.forEach(k => { const o = form.orig[k]; if (o && o !== v[k])
                 delFile(o); });
+            multiFileKeys.forEach(k => { const keep = new Set((v[k] || []).map(x => x.fid)); (form.orig[k] || []).forEach(x => { if (!keep.has(x.fid))
+                delFile(x.fid); }); });
             L.close();
             res(v);
         };
@@ -1426,6 +1551,33 @@ function pickContact({ type, allowNone = false } = {}) {
             $('#pcQ', body).focus(); }, 300);
         (_a = $('[data-none]', L.el)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => { done = true; L.close(); res(''); });
         $('[data-new]', L.el).onclick = async () => { done = true; L.close(); const c = await Contacts.edit(null, { type: type || 'vrach', name: $('#pcQ', body).value }); res(c ? c.id : undefined); };
+    });
+}
+/* choose several items from a list (with search and free text) */
+function pickMany(title, options, selected) {
+    return new Promise(res => {
+        let done = false, q = '';
+        const sel = new Set(selected || []);
+        const body = document.createElement('div');
+        const L = UI.open({ title, body, cls: 'full', foot: `<button class="btn" data-clr>Tozalash</button><button class="btn primary" data-ok>Tayyor</button>`, onClose: () => { if (!done)
+                res(null); } });
+        const draw = () => {
+            var _a;
+            const nq = norm(q);
+            const all = [...new Set([...sel, ...options])];
+            const list = all.filter(o => !nq || norm(o).includes(nq));
+            body.innerHTML = `<div class="search" style="margin-bottom:8px">${ic('search')}<input id="pmQ" placeholder="Qidirish yoki yangi nom" value="${esc(q)}"></div>
+        ${q && !all.some(o => norm(o) === nq) ? `<button class="btn block sm" data-add style="margin-bottom:8px">${ic('plus')}"${esc(q)}" qo'shish</button>` : ''}
+        <div class="list">${list.slice(0, 300).map(o => `<div class="item ${sel.has(o) ? 'sel' : ''}" data-o="${esc(o)}" style="cursor:pointer;padding:10px 12px"><span class="chk"></span><span class="body"><span class="t" style="white-space:normal;font-size:14px">${esc(o)}</span></span></div>`).join('') || '<div class="empty small">Ro\'yxat bo\'sh — nomini yozib qo\'shing</div>'}</div>`;
+            const qi = $('#pmQ', body);
+            qi.addEventListener('input', debounce(() => { q = qi.value; draw(); const n = $('#pmQ', body); n.focus(); n.setSelectionRange(n.value.length, n.value.length); }, 200));
+            (_a = $('[data-add]', body)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => { sel.add(q.trim()); q = ''; draw(); });
+            $$('[data-o]', body).forEach(el => el.onclick = () => { const o = el.dataset.o; sel.has(o) ? sel.delete(o) : sel.add(o); el.classList.toggle('sel'); L.setTitle(`${title} (${sel.size})`); });
+        };
+        draw();
+        L.setTitle(`${title} (${sel.size})`);
+        $('[data-clr]', L.el).onclick = () => { sel.clear(); draw(); L.setTitle(title); };
+        $('[data-ok]', L.el).onclick = () => { done = true; L.close(); res([...sel]); };
     });
 }
 function avatar(c, size = 44) {
@@ -1980,7 +2132,7 @@ const Contacts = {
             const addBtn = (label, attr) => `<button class="btn block sm" ${attr} style="margin-bottom:8px">${ic('plus')}${label}</button>`;
             if (seg === 'visits') {
                 sb.innerHTML = addBtn('Tashrif qayd etish', 'data-addv') + (st.visits.length ? `<div class="tl">${st.visits.map(v => `<div><div style="display:flex;justify-content:space-between;gap:8px"><b>${fmtD(v.date)}${v.time ? ' ' + esc(v.time) : ''}</b><span><button class="btn sm ghost" data-ev="${v.id}">${ic('edit')}</button></span></div>
-          <div class="small muted">${esc(lbl(VISIT_PURPOSE, v.purpose))} · <span class="${v.result === 'muvaffaqiyatli' ? 'c-green' : v.result === 'rad_etildi' ? 'c-red' : 'c-amber'}">${esc(lbl(VISIT_RESULT, v.result))}</span>${v.dist != null ? ` · ${v.dist <= 150 ? '<span class="c-green">joyida</span>' : Geo.fmtDist(v.dist) + ' uzoqda'}` : ''}</div>${v.note ? `<div class="small">${esc(v.note)}</div>` : ''}</div>`).join('')}</div>` : '<div class="empty small">Tashriflar yo\'q</div>');
+          <div class="small muted">${v.joint ? '<span class="tag violet" style="padding:0 6px">👥 ' + esc(v.manager || 'dvoynoy') + '</span> ' : ''}${esc(lbl(VISIT_PURPOSE, v.purpose))} · <span class="${v.result === 'muvaffaqiyatli' ? 'c-green' : v.result === 'rad_etildi' ? 'c-red' : 'c-amber'}">${esc(lbl(VISIT_RESULT, v.result))}</span>${v.dist != null ? ` · ${v.dist <= 150 ? '<span class="c-green">joyida</span>' : Geo.fmtDist(v.dist) + ' uzoqda'}` : ''}</div>${(v.products || []).length ? `<div class="tiny c-green">💊 ${esc(v.products.join(', '))}</div>` : ''}${v.note ? `<div class="small">${esc(v.note)}</div>` : ''}</div>`).join('')}</div>` : '<div class="empty small">Tashriflar yo\'q</div>');
             }
             else if (seg === 'debts') {
                 const ds = DB.debts.filter(d => d.contactId === id).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
@@ -2445,34 +2597,42 @@ function rowsToContacts(rows) {
             note: pick(row, ['izoh', 'note', 'notes', 'примечание']), birthday: parseAnyDate(pick(row, ['tug\'ilgan kun', 'birthday', 'дата рождения'])) };
     });
 }
-/* ═════════ VISITS ═════════ */
+/* ═════════ VISIT FORM (edit / delete / joint visit / detailing) ═════════ */
 const Visits = {
-    async edit(id, contactId) {
+    products() { return [...new Set(DB.expired.map(e => String(e.name).replace(/\s+(таблетки|капсулы|табл\.?|таб\.?|суппозитории|гель|крем|раствор|сироп|мазь|шампунь)\b.*$/i, '').trim()).concat(DB.visits.flatMap(v => v.products || [])).filter(Boolean))].sort((a, b) => a.localeCompare(b)); },
+    managers() { return [...new Set([getMeta('profile', {}).manager, ...DB.visits.map(v => v.manager)].filter(Boolean))]; },
+    async edit(id, contactId, preset = {}) {
         const v = id ? byId('visits', id) : null;
-        const c = byId('contacts', v ? v.contactId : contactId);
-        const vals = v ? Object.assign(Object.assign({}, v), { geo: false }) : { contactId: contactId || '', date: today(), time: nowTime(), purpose: 'uchrashuv', result: 'muvaffaqiyatli', geo: Geo.ok() && window.isSecureContext };
+        const vals = v ? Object.assign(Object.assign({}, v), { geo: false }) : Object.assign({ contactId: contactId || '', date: today(), time: nowTime(), purpose: 'uchrashuv', result: 'muvaffaqiyatli', geo: Geo.ok() && window.isSecureContext, joint: false, manager: '', products: [] }, preset);
+        if (!vals.manager && vals.joint)
+            vals.manager = (this.managers()[0] || '');
         const r = await formSheet(v ? 'Tashrifni tahrirlash' : 'Tashrif qayd etish', [
             { k: 'contactId', label: 'Kontakt', type: 'contact', req: true },
             { k: 'date', label: 'Sana', type: 'date', half: true, req: true }, { k: 'time', label: 'Vaqt', type: 'time', half: true },
             { k: 'purpose', label: 'Maqsad', type: 'select', half: true, opts: VISIT_PURPOSE }, { k: 'result', label: 'Natija', type: 'select', half: true, opts: VISIT_RESULT },
-            { k: 'note', label: 'Izoh', type: 'textarea', ph: 'Nima kelishildi, keyingi qadam…' },
-            { k: 'geo', label: 'Joylashuvni qayd etish', type: 'switch', hint: 'Tashrif joyida ekanligingiz tasdiqlanadi' },
+            { k: 'products', label: 'Taqdim etilgan preparatlar', type: 'multi', opts: () => this.products(), ph: 'Preparatlarni tanlang' },
+            { k: 'joint', label: 'Dvoynoy vizit (menejer bilan)', type: 'switch', onChange: (x, st, api) => { if (x && !st.manager) {
+                    st.manager = this.managers()[0] || '';
+                } api.render(); } },
+            { k: 'manager', label: 'Menejer', list: () => this.managers(), show: s => !!s.joint, ph: 'Menejer ismi' },
+            { k: 'note', label: 'Izoh', type: 'textarea', ph: 'Nima kelishildi, e\'tirozlar, keyingi qadam…' },
+            { k: 'geo', label: 'Joylashuvni qayd etish', type: 'switch', hint: 'Tashrif joyida ekanligingiz tasdiqlanadi', show: () => !v },
             { k: 'nextDate', label: 'Keyingi tashrif (eslatma yaratiladi)', type: 'date', show: () => !v }
         ], vals, { extraBtn: v ? { label: 'O\'chirish', cls: 'danger' } : null });
         if (!r)
-            return;
+            return null;
         if (r.__extra) {
             if (await UI.confirm('O\'chirish', 'Tashrif o\'chirilsinmi?', { danger: true, ok: 'O\'chirish' }))
-                remove('visits', v.id);
-            return;
+                remove('visits', [v.id]);
+            return null;
         }
         const o = Object.assign(Object.assign(Object.assign({}, (v || {})), r), { id: v ? v.id : uid() });
         const want = o.geo;
         delete o.geo;
         const next = o.nextDate;
         delete o.nextDate;
-        if (o.purpose === 'uchrashув')
-            o.purpose = 'uchrashuv';
+        if (!o.joint)
+            o.manager = '';
         upsert('visits', o);
         UI.toast('Tashrif saqlandi', 'ok');
         if (next)
@@ -2498,6 +2658,7 @@ const Visits = {
                 UI.toast('Joylashuv olinmadi: ' + e.message, 'err');
             }
         }
+        return o;
     }
 };
 /* ═════════ MAP VIEW (all contacts, nearest) ═════════ */
@@ -2828,14 +2989,14 @@ const Debts = {
         d.closedAt = null; return d; },
     list() {
         const q = norm(this.q);
-        return DB.debts.filter(d => (this.tab === 'open' ? this.isOpen(d) : !this.isOpen(d))
+        return DB.debts.filter(d => !d.personal && (this.tab === 'open' ? this.isOpen(d) : !this.isOpen(d))
             && (!this.kind || (this.kind === 'late' ? this.overdue(d) : (d.type || 'bergan') === this.kind))
-            && (!q || norm(contactName(d.contactId)).includes(q) || norm(d.note).includes(q)))
+            && (!q || norm(debtWho(d)).includes(q) || norm(d.note).includes(q)))
             .map(d => { var _a; return [d, this.tab === 'open' ? (((_a = this.nextDue(d)) === null || _a === void 0 ? void 0 : _a.date) || '9999') : String(1e15 - (d.closedAt || 0))]; }).sort((a, b) => a[1].localeCompare(b[1])).map(x => x[0]);
     },
     render(v) {
         var _a, _b;
-        const open = DB.debts.filter(d => this.isOpen(d));
+        const open = DB.debts.filter(d => !d.personal && this.isOpen(d));
         const bergan = open.filter(d => d.type !== 'olgan').reduce((s, d) => s + this.left(d), 0);
         const olgan = open.filter(d => d.type === 'olgan').reduce((s, d) => s + this.left(d), 0);
         const late = open.filter(d => this.overdue(d)).length;
@@ -2845,7 +3006,7 @@ const Debts = {
         <div class="stat"><div class="k">Menga qarzdorlar</div><div class="v c-red">${short(bergan)}</div><div class="x">${open.filter(d => d.type !== 'olgan').length} ta qarz</div></div>
         <div class="stat"><div class="k">Men qarzdorman</div><div class="v c-amber">${short(olgan)}</div><div class="x">${open.filter(d => d.type === 'olgan').length} ta qarz</div></div>
       </div>
-      <div class="seg"><button data-tab="open" class="${this.tab === 'open' ? 'on' : ''}">Faol ${open.length}</button><button data-tab="closed" class="${this.tab === 'closed' ? 'on' : ''}">Yopilgan ${DB.debts.length - open.length}</button></div>
+      <div class="seg"><button data-tab="open" class="${this.tab === 'open' ? 'on' : ''}">Faol ${open.length}</button><button data-tab="closed" class="${this.tab === 'closed' ? 'on' : ''}">Yopilgan ${DB.debts.filter(x => !x.personal).length - open.length}</button></div>
       <div class="toolbar" style="margin-top:0"><label class="search">${ic('search')}<input id="dQ" placeholder="Kontakt yoki izoh" value="${esc(this.q)}"></label><button class="btn" id="dMore">${ic('more')}</button></div>
       <div class="chips"><button class="chip ${!this.kind ? 'on' : ''}" data-k="">Hammasi</button><button class="chip ${this.kind === 'bergan' ? 'on' : ''}" data-k="bergan">Menga qarzdor</button><button class="chip ${this.kind === 'olgan' ? 'on' : ''}" data-k="olgan">Men qarzdor</button>${this.tab === 'open' ? `<button class="chip ${this.kind === 'late' ? 'on' : ''}" data-k="late">Kechikkan${late ? `<span class="n">${late}</span>` : ''}</button>` : ''}</div>
       ${Sel.barHTML('debts')}
@@ -2874,7 +3035,7 @@ const Debts = {
             } }, all: () => list.map(d => d.id) });
     },
     itemHTML(d, compact) {
-        const c = byId('contacts', d.contactId);
+        const c = d.personal ? { name: d.person || '—', type: 'p' } : byId('contacts', d.contactId);
         const left = this.left(d), due = this.due(d), paid = this.paid(d);
         const nd = this.nextDue(d);
         const late = this.overdue(d);
@@ -2896,7 +3057,9 @@ const Debts = {
             el.outerHTML = prev(st); };
         return [
             { k: 'type', label: 'Qarz turi', type: 'select', opts: [['bergan', 'Men berdim — menga qarzdor'], ['olgan', 'Men oldim — men qarzdorman']] },
-            { k: 'contactId', label: 'Kontakt', type: 'contact', req: true },
+            { k: 'contactId', label: 'Kontakt', type: 'contact', req: true, show: s => !s.personal },
+            { k: 'person', label: 'Kim bilan (ism)', req: true, show: s => !!s.personal, list: () => [...new Set(DB.debts.map(x => x.person).concat(DB.notes.map(x => x.person)).filter(Boolean))] },
+            { k: 'phone', label: 'Telefoni', type: 'tel', show: s => !!s.personal },
             { k: 'amount', label: 'Qarz summasi', type: 'money', req: true, onChange: upd },
             { k: 'date', label: 'Berilgan sana', type: 'date', half: true },
             { k: 'dueDate', label: 'Qaytarish muddati', type: 'date', half: true },
@@ -2919,11 +3082,12 @@ const Debts = {
         const f = this.fields();
         if (d)
             f.splice(f.findIndex(x => x.k === 'firstPay'), 1);
-        const r = await formSheet(d ? 'Qarzni tahrirlash' : 'Yangi qarz', f, vals);
+        const r = await formSheet(d ? 'Qarzni tahrirlash' : (vals.personal ? 'Shaxsiy qarz' : 'Yangi qarz'), f, vals);
         if (!r)
             return;
         const months = Math.floor(num(r.instMonths));
-        const o = Object.assign(Object.assign({}, (d || {})), { type: r.type, contactId: r.contactId, amount: num(r.amount), date: r.date, dueDate: r.dueDate, note: r.note, interest: num(r.interest), interestType: r.interestType, interestBase: r.interestBase, installments: months > 0 && r.instStart ? this.build(r.amount, months, r.instStart, num(r.interest), r.interestType, r.interestBase) : [], fileId: r.fileId || '', fileName: r.fileId ? (r.fileIdName || (d === null || d === void 0 ? void 0 : d.fileName) || 'fayl') : '', payments: d ? d.payments || [] : [], id: d ? d.id : uid() });
+        const personal = !!(d ? d.personal : vals.personal);
+        const o = Object.assign(Object.assign({}, (d || {})), { personal, person: personal ? r.person : '', phone: personal ? normPhone(r.phone) : '', type: r.type, contactId: personal ? '' : r.contactId, amount: num(r.amount), date: r.date, dueDate: r.dueDate, note: r.note, interest: num(r.interest), interestType: r.interestType, interestBase: r.interestBase, installments: months > 0 && r.instStart ? this.build(r.amount, months, r.instStart, num(r.interest), r.interestType, r.interestBase) : [], fileId: r.fileId || '', fileName: r.fileId ? (r.fileIdName || (d === null || d === void 0 ? void 0 : d.fileName) || 'fayl') : '', payments: d ? d.payments || [] : [], id: d ? d.id : uid() });
         if (!o.dueDate && o.installments.length)
             o.dueDate = o.installments[o.installments.length - 1].date;
         if (!d && num(r.firstPay) > 0)
@@ -2939,7 +3103,7 @@ const Debts = {
             return;
         const left = this.left(d);
         const r = await formSheet('To\'lov qo\'shish', [
-            { type: 'html', html: `<div class="card pad small" style="margin-bottom:4px">${esc(contactName(d.contactId))} · qoldiq <b class="num">${money(left)}</b></div>` },
+            { type: 'html', html: `<div class="card pad small" style="margin-bottom:4px">${esc(debtWho(d))} · qoldiq <b class="num">${money(left)}</b></div>` },
             { k: 'amount', label: 'To\'lov summasi', type: 'money', req: true, hint: 'Faqat hozirgi to\'lovni yozing — oldingilari saqlanib qoladi' },
             { k: 'date', label: 'Sana', type: 'date', req: true },
             { k: 'note', label: 'Izoh', ph: 'Naqd, karta, Click…' }
@@ -2967,7 +3131,7 @@ const Debts = {
             const l = o.filter(d => (d.type || 'bergan') === type).sort((a, b) => this.left(b) - this.left(a));
             if (!l.length)
                 return '';
-            return `${title} — ${money(l.reduce((s, d) => s + this.left(d), 0))}\n` + l.map((d, i) => { const nd = this.nextDue(d); return `${i + 1}. ${contactName(d.contactId) || '—'}: ${money(this.left(d))}${nd ? ` · ${fmtD(nd.date, 'always')}${this.overdue(d) ? ' (kechikkan)' : ''}` : ''}`; }).join('\n');
+            return `${title} — ${money(l.reduce((s, d) => s + this.left(d), 0))}\n` + l.map((d, i) => { const nd = this.nextDue(d); return `${i + 1}. ${debtWho(d) || '—'}: ${money(this.left(d))}${nd ? ` · ${fmtD(nd.date, 'always')}${this.overdue(d) ? ' (kechikkan)' : ''}` : ''}`; }).join('\n');
         };
         const t = [`💰 Qarzlar — ${fmtD(today(), 'always')}`, '', part('bergan', 'Menga qarzdorlar'), '', part('olgan', 'Men qarzdorman')].filter((x, i, a) => x || a[i - 1]).join('\n').trim();
         if (!o.length) {
@@ -2978,13 +3142,13 @@ const Debts = {
     },
     reminderText(d) {
         var _a;
-        const c = byId('contacts', d.contactId);
+        const c = d.personal ? { name: d.person } : byId('contacts', d.contactId);
         const nd = this.nextDue(d);
         return `Assalomu alaykum${c ? ', ' + c.name : ''}! Eslatma: sizda ${money(nd && ((_a = d.installments) === null || _a === void 0 ? void 0 : _a.length) ? nd.amount : this.left(d))} miqdorida to'lov${nd ? ` (muddati: ${fmtD(nd.date, 'always')})` : ''} bor. Iltimos, imkoniyat bo'lganda to'lab qo'ying. Rahmat!`;
     },
     async remind(id) {
         const d = byId('debts', id);
-        const c = byId('contacts', d.contactId);
+        const c = d.personal ? { name: d.person, phone: d.phone } : byId('contacts', d.contactId);
         const txt = this.reminderText(d);
         const p = c && normPhone(c.phone);
         const r = await UI.menu('Qarzdorga eslatma', [
@@ -3019,11 +3183,11 @@ const Debts = {
                 L.close();
                 return;
             }
-            const c = byId('contacts', d.contactId);
+            const c = d.personal ? { id: '', name: d.person || '—', phone: d.phone, type: 'p' } : byId('contacts', d.contactId);
             const paid = this.paid(d), due = this.due(d), left = this.left(d), pen = this.penalty(d);
             const pct = due ? Math.min(100, Math.round(paid / due * 100)) : 0;
             const inst = this.instState(d);
-            L.setTitle(d.type === 'olgan' ? 'Men qarzdorman' : 'Menga qarzdor');
+            L.setTitle((d.personal ? 'Shaxsiy · ' : '') + (d.type === 'olgan' ? 'Men qarzdorman' : 'Menga qarzdor'));
             $('[data-r]', L.el).hidden = d.type === 'olgan' || !this.isOpen(d);
             $('[data-p]', L.el).hidden = !this.isOpen(d);
             body.innerHTML = `
@@ -3049,7 +3213,10 @@ const Debts = {
             <span class="r"><div class="v small">${fmtNum(r.total)}</div>${!r.paid && this.isOpen(d) ? `<button class="btn sm ghost" data-pi="${r.num}">To'lash</button>` : ''}</span></div>`).join('')}</div>` : ''}
         <div class="section-h"><h2>To'lovlar tarixi</h2></div>
         ${(d.payments || []).length ? `<div class="tl">${[...d.payments].sort((a, b) => (b.date || '').localeCompare(a.date || '')).map(p => `<div><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b class="num c-green">+${money(p.amount)}</b><button class="btn sm ghost" data-dp="${p.id}" aria-label="O'chirish">${ic('trash')}</button></div><div class="small muted">${fmtD(p.date, 'always')}${p.note ? ' · ' + esc(p.note) : ''}</div></div>`).join('')}</div>` : '<div class="empty small">Hali to\'lov yo\'q</div>'}`;
-            $('[data-c]', body).onclick = () => c && Contacts.open(c.id, 'debts');
+            $('[data-c]', body).onclick = () => { if (c && c.id)
+                Contacts.open(c.id, 'debts');
+            else if (c && c.phone)
+                location.href = 'tel:' + normPhone(c.phone); };
             $$('[data-pi]', body).forEach(b => b.onclick = () => { const r = inst.find(x => x.num === +b.dataset.pi); this.pay(id, num(r.total) - r.covered, `${r.num}-to'lov (${fmtD(r.date)})`); });
             $$('[data-dp]', body).forEach(b => b.onclick = () => this.delPay(id, b.dataset.dp));
             (_a = $('[data-file]', body)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => viewFile(d.fileId, d.fileName));
@@ -3067,7 +3234,7 @@ const Debts = {
             if (r === 'rem') {
                 const d = byId('debts', id);
                 const nd = this.nextDue(d);
-                Reminders.edit(null, { contactId: d.contactId, title: `Qarz: ${contactName(d.contactId)}`, remindDate: nd ? nd.date : today() });
+                Reminders.edit(null, { contactId: d.contactId, title: `Qarz: ${debtWho(d)}`, remindDate: nd ? nd.date : today() });
             }
             if (r === 'd' && await UI.confirm('O\'chirish', 'Qarz va uning to\'lovlar tarixi o\'chirilsinmi?', { danger: true, ok: 'O\'chirish' })) {
                 remove('debts', [id]);
@@ -3092,6 +3259,888 @@ async function viewFile(fid, name) {
     if (!w)
         download(name || 'hujjat.pdf', b);
 }
+/* ═════════ PERSONAL: own debts, promises, notes with attachments ═════════ */
+function debtWho(d) { return d.personal ? (d.person || '—') : (contactName(d.contactId) || ''); }
+const Personal = {
+    title: 'Shaxsiy', seg: 'debts', q: '',
+    promises() { return DB.notes.filter(n => n.kind === 'promise'); },
+    notes() { return DB.notes.filter(n => n.kind !== 'promise'); },
+    render(v) {
+        var _a;
+        const pd = DB.debts.filter(d => d.personal);
+        const open = pd.filter(d => Debts.isOpen(d));
+        const pr = this.promises();
+        const nt = this.notes();
+        v.innerHTML = `<div class="seg" style="margin-top:8px">
+        <button data-s="debts" class="${this.seg === 'debts' ? 'on' : ''}">Qarzlar ${open.length || ''}</button>
+        <button data-s="prom" class="${this.seg === 'prom' ? 'on' : ''}">Va'dalar ${pr.filter(x => !x.done).length || ''}</button>
+        <button data-s="notes" class="${this.seg === 'notes' ? 'on' : ''}">Qaydlar ${nt.length || ''}</button></div><div id="pB"></div>`;
+        $$('[data-s]', v).forEach(b => b.onclick = () => { this.seg = b.dataset.s; this.q = ''; Router.render(); });
+        const B = $('#pB', v);
+        if (this.seg === 'debts') {
+            const gave = open.filter(d => d.type !== 'olgan').reduce((s, d) => s + Debts.left(d), 0), took = open.filter(d => d.type === 'olgan').reduce((s, d) => s + Debts.left(d), 0);
+            const list = [...pd].sort((a, b) => { var _a, _b; return (Debts.isOpen(b) - Debts.isOpen(a)) || ((((_a = Debts.nextDue(a)) === null || _a === void 0 ? void 0 : _a.date) || '9')).localeCompare(((_b = Debts.nextDue(b)) === null || _b === void 0 ? void 0 : _b.date) || '9'); });
+            B.innerHTML = `<div class="stats" style="margin-bottom:10px"><div class="stat"><div class="k">Men berdim</div><div class="v c-red">${short(gave)}</div><div class="x">qaytishi kerak</div></div><div class="stat"><div class="k">Men oldim</div><div class="v c-amber">${short(took)}</div><div class="x">qaytarishim kerak</div></div></div>
+        <div class="list">${list.map(d => Debts.itemHTML(d)).join('') || emptyState('🤝', 'Shaxsiy qarzlar yo\'q. Do\'st, qarindosh yoki tanishlar bilan qarz-hisoblar shu yerda.', { label: 'Qarz yozish', attr: 'id="pAdd"' })}</div>`;
+            $$('[data-sid]', B).forEach(b => b.onclick = () => Debts.open(b.dataset.sid));
+        }
+        else if (this.seg === 'prom') {
+            const list = [...pr].sort((a, b) => (a.done - b.done) || ((a.due || '9')).localeCompare(b.due || '9'));
+            B.innerHTML = `<div class="list">${list.map(p => this.promHTML(p)).join('') || emptyState('🤞', 'Va\'dalar yo\'q. "Ertaga hujjatni olib boraman", "Juma kuni pul qaytaradi" kabi kelishuvlarni yozib qo\'ying.', { label: 'Va\'da yozish', attr: 'id="pAdd"' })}</div>`;
+            $$('[data-pid]', B).forEach(b => b.onclick = e => { if (e.target.closest('[data-pdone]'))
+                return; this.editPromise(b.dataset.pid); });
+            $$('[data-pdone]', B).forEach(b => b.onclick = () => { const p = byId('notes', b.dataset.pdone); touch('notes', p.id, { done: !p.done, doneAt: p.done ? null : Date.now() }); });
+        }
+        else {
+            const q = norm(this.q);
+            const list = nt.filter(n => !q || norm(n.title).includes(q) || norm(n.text).includes(q) || (n.tags || []).some(t => norm(t).includes(q))).sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b._ts || 0) - (a._ts || 0));
+            B.innerHTML = `<label class="search" style="margin-bottom:10px">${ic('search')}<input id="pQ" placeholder="Qaydlardan qidirish" value="${esc(this.q)}"></label>
+        <div class="notes-grid">${list.map(n => this.noteHTML(n)).join('')}</div>${list.length ? '' : emptyState('🗒️', 'Qaydlar yo\'q. Matn, rasm, PDF, Word, Excel — istalgan narsani saqlang.', { label: 'Qayd yozish', attr: 'id="pAdd"' })}`;
+            const qi = $('#pQ', B);
+            qi.addEventListener('input', debounce(() => { this.q = qi.value; Router.render({ keepFocus: 'pQ' }); }, 200));
+            $$('[data-nid]', B).forEach(b => b.onclick = () => this.editNote(b.dataset.nid));
+        }
+        (_a = $('#pAdd', B)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => this.add());
+        hydrate(B);
+    },
+    add() { if (this.seg === 'debts')
+        Debts.edit(null, { personal: true });
+    else if (this.seg === 'prom')
+        this.editPromise();
+    else
+        this.editNote(); },
+    promHTML(p) {
+        const n = dLeft(p.due);
+        return `<div class="item" data-pid="${p.id}" style="cursor:pointer"><button data-pdone="${p.id}" aria-label="Bajarildi" style="width:28px;height:28px;border-radius:50%;border:2px solid ${p.done ? 'var(--brand)' : 'var(--line2)'};background:${p.done ? 'var(--brand)' : 'none'};color:var(--brand-ink);flex:none">${p.done ? '✓' : ''}</button>
+      <span class="body"><span class="t" style="white-space:normal;${p.done ? 'text-decoration:line-through;color:var(--ink3)' : ''}">${esc(p.title)}</span><span class="s">${p.dir === 'menga' ? '📥 Menga va\'da berdi' : '📤 Men va\'da berdim'}${p.person ? ' · ' + esc(p.person) : ''}${p.due ? ` · <span class="${!p.done && n < 0 ? 'c-red' : !p.done && n === 0 ? 'c-amber' : ''}">${fmtD(p.due)} (${relD(p.due)})</span>` : ''}</span></span></div>`;
+    },
+    noteHTML(n) {
+        const img = (n.files || []).find(f => /^image\//.test(f.type || ''));
+        const other = (n.files || []).filter(f => f !== img).length;
+        return `<button class="note ${n.color ? 'nc-' + n.color : ''}" data-nid="${n.id}">${img ? `<img data-fid="${esc(img.fid)}" alt="" hidden>` : ''}<span class="note-b">${n.pinned ? '<span class="tiny">📌</span> ' : ''}<b>${esc(n.title || 'Qayd')}</b>${n.text ? `<span class="note-t">${esc(n.text)}</span>` : ''}
+      <span class="tiny c-mute">${(n.files || []).length ? `📎 ${(n.files || []).length} · ` : ''}${n.remind ? `🔔 ${fmtD(n.remind)} · ` : ''}${fmtD(ymd(new Date(n._ts || Date.now())))}</span></span></button>`;
+    },
+    async editPromise(id) {
+        const p = id ? byId('notes', id) : null;
+        const r = await formSheet(p ? 'Va\'dani tahrirlash' : 'Yangi va\'da', [
+            { k: 'dir', label: 'Kim va\'da berdi', type: 'select', opts: [['men', 'Men va\'da berdim'], ['menga', 'Menga va\'da berishdi']] },
+            { k: 'title', label: 'Nima', req: true, ph: 'Masalan: dorini olib kelaman / pulni qaytaradi' },
+            { k: 'person', label: 'Kim bilan', list: () => [...new Set(DB.notes.map(x => x.person).concat(DB.debts.map(d => d.person)).concat(DB.contacts.map(c => c.name)).filter(Boolean))] },
+            { k: 'due', label: 'Qachongacha', type: 'date' }, { k: 'text', label: 'Izoh', type: 'textarea' }, { k: 'done', label: 'Bajarildi', type: 'switch' }
+        ], p ? Object.assign({}, p) : { dir: 'men', due: addDays(today(), 1) }, { extraBtn: p ? { label: 'O\'chirish', cls: 'danger' } : null });
+        if (!r)
+            return;
+        if (r.__extra) {
+            remove('notes', [p.id]);
+            return;
+        }
+        upsert('notes', Object.assign(Object.assign(Object.assign({}, (p || {})), r), { kind: 'promise', id: p ? p.id : uid() }));
+        UI.toast('Saqlandi', 'ok');
+    },
+    async editNote(id) {
+        const n = id ? byId('notes', id) : null;
+        const r = await formSheet(n ? 'Qayd' : 'Yangi qayd', [
+            { k: 'title', label: 'Sarlavha', ph: 'Masalan: Pasport nusxasi, Shartnoma, G\'oya…' },
+            { k: 'text', label: 'Matn', type: 'textarea' },
+            { k: 'files', label: 'Rasm va fayllar', type: 'files', hint: 'Rasm, PDF, Word, Excel — har biri 8 MB gacha' },
+            { k: 'remind', label: 'Eslatish sanasi', type: 'date', half: true },
+            { k: 'color', label: 'Rang', type: 'select', half: true, opts: [['', 'Oddiy'], ['green', 'Yashil'], ['amber', 'Sariq'], ['red', 'Qizil'], ['blue', 'Ko\'k'], ['violet', 'Binafsha']] },
+            { k: 'pinned', label: 'Tepaga mahkamlash', type: 'switch' }
+        ], n ? Object.assign({}, n) : { files: [] }, { extraBtn: n ? { label: 'O\'chirish', cls: 'danger' } : null });
+        if (!r)
+            return;
+        if (r.__extra) {
+            remove('notes', [n.id]);
+            return;
+        }
+        if (!r.title && !r.text && !(r.files || []).length) {
+            UI.toast('Qayd bo\'sh', 'err');
+            return;
+        }
+        upsert('notes', Object.assign(Object.assign(Object.assign({}, (n || {})), r), { kind: 'note', title: r.title || (r.text || '').split('\n')[0].slice(0, 40) || ((r.files || [])[0] || {}).name || 'Qayd', id: n ? n.id : uid() }));
+        UI.toast('Saqlandi', 'ok');
+    }
+};
+/* ═════════ TOUR PLAN ═════════ */
+const WD_SHORT = ['Ya', 'Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh'];
+const WD_RU = { 'понедельник': 1, 'вторник': 2, 'среда': 3, 'четверг': 4, 'пятница': 5, 'суббота': 6, 'воскресенье': 0, 'пн': 1, 'вт': 2, 'ср': 3, 'чт': 4, 'пт': 5, 'сб': 6, 'вс': 0,
+    'dushanba': 1, 'seshanba': 2, 'chorshanba': 3, 'payshanba': 4, 'juma': 5, 'shanba': 6, 'yakshanba': 0, 'monday': 1, 'tuesday': 2, 'wednesday': 3, 'thursday': 4, 'friday': 5, 'saturday': 6, 'sunday': 0 };
+const PLAN_TYPES = [['work', 'Ish kuni'], ['off', 'Dam olish'], ['holiday', 'Bayram'], ['training', 'Trening / seminar'], ['vacation', 'Ta\'til'], ['other', 'Boshqa']];
+const MONTH_RX = [/январ|yanvar|january/, /феврал|fevral|february/, /март|\bmart\b|march/, /апрел|aprel|april/, /\bма[йя]\b|\bmay\b/, /июн|iyun|june/, /июл|iyul|july/, /август|avgust|august/, /сентябр|sentabr|sentyabr|september/, /октябр|oktabr|oktyabr|october/, /ноябр|noyabr|november/, /декабр|dekabr|december/];
+const TourPlan = {
+    get(month) { return DB.plans.find(p => p.month === month) || null; },
+    dayOf(date) { const p = this.get(date.slice(0, 7)); return p ? (p.days || []).find(d => d.d === +date.slice(8)) : null; },
+    today() { return this.dayOf(today()); },
+    save(month, days, source) { const id = 'plan-' + month; const ex = byId('plans', id); upsert('plans', Object.assign(Object.assign({}, (ex || {})), { id, month, days: days.map(d => (Object.assign({}, d))).sort((a, b) => a.d - b.d), source: source || (ex && ex.source) || '' })); },
+    monthLabel(m) { return `${MONTHS_C[+m.slice(5) - 1]} ${m.slice(0, 4)}`; },
+    shiftMonth(m, n) { const d = parseD(m + '-01'); d.setMonth(d.getMonth() + n); return ymd(d).slice(0, 7); },
+    daysIn(m) { return new Date(+m.slice(0, 4), +m.slice(5), 0).getDate(); },
+    wd(m, d) { return new Date(+m.slice(0, 4), +m.slice(5) - 1, d).getDay(); },
+    classify(o, m) {
+        const t = norm([o.district, o.objects, o.note].join(' '));
+        if (/праздник|bayram|выходной день|holiday/.test(t))
+            o.type = 'holiday';
+        else if (/тренинг|trening|семинар|seminar|конференц|konferens|обучен/.test(t))
+            o.type = 'training';
+        else if (/отпуск|ta'til|tatil|vacation/.test(t))
+            o.type = 'vacation';
+        else if (!o.district && !o.objects)
+            o.type = [0, 6].includes(this.wd(m, o.d)) ? 'off' : 'work';
+        else
+            o.type = o.type || 'work';
+        if (/двойн|совместн|dvoyn|dvoin|менеджер|menejer|manager|с рм\b|\bрм\b/.test(t))
+            o.joint = true;
+        return o;
+    },
+    blank(m) { return Array.from({ length: this.daysIn(m) }, (_, i) => this.classify({ d: i + 1, district: '', objects: '', note: '', joint: false }, m)); },
+    detectMonth(text) {
+        const t = norm(text);
+        let mi = -1;
+        MONTH_RX.forEach((rx, i) => { if (mi < 0 && rx.test(t))
+            mi = i; });
+        const y = (t.match(/\b(20\d\d)\b/) || [])[1];
+        if (mi < 0)
+            return null;
+        return `${y || new Date().getFullYear()}-${pad(mi + 1)}`;
+    },
+    /* rows from Excel / Word tables */
+    fromAoa(aoa) {
+        const H = { num: ['№', 'no', 'n', '#', 'число', 'дата', 'sana', 'date', 'kun №'], wd: ['день', 'день недели', 'hafta kuni', 'kun', 'day'], mp: ['мп', 'mp', 'ф.и.о', 'фио', 'vakil', 'медпред'],
+            district: ['район', 'hudud', 'tuman', 'город', 'shahar', 'территория', 'hudud/tuman', 'маршрут', 'marshrut', 'region'], object: ['объект', 'объекты', 'obyekt', 'obyektlar', 'лпу', 'учреждение', 'muassasa', 'manzil', 'ташриф', 'tashrif'], note: ['примечание', 'izoh', 'комментарий', 'note'] };
+        let head = null, map = {};
+        for (let r = 0; r < Math.min(aoa.length, 25) && !head; r++) {
+            const m = {};
+            (aoa[r] || []).forEach((c, ci) => {
+                const h = norm(c).replace(/\s+/g, ' ').trim();
+                if (!h || h.length > 30)
+                    return;
+                for (const [f, keys] of Object.entries(H))
+                    if (m[f] === undefined && keys.some(k => h === k || (k.length >= 4 && h.startsWith(k)))) {
+                        m[f] = ci;
+                        break;
+                    }
+            });
+            if (Object.keys(m).length >= 2 && (m.district !== undefined || m.object !== undefined)) {
+                head = r;
+                map = m;
+            }
+        }
+        const title = aoa.slice(0, Math.max(6, (head || 0) + 1)).flat().join(' ');
+        const out = [];
+        let month = this.detectMonth(title);
+        for (let r = (head === null ? 0 : head + 1); r < aoa.length; r++) {
+            const row = (aoa[r] || []).map(c => c == null ? '' : c);
+            let day = null, wdi = null;
+            // day number / date
+            const cand = map.num !== undefined ? [row[map.num]] : row.slice(0, 3);
+            for (const c of cand) {
+                if (typeof c === 'number' && c > 20000 && c < 80000) {
+                    const s = parseAnyDate(c);
+                    day = +s.slice(8);
+                    month = month || s.slice(0, 7);
+                    break;
+                }
+                const sc = String(c).trim();
+                if (/^\d{1,2}$/.test(sc) && +sc >= 1 && +sc <= 31) {
+                    day = +sc;
+                    break;
+                }
+                const pd = parseAnyDate(sc);
+                if (pd && /[./-]/.test(sc)) {
+                    day = +pd.slice(8);
+                    month = month || pd.slice(0, 7);
+                    break;
+                }
+            }
+            row.forEach((c, ci) => { const k = norm(c).trim().replace(/[.,]/g, ''); if (WD_RU[k] !== undefined && wdi === null)
+                wdi = ci; });
+            if (!day)
+                continue;
+            let district = '', objects = '', note = '';
+            if (map.district !== undefined || map.object !== undefined) {
+                district = map.district !== undefined ? String(row[map.district] || '').trim() : '';
+                objects = map.object !== undefined ? String(row[map.object] || '').trim() : '';
+                note = map.note !== undefined ? String(row[map.note] || '').trim() : '';
+            }
+            else {
+                const texts = row.map((c, ci) => ({ c: String(c).trim(), ci })).filter(x => x.c && x.ci !== wdi && !/^\d{1,2}$/.test(x.c));
+                district = (texts[0] || {}).c || '';
+                objects = texts.slice(1).map(x => x.c).join('; ');
+            }
+            out.push({ d: day, district, objects, note, joint: false, type: '' });
+        }
+        return { month, days: this.cleanup(out) };
+    },
+    /* lines from photo (OCR) or Word text: "5 Понедельник Исломбек Карши 4-СП, Гор полик…" */
+    fromText(text) {
+        const lines = String(text || '').split(/\r?\n/).map(l => l.replace(/[|_\[\]{}]+/g, ' ').replace(/\s+/g, ' ').trim()).filter(Boolean);
+        const rows = [];
+        const wdNames = Object.keys(WD_RU).filter(k => k.length > 3).join('|');
+        const rx = new RegExp(`^\\D{0,3}?(\\d{1,2})[\\s.,):-]+(${wdNames})[a-zа-яё]*(?:[\\s.,:-]+(.*))?$`, 'i');
+        lines.forEach(l => { const m = l.match(rx); if (m && +m[1] >= 1 && +m[1] <= 31)
+            rows.push({ d: +m[1], rest: (m[3] || '').trim() }); });
+        // the rep's own name repeats on every line — find and drop it
+        const first = {};
+        rows.forEach(r => { const w = r.rest.split(' ')[0]; if (w)
+            first[w] = (first[w] || 0) + 1; });
+        const top = Object.entries(first).sort((a, b) => b[1] - a[1])[0];
+        const mp = top && top[1] >= Math.max(3, rows.length * .4) ? top[0] : null;
+        const out = rows.map(r => {
+            let rest = r.rest;
+            if (mp && rest.startsWith(mp))
+                rest = rest.slice(mp.length).trim();
+            const ws = rest.split(' ');
+            let district = '', objects = rest;
+            if (ws[0] && !/^(ттб|ttb|обл|частн|рсн|праздник|тренинг|\d)/i.test(ws[0]) && !/[,]$/.test(ws[0])) {
+                district = ws[0].replace(/[,.;]$/, '');
+                objects = ws.slice(1).join(' ');
+            }
+            return { d: r.d, district, objects: objects.trim(), note: '', joint: false, type: '' };
+        });
+        return { month: this.detectMonth(text), days: this.cleanup(out) };
+    },
+    cleanup(days) {
+        const m = new Map();
+        days.forEach(d => { const x = m.get(d.d); if (!x || (!x.district && !x.objects))
+            m.set(d.d, d); });
+        return [...m.values()].map(d => (Object.assign(Object.assign({}, d), { district: this.tidy(d.district), objects: this.tidy(d.objects) }))).sort((a, b) => a.d - b.d);
+    },
+    tidy(s) { s = String(s || '').trim(); if (s && s === s.toUpperCase() && /[A-ZА-ЯЁ]{3}/.test(s) && s.length < 25)
+        s = s.charAt(0) + s.slice(1).toLowerCase(); return s; },
+    async importMenu(month) {
+        const r = await UI.menu('Tur planni yuklash', [
+            { icon: '📊', label: 'Excel fayl (.xlsx, .xls)', value: 'x' },
+            { icon: '📘', label: 'Word fayl (.docx)', value: 'w' },
+            { icon: '📷', label: 'Rasm yoki skrinshot', sub: 'Matn telefonning o\'zida o\'qiladi (birinchi marta ~1 daqiqa)', value: 'i' },
+            { icon: '📝', label: 'Matnni qo\'yish', sub: 'Telegramdan nusxalangan reja ham bo\'ladi', value: 't' },
+            { icon: '🗓️', label: 'Bo\'sh reja (qo\'lda to\'ldirish)', value: 'b' },
+            { icon: '⧉', label: 'O\'tgan oy rejasidan nusxa', value: 'c', disabled: !this.get(this.shiftMonth(month, -1)) }
+        ]);
+        if (!r)
+            return;
+        try {
+            if (r === 'x')
+                pickFile('.xlsx,.xls,.csv,.ods', async (f) => {
+                    const XLSX = await loadLib('xlsx');
+                    const wb = XLSX.read(await readFileAsBuffer(f), { type: 'array' });
+                    let best = null;
+                    wb.SheetNames.forEach(n => { const res = this.fromAoa(XLSX.utils.sheet_to_json(wb.Sheets[n], { header: 1, raw: true, defval: '' })); if (!best || res.days.length > best.days.length)
+                        best = res; });
+                    this.preview(best, month, f.name);
+                });
+            if (r === 'w')
+                pickFile('.docx', async (f) => {
+                    const mm = await loadLib('mammoth');
+                    const html = (await mm.convertToHtml({ arrayBuffer: await readFileAsBuffer(f) })).value;
+                    const doc = new DOMParser().parseFromString(html, 'text/html');
+                    let best = null;
+                    $$('table', doc).forEach(t => { const aoa = $$('tr', t).map(tr => $$('td,th', tr).map(td => td.textContent.trim())); const res = this.fromAoa(aoa); if (!best || res.days.length > best.days.length)
+                        best = res; });
+                    if (!best || !best.days.length)
+                        best = this.fromText(doc.body.textContent.replace(/\n{2,}/g, '\n'));
+                    if (!best.month)
+                        best.month = this.detectMonth(doc.body.textContent);
+                    this.preview(best, month, f.name);
+                });
+            if (r === 'i')
+                pickFile('image/*', f => this.ocr(f, month));
+            if (r === 't') {
+                const t = await formSheet('Rejani matn sifatida qo\'ying', [{ k: 't', label: 'Matn', type: 'textarea', ph: '1 Четверг Праздник\n2 Пятница Миришкор ТТБ. Поликлиника…', hint: 'Har qator: kun raqami, hafta kuni, hudud, obyektlar' }], {});
+                if (t && t.t)
+                    this.preview(this.fromText(t.t), month, 'matn');
+            }
+            if (r === 'b')
+                this.preview({ month, days: this.blank(month) }, month, 'qo\'lda');
+            if (r === 'c') {
+                const prev = this.get(this.shiftMonth(month, -1));
+                const days = this.blank(month).map(d => { if (d.type !== 'work')
+                    return d; const wd = this.wd(month, d.d); const src = prev.days.find(x => x.type === 'work' && this.wd(prev.month, x.d) === wd && Math.abs(x.d - d.d) < 7); return src ? Object.assign(Object.assign({}, d), { district: src.district, objects: src.objects, joint: false }) : d; });
+                this.preview({ month, days }, month, 'nusxa');
+            }
+        }
+        catch (e) {
+            UI.toast(e.message, 'err');
+        }
+    },
+    async ocr(file, month) {
+        const body = document.createElement('div');
+        body.innerHTML = `<img id="ocImg" style="width:100%;border-radius:12px;margin-bottom:10px"><div class="bar" style="height:8px"><i id="ocBar" style="width:2%"></i></div><p class="small muted" id="ocMsg" style="margin-top:8px">Tayyorlanmoqda…</p>`;
+        const L = UI.open({ title: 'Rasm o\'qilmoqda', body, foot: null });
+        $('#ocImg', body).src = URL.createObjectURL(file);
+        const msg = t => { const e = $('#ocMsg', body); if (e)
+            e.textContent = t; };
+        try {
+            const T = await loadLib('tesseract');
+            msg('Matn tanib olinmoqda…');
+            const res = await T.recognize(file, 'rus+eng', { logger: m => { if (m.status === 'recognizing text') {
+                    const b = $('#ocBar', body);
+                    if (b)
+                        b.style.width = Math.round(m.progress * 100) + '%';
+                    msg(`Matn tanib olinmoqda… ${Math.round(m.progress * 100)}%`);
+                }
+                else
+                    msg(m.status === 'loading language traineddata' ? 'Til fayli yuklanmoqda (faqat birinchi marta)…' : 'Tayyorlanmoqda…'); } });
+            L.close();
+            const parsed = this.fromText(res.data.text);
+            if (!parsed.days.length) {
+                UI.toast('Rasmdan kunlar topilmadi. Rasm aniqroq bo\'lsin yoki Excel/Word variantini yuboring.', 'err', 7000);
+                return;
+            }
+            this.preview(parsed, month, 'rasm', true);
+        }
+        catch (e) {
+            L.close();
+            UI.toast(e.message, 'err', 6000);
+        }
+    },
+    /* editable table before saving */
+    preview(parsed, fallbackMonth, src, fromOcr) {
+        let month = parsed.month || fallbackMonth;
+        const byDay = new Map(parsed.days.map(d => [d.d, d]));
+        const build = () => Array.from({ length: this.daysIn(month) }, (_, i) => { const x = byDay.get(i + 1); return this.classify(Object.assign(Object.assign({ d: i + 1, district: '', objects: '', note: '', joint: false, type: '' }, (x || {})), { type: '' }), month); });
+        let days = build();
+        const exists = !!this.get(month);
+        const body = document.createElement('div');
+        const L = UI.open({ title: 'Tur planni tekshiring', body, cls: 'full wide', foot: `<button class="btn primary" data-save>Saqlash</button>` });
+        const draw = () => {
+            const found = parsed.days.length;
+            body.innerHTML = `<div class="card pad small" style="margin-bottom:10px">${found} ta kun o'qildi${src ? ' · ' + esc(src) : ''}.${fromOcr ? ' <b>Rasmdan o\'qilgan — xatolarni to\'g\'rilab chiqing.</b>' : ''} Har bir qatorni bosib tahrirlash mumkin.</div>
+        <div class="f" style="margin-bottom:10px"><label>Oy</label><input class="inp" type="month" id="tpM" value="${month}">${this.get(month) ? '<span class="hint c-amber">Bu oy uchun reja bor — saqlasangiz almashtiriladi</span>' : ''}</div>
+        <div class="list">${days.map((d, i) => this.rowHTML(month, d, i)).join('')}</div>`;
+            $('#tpM', body).onchange = e => { if (/^\d{4}-\d{2}$/.test(e.target.value)) {
+                month = e.target.value;
+                days = build();
+                draw();
+            } };
+            $$('[data-row]', body).forEach(b => b.onclick = async () => { const i = +b.dataset.row; const nd = await this.editDay(month, days[i], true); if (nd) {
+                days[i] = nd;
+                byDay.set(nd.d, nd);
+                draw();
+            } });
+        };
+        draw();
+        $('[data-save]', L.el).onclick = async () => {
+            if (this.get(month) && !(await UI.confirm('Rejani almashtirish', `${this.monthLabel(month)} uchun avvalgi reja yangisi bilan almashtiriladi.`, { ok: 'Almashtirish' })))
+                return;
+            this.save(month, days, src);
+            L.close();
+            UI.toast(`${this.monthLabel(month)} tur plani saqlandi`, 'ok');
+            VisitsView.month = month;
+            VisitsView.seg = 'plan';
+            Router.go('visits');
+        };
+    },
+    typeTag(d) {
+        const t = d.type;
+        if (t === 'work')
+            return d.joint ? '<span class="tag violet">👥 dvoynoy</span>' : '';
+        const c = { off: '', holiday: 'red', training: 'blue', vacation: 'amber', other: '' }[t] || '';
+        return `<span class="tag ${c}">${esc(lbl(PLAN_TYPES, t))}</span>${d.joint ? ' <span class="tag violet">👥</span>' : ''}`;
+    },
+    rowHTML(month, d, i, fact) {
+        const wd = this.wd(month, d.d);
+        const date = `${month}-${pad(d.d)}`;
+        const isT = date === today();
+        return `<button class="item tp-row ${isT ? 'tp-today' : ''} ${d.type === 'off' ? 'tp-off' : ''}" data-row="${i}" data-date="${date}">
+      <span class="tp-date"><b>${d.d}</b><span>${WD_SHORT[wd]}</span></span>
+      <span class="body"><span class="t" style="white-space:normal">${esc(d.district || (d.type === 'work' ? '—' : lbl(PLAN_TYPES, d.type)))}</span>${d.objects ? `<span class="s" style="white-space:normal">${esc(d.objects)}</span>` : ''}</span>
+      <span class="r">${this.typeTag(d)}${fact != null && d.type === 'work' ? `<div class="tiny ${fact ? 'c-green' : dLeft(date) < 0 ? 'c-red' : 'c-mute'}" style="margin-top:4px">${fact ? '✓ ' + fact + ' tashrif' : dLeft(date) < 0 ? 'tashrif yo\'q' : ''}</div>` : ''}</span></button>`;
+    },
+    async editDay(month, d, inPreview) {
+        const r = await formSheet(`${d.d}-${MONTHS[+month.slice(5) - 1]}, ${WEEKDAYS[this.wd(month, d.d)]}`, [
+            { k: 'type', label: 'Kun turi', type: 'select', opts: PLAN_TYPES },
+            { k: 'district', label: 'Hudud / tuman', list: () => [...new Set(DB.plans.flatMap(p => (p.days || []).map(x => x.district)).filter(Boolean))], show: s => s.type === 'work' || s.type === 'training' || s.type === 'other' },
+            { k: 'objects', label: 'Obyektlar', type: 'textarea', ph: 'TTB, poliklinika, aptekalar…', show: s => s.type === 'work' || s.type === 'training' || s.type === 'other' },
+            { k: 'joint', label: 'Dvoynoy vizit (menejer bilan)', type: 'switch', show: s => s.type === 'work' },
+            { k: 'note', label: 'Izoh' }
+        ], Object.assign({}, d));
+        if (!r)
+            return null;
+        const nd = Object.assign(Object.assign({}, d), r);
+        if (!inPreview) {
+            const p = this.get(month);
+            const days = (p ? p.days : this.blank(month)).map(x => x.d === d.d ? nd : x);
+            this.save(month, days);
+            UI.toast('Saqlandi', 'ok');
+        }
+        return nd;
+    },
+    /* contacts that probably belong to a plan day (by district / object words) */
+    matchContacts(d) {
+        const words = norm([d.district, d.objects].join(' ')).split(/[^a-zа-яё0-9'-]+/i).filter(w => w.length >= 4 && !/^(аптеки|apteka|aptekalar|поликлиника|poliklinika|клиники|частный|частные)$/.test(w));
+        if (!words.length)
+            return [];
+        return DB.contacts.filter(c => { const t = norm([c.address, c.workplace, c.name, regionLabel(c.region)].join(' ')); return words.some(w => t.includes(w)); });
+    },
+    render(v, month) {
+        const p = this.get(month);
+        const factBy = {};
+        DB.visits.forEach(x => { if (monthKey(x.date) === month)
+            factBy[x.date] = (factBy[x.date] || 0) + 1; });
+        if (!p) {
+            v.innerHTML = emptyState('🗓️', `${this.monthLabel(month)} uchun tur plan yo'q. Excel, Word yoki rasmdan yuklang — yoki qo'lda tuzing.`, { label: 'Tur planni yuklash', attr: 'id="tpImp"' });
+            $('#tpImp', v).onclick = () => this.importMenu(month);
+            return;
+        }
+        const work = p.days.filter(d => d.type === 'work');
+        const done = work.filter(d => factBy[`${month}-${pad(d.d)}`]).length;
+        const past = work.filter(d => dLeft(`${month}-${pad(d.d)}`) <= 0).length;
+        v.innerHTML = `<div class="stats" style="margin-bottom:10px">
+        <div class="stat"><div class="k">Ish kunlari</div><div class="v">${work.length}</div><div class="x">${p.days.filter(d => d.joint).length} ta dvoynoy</div></div>
+        <div class="stat"><div class="k">Bajarildi</div><div class="v ${past && done < past ? 'c-amber' : 'c-green'}">${done}/${past || 0}</div><div class="x">o'tgan ish kunlaridan</div></div></div>
+      <div class="btn-row" style="margin-bottom:10px"><button class="btn sm" id="tpImp">${ic('upload')}Qayta yuklash</button><button class="btn sm" id="tpXl">${ic('download')}Excel</button><button class="btn sm" id="tpPr">${ic('print')}PDF</button></div>
+      <div class="list">${p.days.map((d, i) => this.rowHTML(month, d, i, factBy[`${month}-${pad(d.d)}`] || 0)).join('')}</div>`;
+        $('#tpImp', v).onclick = () => this.importMenu(month);
+        $('#tpXl', v).onclick = () => ReportsCenter.excel('plan', month);
+        $('#tpPr', v).onclick = () => ReportsCenter.show('plan', month);
+        $$('[data-row]', v).forEach(b => b.onclick = () => this.openDay(month, p.days[+b.dataset.row]));
+        const t = $('.tp-today', v);
+        if (t)
+            setTimeout(() => t.scrollIntoView({ block: 'center' }), 50);
+    },
+    async openDay(month, d) {
+        const date = `${month}-${pad(d.d)}`;
+        const vis = DB.visits.filter(x => x.date === date);
+        const cands = this.matchContacts(d);
+        const r = await UI.menu(`${d.d}-${MONTHS[+month.slice(5) - 1]}: ${d.district || lbl(PLAN_TYPES, d.type)}`, [
+            { icon: '✏️', label: 'Rejani tahrirlash', sub: d.objects || '', value: 'e' },
+            { icon: '📍', label: 'Tashrif qo\'shish', sub: `Shu kunga${d.joint ? ' (dvoynoy)' : ''}`, value: 'v' },
+            { icon: '🧭', label: 'Marshrut tuzish', sub: cands.length ? `${cands.length} ta mos kontakt topildi` : 'Kontaktlarni tanlaysiz', value: 'r' },
+            vis.length ? { icon: '📋', label: `Bu kungi tashriflar (${vis.length})`, value: 'l' } : null
+        ]);
+        if (r === 'e')
+            this.editDay(month, d);
+        if (r === 'v')
+            Visits.edit(null, '', { date, joint: !!d.joint });
+        if (r === 'r')
+            Route.open(cands.filter(c => c.lat != null).map(c => c.id));
+        if (r === 'l') {
+            VisitsView.seg = 'cal';
+            VisitsView.month = month;
+            VisitsView.day = date;
+            Router.render();
+        }
+    }
+};
+/* ═════════ VISITS PAGE: calendar + list + tour plan ═════════ */
+const VisitsView = {
+    title: 'Tashriflar', seg: 'cal', month: null, day: null, filter: 'all',
+    render(v) {
+        this.month = this.month || thisMonth();
+        const m = this.month;
+        v.innerHTML = `<div class="month-nav"><button class="icon-btn" id="vmP">${ic('back')}</button><b>${TourPlan.monthLabel(m)}</b><button class="icon-btn" id="vmN" style="transform:scaleX(-1)">${ic('back')}</button></div>
+      <div class="seg" style="margin-top:4px"><button data-s="cal" class="${this.seg === 'cal' ? 'on' : ''}">Kalendar</button><button data-s="plan" class="${this.seg === 'plan' ? 'on' : ''}">Tur plan</button></div><div id="vBody"></div>`;
+        $('#vmP', v).onclick = () => { this.month = TourPlan.shiftMonth(m, -1); this.day = null; Router.render(); };
+        $('#vmN', v).onclick = () => { this.month = TourPlan.shiftMonth(m, 1); this.day = null; Router.render(); };
+        $$('[data-s]', v).forEach(b => b.onclick = () => { this.seg = b.dataset.s; Router.render(); });
+        const b = $('#vBody', v);
+        if (this.seg === 'plan')
+            TourPlan.render(b, m);
+        else
+            this.cal(b, m);
+    },
+    cal(v, m) {
+        var _a, _b;
+        const vis = DB.visits.filter(x => monthKey(x.date) === m && (this.filter !== 'joint' || x.joint));
+        const plan = TourPlan.get(m);
+        const by = {};
+        vis.forEach(x => { (by[x.date] = by[x.date] || []).push(x); });
+        const docs = new Set(vis.map(x => x.contactId));
+        const first = (TourPlan.wd(m, 1) + 6) % 7;
+        const n = TourPlan.daysIn(m);
+        const cells = [];
+        for (let i = 0; i < first; i++)
+            cells.push('<span></span>');
+        for (let d = 1; d <= n; d++) {
+            const date = `${m}-${pad(d)}`;
+            const cnt = (by[date] || []).length;
+            const pd = plan && plan.days.find(x => x.d === d);
+            const cls = [date === today() ? 'today' : '', date === this.day ? 'sel' : '', pd && pd.type !== 'work' ? 'pt-' + pd.type : '', pd && pd.joint ? 'joint' : ''].join(' ');
+            cells.push(`<button class="cal-d ${cls}" data-d="${date}"><b>${d}</b>${cnt ? `<i>${cnt}</i>` : pd && pd.type === 'work' && pd.district ? `<em>${esc(pd.district.slice(0, 5))}</em>` : ''}</button>`);
+        }
+        const day = this.day;
+        const list = (day ? (by[day] || []) : vis).slice().sort((a, b) => (b.date + (b.time || '')).localeCompare(a.date + (a.time || '')));
+        const pd = day && TourPlan.dayOf(day);
+        v.innerHTML = `<div class="stats" style="margin-bottom:10px">
+        <div class="stat"><div class="k">Tashriflar</div><div class="v">${vis.length}</div><div class="x">${docs.size} ta kontakt</div></div>
+        <div class="stat"><div class="k">Dvoynoy vizit</div><div class="v c-violet">${vis.filter(x => x.joint).length}</div><div class="x">${[...new Set(vis.filter(x => x.joint).map(x => x.manager).filter(Boolean))].join(', ') || 'menejer bilan'}</div></div></div>
+      <div class="card pad cal"><div class="cal-h">${['Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh', 'Ya'].map(x => `<span>${x}</span>`).join('')}</div><div class="cal-g">${cells.join('')}</div></div>
+      <div class="chips" style="margin-top:10px"><button class="chip ${this.filter === 'all' ? 'on' : ''}" data-f="all">Hammasi</button><button class="chip ${this.filter === 'joint' ? 'on' : ''}" data-f="joint">👥 Dvoynoy</button>${day ? `<button class="chip on" data-clr>${fmtD(day)} ✕</button>` : ''}</div>
+      ${pd ? `<div class="card pad" style="margin-top:8px"><div class="small muted">Tur plan</div><b>${esc(pd.district || lbl(PLAN_TYPES, pd.type))}</b>${pd.joint ? ' <span class="tag violet">👥 dvoynoy</span>' : ''}<div class="small">${esc(pd.objects || '')}</div></div>` : ''}
+      <div class="list" style="margin-top:8px">${list.map(x => this.itemHTML(x, !day)).join('') || emptyState('📍', day ? 'Bu kunda tashrif yo\'q' : 'Bu oyda tashrif yo\'q', { label: 'Tashrif qo\'shish', attr: 'id="vAdd"' })}</div>`;
+        $$('[data-d]', v).forEach(b => b.onclick = () => { this.day = this.day === b.dataset.d ? null : b.dataset.d; Router.render(); });
+        $$('[data-f]', v).forEach(b => b.onclick = () => { this.filter = b.dataset.f; Router.render(); });
+        (_a = $('[data-clr]', v)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => { this.day = null; Router.render(); });
+        (_b = $('#vAdd', v)) === null || _b === void 0 ? void 0 : _b.addEventListener('click', () => Visits.edit(null, '', { date: day || today() }));
+        $$('[data-vid]', v).forEach(b => b.onclick = () => Visits.edit(b.dataset.vid));
+        hydrate(v);
+    },
+    itemHTML(x, showDate) {
+        const c = byId('contacts', x.contactId);
+        return `<button class="item" data-vid="${x.id}">${avatar(c)}<span class="body"><span class="t">${esc(c ? c.name : '(o\'chirilgan kontakt)')}</span>
+      <span class="s">${showDate ? fmtD(x.date) + ' · ' : ''}${x.time ? esc(x.time) + ' · ' : ''}${esc(lbl(VISIT_PURPOSE, x.purpose))}${(x.products || []).length ? ' · 💊 ' + esc(x.products.slice(0, 2).join(', ')) + (x.products.length > 2 ? '…' : '') : ''}</span></span>
+      <span class="r">${x.joint ? `<span class="tag violet">👥</span><br>` : ''}<span class="tiny ${x.result === 'muvaffaqiyatli' ? 'c-green' : x.result === 'rad_etildi' ? 'c-red' : 'c-amber'}">${esc(lbl(VISIT_RESULT, x.result))}</span>${x.dist != null && x.dist <= 150 ? '<div class="tiny c-green">📍 joyida</div>' : ''}</span></button>`;
+    }
+};
+/* ═════════ SALES ANALYTICS ═════════ */
+const SalesA = {
+    month: null,
+    agg(month) {
+        const rows = DB.sales.filter(s => monthKey(s.date) === month);
+        const by = (key) => { const m = new Map(); rows.forEach(s => { const k = key(s); if (!m.has(k))
+            m.set(k, { k, qty: 0, sum: 0, n: 0 }); const x = m.get(k); x.qty += num(s.qty); x.sum += num(s.total); x.n++; }); return [...m.values()].sort((a, b) => b.sum - a.sum); };
+        return { rows, sum: rows.reduce((s, x) => s + num(x.total), 0), qty: rows.reduce((s, x) => s + num(x.qty), 0), clients: new Set(rows.map(s => s.contactId)).size,
+            drugs: by(s => String(s.drug || '—').trim()), contacts: by(s => s.contactId || '') };
+    },
+    plan(month) { return (getMeta('salesPlan', {}) || {})[month] || {}; },
+    setPlan(month, drug, qty) { const all = Object.assign({}, (getMeta('salesPlan', {}) || {})); all[month] = Object.assign(Object.assign({}, (all[month] || {})), { [drug]: num(qty) }); if (!num(qty))
+        delete all[month][drug]; setMeta('salesPlan', all); },
+    pct(a, b) { if (!b)
+        return a ? null : 0; return Math.round((a - b) / b * 100); },
+    delta(a, b) { const p = this.pct(a, b); if (p === null)
+        return '<span class="tiny c-green">yangi</span>'; if (!p)
+        return '<span class="tiny c-mute">0%</span>'; return `<span class="tiny ${p > 0 ? 'c-green' : 'c-red'}">${p > 0 ? '▲' : '▼'} ${Math.abs(p)}%</span>`; },
+    render(v) {
+        const m = this.month = this.month || thisMonth();
+        const pm = TourPlan.shiftMonth(m, -1);
+        const A = this.agg(m), P = this.agg(pm);
+        const plan = this.plan(m);
+        const prevBy = new Map(P.drugs.map(x => [x.k, x]));
+        const planQty = Object.values(plan).reduce((s, x) => s + num(x), 0);
+        const months = [];
+        for (let i = 5; i >= 0; i--)
+            months.push(TourPlan.shiftMonth(m, -i));
+        const SH = ['Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyun', 'Iyul', 'Avg', 'Sen', 'Okt', 'Noy', 'Dek'];
+        const drugsAll = [...new Set([...A.drugs.map(x => x.k), ...Object.keys(plan)])];
+        const rowsD = drugsAll.map(k => { const x = A.drugs.find(d => d.k === k) || { k, qty: 0, sum: 0 }; return Object.assign(Object.assign({}, x), { plan: num(plan[k]), prev: prevBy.get(k) }); }).sort((a, b) => b.sum - a.sum || b.plan - a.plan);
+        v.innerHTML = `<div class="month-nav"><button class="icon-btn" id="saP">${ic('back')}</button><b>${TourPlan.monthLabel(m)}</b><button class="icon-btn" id="saN" style="transform:scaleX(-1)">${ic('back')}</button></div>
+      <div class="stats" style="margin:6px 0 10px">
+        <div class="stat"><div class="k">Sotuv summasi</div><div class="v">${short(A.sum)}</div>${this.delta(A.sum, P.sum)}</div>
+        <div class="stat"><div class="k">Dona</div><div class="v">${fmtNum(A.qty)}</div>${planQty ? `<div class="x">reja ${fmtNum(planQty)} · ${Math.round(A.qty / planQty * 100)}%</div>` : this.delta(A.qty, P.qty)}</div>
+        <div class="stat"><div class="k">Mijozlar</div><div class="v">${A.clients}</div><div class="x">o'rtacha ${short(A.clients ? A.sum / A.clients : 0)}</div></div>
+        <div class="stat"><div class="k">Preparatlar</div><div class="v">${A.drugs.length}</div><div class="x">${A.rows.length} ta yozuv</div></div></div>
+      <div class="section-h"><h2>Preparatlar bo'yicha</h2><button class="link" id="saPlan">Reja kiritish</button></div>
+      <div class="card" style="overflow-x:auto"><table class="tbl"><thead><tr><th>Preparat</th><th class="n">Dona</th><th class="n">Summa</th><th class="n">Ulush</th><th class="n">Reja</th><th class="n">O'tgan oy</th></tr></thead>
+        <tbody>${rowsD.map(x => `<tr data-drug="${esc(x.k)}"><td>${esc(x.k)}</td><td class="n">${fmtNum(x.qty)}</td><td class="n">${fmtNum(x.sum)}</td><td class="n">${A.sum ? Math.round(x.sum / A.sum * 100) : 0}%</td>
+          <td class="n">${x.plan ? `<span class="${x.qty >= x.plan ? 'c-green' : 'c-amber'}">${Math.round(x.qty / x.plan * 100)}%</span><div class="tiny c-mute">${fmtNum(x.plan)}</div>` : '<span class="c-mute">＋</span>'}</td>
+          <td class="n">${x.prev ? fmtNum(x.prev.qty) : '—'} ${this.delta(x.qty, x.prev ? x.prev.qty : 0)}</td></tr>`).join('') || '<tr><td colspan="6" class="c-mute" style="text-align:center;padding:18px">Bu oyda sotuv yo\'q</td></tr>'}</tbody>
+        ${rowsD.length ? `<tfoot><tr><td>Jami</td><td class="n">${fmtNum(A.qty)}</td><td class="n">${fmtNum(A.sum)}</td><td class="n">100%</td><td class="n">${planQty ? Math.round(A.qty / planQty * 100) + '%' : ''}</td><td class="n">${fmtNum(P.qty)}</td></tr></tfoot>` : ''}</table></div>
+      ${A.drugs.length ? `<div class="section"><div class="section-h"><h2>Top preparatlar (summa)</h2></div><div class="card pad">${hbars(A.drugs.slice(0, 8).map(x => ({ l: x.k, v: x.sum })))}</div></div>` : ''}
+      <div class="section"><div class="section-h"><h2>Mijozlar bo'yicha</h2></div><div class="card pad">${A.contacts.length ? hbars(A.contacts.slice(0, 10).map(x => ({ l: contactName(x.k) || '—', v: x.sum, id: x.k }))) : '<div class="small muted">Ma\'lumot yo\'q</div>'}</div></div>
+      <div class="section"><div class="section-h"><h2>6 oylik dinamika</h2></div><div class="card pad">${barChart(months.map(k => SH[+k.slice(5) - 1]), [{ name: 'Sotuv', color: 'var(--brand)', data: months.map(k => this.agg(k).sum) }])}</div></div>
+      <div class="section btn-row"><button class="btn" id="saX">${ic('download')}Excel</button><button class="btn" id="saPr">${ic('print')}PDF</button></div>`;
+        $('#saP', v).onclick = () => { this.month = pm; Router.render(); };
+        $('#saN', v).onclick = () => { this.month = TourPlan.shiftMonth(m, 1); Router.render(); };
+        $$('[data-drug]', v).forEach(tr => tr.onclick = () => this.editPlan(m, tr.dataset.drug));
+        $('#saPlan', v).onclick = () => this.planSheet(m);
+        $$('[data-hb]', v).forEach(b => b.onclick = () => b.dataset.hb && Contacts.open(b.dataset.hb));
+        $('#saX', v).onclick = () => ReportsCenter.excel('salesDrug', m);
+        $('#saPr', v).onclick = () => ReportsCenter.show('salesDrug', m);
+    },
+    async editPlan(m, drug) { const r = await formSheet(drug, [{ k: 'q', label: `${TourPlan.monthLabel(m)} uchun reja (dona)`, type: 'number' }], { q: this.plan(m)[drug] || '' }); if (r)
+        this.setPlan(m, drug, r.q); },
+    async planSheet(m) {
+        const names = [...new Set([...Object.keys(this.plan(m)), ...DB.expired.map(e => e.name), ...DB.sales.map(s => s.drug)].filter(Boolean))].sort((a, b) => a.localeCompare(b));
+        const r = await pickMany('Rejadagi preparatlar', names, Object.keys(this.plan(m)));
+        if (!r)
+            return;
+        const fields = r.map((n, i) => ({ k: 'p' + i, label: n, type: 'number', half: false }));
+        const vals = {};
+        r.forEach((n, i) => vals['p' + i] = this.plan(m)[n] || '');
+        const q = await formSheet(`Reja — ${TourPlan.monthLabel(m)}`, fields, vals);
+        if (!q)
+            return;
+        const all = Object.assign({}, (getMeta('salesPlan', {}) || {}));
+        all[m] = {};
+        r.forEach((n, i) => { if (num(q['p' + i]))
+            all[m][n] = num(q['p' + i]); });
+        setMeta('salesPlan', all);
+        UI.toast('Reja saqlandi', 'ok');
+    }
+};
+function hbars(items) {
+    const max = Math.max(1, ...items.map(x => x.v));
+    return items.map(x => `<div class="hb" ${x.id !== undefined ? `data-hb="${esc(x.id)}"` : ''}><div class="hb-l"><span>${esc(x.l)}</span><b class="num">${short(x.v)}</b></div><div class="bar"><i style="width:${Math.max(2, Math.round(x.v / max * 100))}%"></i></div></div>`).join('');
+}
+/* ═════════ ORDER: several drugs for one client at once ═════════ */
+const Order = {
+    async open(contactId) {
+        const names = [...new Set(DB.expired.map(e => e.name).concat(DB.sales.map(s => s.drug)).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+        let cid = contactId || '', date = today(), lines = [{ drug: '', qty: 1, price: 0 }];
+        const body = document.createElement('div');
+        const L = UI.open({ title: 'Buyurtma (bir nechta dori)', body, cls: 'full', foot: `<button class="btn primary" data-save></button>` });
+        const priceOf = n => { const e = DB.expired.find(x => norm(x.name) === norm(n)); if (e && num(e.price))
+            return num(e.price); const s = [...DB.sales].reverse().find(x => norm(x.drug) === norm(n)); return s ? num(s.price) : 0; };
+        const total = () => lines.reduce((s, l) => s + num(l.qty) * num(l.price), 0);
+        const draw = () => {
+            const c = byId('contacts', cid);
+            body.innerHTML = `<div class="fgrid" style="margin-bottom:12px"><div class="f"><label>Mijoz (dorixona yoki vrach) <span class="req">*</span></label><button type="button" class="picker" id="orC">${c ? `<span class="pv">${esc(c.name)}</span>` : '<span class="pv ph">Tanlang</span>'}<span class="c-mute">▾</span></button></div>
+        <div class="f"><label>Sana</label><input class="inp" type="date" id="orD" value="${date}"></div></div>
+        <datalist id="orList">${names.map(n => `<option value="${esc(n)}">`).join('')}</datalist>
+        <div class="list">${lines.map((l, i) => `<div class="card pad" style="padding:10px 12px"><div style="display:flex;gap:6px;align-items:center"><b class="c-mute" style="width:18px">${i + 1}</b><input class="inp" list="orList" data-dr="${i}" placeholder="Dori nomi" value="${esc(l.drug)}" style="flex:1"><button class="icon-btn" data-rm="${i}" aria-label="O'chirish">${ic('x')}</button></div>
+          <div style="display:grid;grid-template-columns:1fr 1.4fr 1.4fr;gap:6px;margin-top:6px"><input class="inp num" inputmode="decimal" data-q="${i}" value="${esc(l.qty)}" placeholder="Dona"><input class="inp num" inputmode="numeric" data-p="${i}" value="${l.price ? fmtNum(l.price) : ''}" placeholder="Narx"><div class="inp num" style="display:flex;align-items:center;background:var(--surface2)" data-t="${i}">${fmtNum(num(l.qty) * num(l.price))}</div></div></div>`).join('')}</div>
+        <button class="btn block" id="orAdd" style="margin-top:8px">${ic('plus')}Yana dori</button>
+        <div class="card pad" style="margin-top:10px;display:flex;justify-content:space-between"><span class="muted">Jami</span><b class="num" id="orTot">${money(total())}</b></div>
+        <p class="small muted" style="margin-top:8px">Ombordagi dori nomi bilan mos kelsa, uning qoldig'i avtomatik kamayadi.</p>`;
+            const upd = i => { const t = $(`[data-t="${i}"]`, body); if (t)
+                t.textContent = fmtNum(num(lines[i].qty) * num(lines[i].price)); $('#orTot', body).textContent = money(total()); $('[data-save]', L.el).textContent = `Saqlash · ${short(total())}`; };
+            $('#orC', body).onclick = async () => { const r = await pickContact({}); if (r !== undefined && r) {
+                cid = r;
+                draw();
+            } };
+            $('#orD', body).onchange = e => date = e.target.value || today();
+            $$('[data-dr]', body).forEach(inp => { inp.oninput = () => { lines[+inp.dataset.dr].drug = inp.value; }; inp.onchange = () => { const i = +inp.dataset.dr; const p = priceOf(inp.value); if (p && !lines[i].price) {
+                lines[i].price = p;
+                $(`[data-p="${i}"]`, body).value = fmtNum(p);
+                upd(i);
+            } }; });
+            $$('[data-q]', body).forEach(inp => inp.oninput = () => { lines[+inp.dataset.q].qty = inp.value; upd(+inp.dataset.q); });
+            $$('[data-p]', body).forEach(inp => inp.oninput = () => { moneyFmtInput(inp); lines[+inp.dataset.p].price = num(inp.value.replace(/\s/g, '')); upd(+inp.dataset.p); });
+            $$('[data-rm]', body).forEach(b => b.onclick = () => { lines.splice(+b.dataset.rm, 1); if (!lines.length)
+                lines.push({ drug: '', qty: 1, price: 0 }); draw(); });
+            $('#orAdd', body).onclick = () => { lines.push({ drug: '', qty: 1, price: 0 }); draw(); const ins = $$('[data-dr]', body); ins[ins.length - 1].focus(); };
+            upd(0);
+        };
+        draw();
+        $('[data-save]', L.el).onclick = () => {
+            const ok = lines.filter(l => String(l.drug).trim() && num(l.qty) > 0);
+            if (!cid) {
+                UI.toast('Mijozni tanlang', 'err');
+                return;
+            }
+            if (!ok.length) {
+                UI.toast('Kamida bitta dori kiriting', 'err');
+                return;
+            }
+            const orderId = uid();
+            ok.forEach(l => {
+                const e = DB.expired.find(x => norm(x.name) === norm(l.drug));
+                const s = { id: uid(), orderId, contactId: cid, drug: String(l.drug).trim(), qty: num(l.qty), price: num(l.price), total: num(l.qty) * num(l.price), date, note: '', stock: e ? { drugId: e.id, qty: num(l.qty) } : null };
+                Sales.applyStock(s, 1);
+                upsert('sales', s);
+            });
+            L.close();
+            UI.toast(`${ok.length} ta dori · ${money(ok.reduce((s, l) => s + num(l.qty) * num(l.price), 0))} saqlandi`, 'ok');
+        };
+    }
+};
+/* ═════════ REPORT TEMPLATES (table · Excel · PDF) ═════════ */
+const ReportsCenter = {
+    title: 'Hisobotlar',
+    T: {
+        monthly: { icon: '📊', title: 'Oylik hisobot', sub: 'Tashriflar, sotuv, reja-fakt, qarzlar — bitta hujjatda', monthly: true },
+        visits: { icon: '📍', title: 'Tashriflar jadvali', sub: 'Sana, kontakt, maqsad, natija, preparatlar, dvoynoy', monthly: true },
+        plan: { icon: '🗓️', title: 'Tur plan va fakt', sub: 'Har kun: reja hududi va qilingan tashriflar', monthly: true },
+        salesDrug: { icon: '💊', title: 'Sotuv: preparatlar bo\'yicha', sub: 'Dona, summa, ulush, reja %', monthly: true },
+        salesClient: { icon: '🏥', title: 'Sotuv: mijozlar bo\'yicha', sub: 'Har bir apteka/vrach qancha oldi', monthly: true },
+        doctors: { icon: '👨‍⚕️', title: 'Vrachlar qamrovi', sub: 'Kimga necha marta borildi, kim qolib ketdi', monthly: true },
+        debts: { icon: '💰', title: 'Qarzdorlar ro\'yxati', sub: 'Faol qarzlar, muddatlar' },
+        stock: { icon: '📦', title: 'Dorilar va muddatlar', sub: 'Qoldiq, narx, yaroqlilik' }
+    },
+    data(key, m) {
+        const vis = DB.visits.filter(v => monthKey(v.date) === m).sort((a, b) => (a.date + (a.time || '')).localeCompare(b.date + (b.time || '')));
+        if (key === 'visits')
+            return { head: ['Sana', 'Vaqt', 'Kontakt', 'Maqsad', 'Natija', 'Preparatlar', 'Dvoynoy', 'Izoh'], rows: vis.map(v => [fmtD(v.date, 'always'), v.time || '', contactName(v.contactId), lbl(VISIT_PURPOSE, v.purpose), lbl(VISIT_RESULT, v.result), (v.products || []).join(', '), v.joint ? (v.manager || 'ha') : '', v.note || '']), num: [] };
+        if (key === 'plan') {
+            const p = TourPlan.get(m);
+            const days = p ? p.days : TourPlan.blank(m);
+            return { head: ['Kun', 'Hafta kuni', 'Hudud', 'Obyektlar', 'Turi', 'Fakt (tashrif)', 'Kimlarga'], rows: days.map(d => {
+                    const date = `${m}-${pad(d.d)}`;
+                    const vv = DB.visits.filter(v => v.date === date);
+                    return [d.d, WEEKDAYS[TourPlan.wd(m, d.d)], d.district || '', d.objects || '', lbl(PLAN_TYPES, d.type) + (d.joint ? ' (dvoynoy)' : ''), vv.length || '', vv.map(v => contactName(v.contactId)).join(', ')];
+                }), num: [0, 5] };
+        }
+        if (key === 'salesDrug') {
+            const A = SalesA.agg(m), pl = SalesA.plan(m);
+            const ks = [...new Set([...A.drugs.map(x => x.k), ...Object.keys(pl)])];
+            const rows = ks.map(k => { const x = A.drugs.find(d => d.k === k) || { qty: 0, sum: 0 }; return [k, x.qty, x.sum, A.sum ? Math.round(x.sum / A.sum * 100) + '%' : '0%', pl[k] || '', pl[k] ? Math.round(x.qty / pl[k] * 100) + '%' : '']; }).sort((a, b) => b[2] - a[2]);
+            return { head: ['Preparat', 'Dona', 'Summa', 'Ulush', 'Reja', 'Bajarildi'], rows, num: [1, 2, 3, 4, 5], total: ['Jami', A.qty, A.sum, '100%', '', ''] };
+        }
+        if (key === 'salesClient') {
+            const A = SalesA.agg(m);
+            return { head: ['Mijoz', 'Yozuvlar', 'Dona', 'Summa'], rows: A.contacts.map(x => [contactName(x.k) || '—', x.n, x.qty, x.sum]), num: [1, 2, 3], total: ['Jami', A.rows.length, A.qty, A.sum] };
+        }
+        if (key === 'doctors') {
+            const lv = lastVisitMap();
+            return { head: ['Vrach', 'Toifa', 'Bu oy tashrif', 'Oxirgi tashrif', 'Holat'], rows: DB.contacts.filter(c => c.type !== 'dorixona').map(c => { const n = vis.filter(v => v.contactId === c.id).length; const d = visitDue(c, lv); return [c.name, c.cat || '', n, lv[c.id] ? fmtD(lv[c.id], 'always') : '—', d && d.days >= 0 ? 'tashrif kerak' : n ? 'qamrab olingan' : '—']; }).sort((a, b) => b[2] - a[2]), num: [2] };
+        }
+        if (key === 'debts') {
+            const o = DB.debts.filter(d => Debts.isOpen(d) && !d.personal);
+            return { head: ['Kontakt', 'Turi', 'Jami', 'To\'langan', 'Qoldiq', 'Muddat'], rows: o.map(d => [debtWho(d), d.type === 'olgan' ? 'Men qarzdor' : 'Menga qarzdor', Debts.due(d), Debts.paid(d), Debts.left(d), d.dueDate ? fmtD(d.dueDate, 'always') : '']), num: [2, 3, 4] };
+        }
+        if (key === 'stock') {
+            return { head: ['Nomi', 'Seriya', 'Miqdor', 'Narx', 'Muddat', 'Holat'], rows: [...DB.expired].sort((a, b) => (a.expDate || '9').localeCompare(b.expDate || '9')).map(e => [e.name, e.series || '', num(e.qty), num(e.price), e.expDate ? fmtD(e.expDate, 'always') : '', EXP_TAG[expStatus(e.expDate)][1]]), num: [2, 3] };
+        }
+        return { head: [], rows: [] };
+    },
+    html(key, m) {
+        const t = this.T[key];
+        const prof = getMeta('profile', {});
+        const hdr = `<h1>${esc(t.title)}</h1><div class="m">${t.monthly ? TourPlan.monthLabel(m) : fmtD(today(), 'always')}${prof.name ? ' · ' + esc(prof.name) : ''}${prof.company ? ' · ' + esc(prof.company) : ''}</div>`;
+        const tbl = k => { const d = this.data(k, m); const fm = r => r.map((c, i) => typeof c === 'number' && d.num.includes(i) && c > 999 ? fmtNum(c) : c); return Reports.table(d.head, d.rows.map(fm), d.num, d.total && fm(d.total)); };
+        if (key === 'monthly') {
+            const vis = DB.visits.filter(v => monthKey(v.date) === m);
+            const A = SalesA.agg(m);
+            const p = TourPlan.get(m);
+            const work = p ? p.days.filter(d => d.type === 'work').length : 0;
+            const daysWithVisits = new Set(vis.map(v => v.date)).size;
+            return hdr + `<div class="box"><div>Tashriflar<b>${vis.length}</b>${new Set(vis.map(v => v.contactId)).size} ta kontakt</div><div>Dvoynoy vizit<b>${vis.filter(v => v.joint).length}</b></div><div>Tur plan<b>${daysWithVisits}/${work || '—'}</b>ish kuni bajarildi</div><div>Sotuv<b>${money(A.sum)}</b>${fmtNum(A.qty)} dona</div></div>
+        <h2>Sotuv: preparatlar</h2>${tbl('salesDrug')}<h2>Tur plan va fakt</h2>${tbl('plan')}<h2>Tashriflar</h2>${tbl('visits')}<h2>Qarzlar</h2>${tbl('debts')}`;
+        }
+        return hdr + tbl(key);
+    },
+    show(key, m) { Reports.print(this.T[key].title + (this.T[key].monthly ? ' — ' + TourPlan.monthLabel(m) : ''), this.html(key, m)); },
+    async excel(key, m) {
+        try {
+            const XLSX = await loadLib('xlsx');
+            const wb = XLSX.utils.book_new();
+            const keys = key === 'monthly' ? ['salesDrug', 'plan', 'visits', 'salesClient', 'debts'] : [key];
+            keys.forEach(k => { const d = this.data(k, m); const ws = XLSX.utils.aoa_to_sheet([d.head, ...d.rows, ...(d.total ? [d.total] : [])]); ws['!cols'] = d.head.map((h, i) => ({ wch: Math.min(45, Math.max(8, h.length + 2, ...d.rows.slice(0, 100).map(r => { var _a; return String((_a = r[i]) !== null && _a !== void 0 ? _a : '').length + 1; }))) })); XLSX.utils.book_append_sheet(wb, ws, this.T[k].title.replace(/[:\\/?*[\]]/g, '').slice(0, 31)); });
+            XLSX.writeFile(wb, `farmapro_${key}_${this.T[key].monthly ? m : today()}.xlsx`);
+            UI.toast('Excel yuklab olindi', 'ok');
+        }
+        catch (e) {
+            UI.toast(e.message, 'err');
+        }
+    },
+    month: null,
+    render(v) {
+        const m = this.month = this.month || thisMonth();
+        v.innerHTML = `<div class="month-nav"><button class="icon-btn" id="rcP">${ic('back')}</button><b>${TourPlan.monthLabel(m)}</b><button class="icon-btn" id="rcN" style="transform:scaleX(-1)">${ic('back')}</button></div>
+      <div class="list" style="margin-top:6px">${Object.entries(this.T).map(([k, t]) => `<div class="item"><span class="av sq" style="font-size:20px">${t.icon}</span><span class="body"><span class="t">${esc(t.title)}</span><span class="s" style="white-space:normal">${esc(t.sub)}</span></span><span class="r" style="display:flex;gap:4px"><button class="btn sm" data-x="${k}" aria-label="Excel">XLS</button><button class="btn sm primary" data-v="${k}">Ko'rish</button></span></div>`).join('')}</div>`;
+        $('#rcP', v).onclick = () => { this.month = TourPlan.shiftMonth(m, -1); Router.render(); };
+        $('#rcN', v).onclick = () => { this.month = TourPlan.shiftMonth(m, 1); Router.render(); };
+        $$('[data-v]', v).forEach(b => b.onclick = () => this.show(b.dataset.v, m));
+        $$('[data-x]', v).forEach(b => b.onclick = () => this.excel(b.dataset.x, m));
+    }
+};
+/* ═════════ FACE ID / TOUCH ID (WebAuthn platform authenticator) ═════════ */
+const Bio = {
+    b64u(buf) { return btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); },
+    unb64u(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4)
+        s += '='; return Uint8Array.from(atob(s), c => c.charCodeAt(0)); },
+    async available() {
+        try {
+            return !!(window.PublicKeyCredential && window.isSecureContext && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable());
+        }
+        catch (_a) {
+            return false;
+        }
+    },
+    on() { return !!(SETS.bioId && AUTH); },
+    name() { return /iphone|ipad|mac/i.test(navigator.userAgent) ? 'Face ID / Touch ID' : 'barmoq izi / yuz'; },
+    async enable() {
+        if (!(await this.available())) {
+            UI.toast('Bu brauzerda Face ID ishlamaydi. Safari yoki uy ekranidagi ilovadan sinab ko\'ring.', 'err', 6000);
+            return false;
+        }
+        if (!AUTH) {
+            UI.toast('Avval PIN-kod qo\'ying — Face ID ishlamay qolsa, PIN zaxira bo\'ladi', 'err', 6000);
+            return false;
+        }
+        try {
+            const cred = await navigator.credentials.create({ publicKey: {
+                    challenge: crypto.getRandomValues(new Uint8Array(32)),
+                    rp: { name: 'FarmaPro', id: location.hostname },
+                    user: { id: crypto.getRandomValues(new Uint8Array(16)), name: 'farmapro', displayName: getMeta('profile', {}).name || 'FarmaPro' },
+                    pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+                    authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'discouraged' },
+                    timeout: 60000, attestation: 'none'
+                } });
+            SETS.bioId = this.b64u(cred.rawId);
+            await saveSets();
+            UI.toast(`${this.name()} yoqildi`, 'ok');
+            return true;
+        }
+        catch (e) {
+            if (e.name !== 'NotAllowedError')
+                UI.toast('Yoqilmadi: ' + e.message, 'err');
+            return false;
+        }
+    },
+    async verify() {
+        if (!SETS.bioId)
+            return false;
+        try {
+            await navigator.credentials.get({ publicKey: { challenge: crypto.getRandomValues(new Uint8Array(32)), rpId: location.hostname,
+                    allowCredentials: [{ type: 'public-key', id: this.unb64u(SETS.bioId), transports: ['internal'] }], userVerification: 'required', timeout: 60000 } });
+            return true;
+        }
+        catch (e) {
+            return false;
+        }
+    },
+    async disable() { SETS.bioId = ''; await saveSets(); UI.toast('O\'chirildi', 'ok'); }
+};
+/* ═════════ PULL TO REFRESH ═════════ */
+const Pull = {
+    init() {
+        const ind = document.createElement('div');
+        ind.id = 'ptr';
+        ind.innerHTML = `<span>${ic('sync')}</span>`;
+        document.body.appendChild(ind);
+        let y0 = null, dy = 0, busy = false;
+        const can = () => !busy && !UI.stack.length && !$('#app').hidden && !$('#printView') && window.scrollY <= 0;
+        document.addEventListener('touchstart', e => { if (can() && e.touches.length === 1) {
+            y0 = e.touches[0].clientY;
+            dy = 0;
+        }
+        else
+            y0 = null; }, { passive: true });
+        document.addEventListener('touchmove', e => {
+            if (y0 === null)
+                return;
+            dy = e.touches[0].clientY - y0;
+            if (dy <= 0 || window.scrollY > 0) {
+                ind.style.transform = '';
+                ind.classList.remove('on', 'ready');
+                return;
+            }
+            const d = Math.min(dy * .5, 90);
+            ind.classList.add('on');
+            ind.classList.toggle('ready', d >= 60);
+            ind.style.transform = `translate(-50%,${d}px) rotate(${d * 4}deg)`;
+        }, { passive: true });
+        document.addEventListener('touchend', async () => {
+            if (y0 === null)
+                return;
+            const go = Math.min(dy * .5, 90) >= 60;
+            y0 = null;
+            if (!go) {
+                ind.style.transform = '';
+                ind.classList.remove('on', 'ready');
+                return;
+            }
+            busy = true;
+            ind.classList.add('spin');
+            ind.style.transform = 'translate(-50%,64px)';
+            try {
+                await this.refresh();
+            }
+            finally {
+                busy = false;
+                ind.classList.remove('spin', 'on', 'ready');
+                ind.style.transform = '';
+            }
+        });
+    },
+    async refresh() {
+        try {
+            navigator.vibrate && navigator.vibrate(15);
+        }
+        catch (_a) { }
+        let msg = 'Yangilandi';
+        if (Sync.on()) {
+            const ok = await Sync.sync({ silent: true });
+            msg = ok ? 'Yangilandi · sinxron' : 'Yangilandi (sinxron: ' + (SETS.ghLastErr || 'xato') + ')';
+        }
+        else
+            await sleep(400);
+        Notify.check();
+        Router.render();
+        UI.toast(msg, Sync.on() && SETS.ghLastErr ? 'err' : 'ok', 2200);
+    }
+};
 /* ═════════ DRUGS / STOCK ═════════ */
 const DRUG_CATS = [['', '—'], ['antibiotik', 'Antibiotik'], ['vitamin', 'Vitamin'], ['yurak', 'Yurak'], ['qon', 'Qon bosimi'], ['og_riq', "Og'riq qoldiruvchi"], ['diabet', 'Diabet'], ['oshqozon', 'Oshqozon'], ['boshqa_kat', 'Boshqa']];
 const DRUG_WHO = [['men', 'Men (o\'zim javobgar)'], ['kompaniya', 'Kompaniya'], ['boshqa', 'Boshqa']];
@@ -3486,7 +4535,7 @@ const Returned = {
 };
 /* ═════════ SALES (linked to stock) ═════════ */
 const Sales = {
-    title: 'Sotuvlar', per: 'month', q: '',
+    title: 'Sotuvlar', per: 'month', q: '', seg: 'list',
     inPer(s) {
         if (this.per === 'all')
             return true;
@@ -3501,6 +4550,15 @@ const Sales = {
         return (s.date || '').slice(0, 4) === m.slice(0, 4);
     },
     render(v) {
+        v.innerHTML = `<div class="seg" style="margin-top:8px"><button data-sg="list" class="${this.seg === 'list' ? 'on' : ''}">Ro'yxat</button><button data-sg="an" class="${this.seg === 'an' ? 'on' : ''}">Tahlil va reja</button></div><div id="slB"></div>`;
+        $$('[data-sg]', v).forEach(b => b.onclick = () => { this.seg = b.dataset.sg; Router.render(); });
+        if (this.seg === 'an') {
+            SalesA.render($('#slB', v));
+            return;
+        }
+        this.renderList($('#slB', v));
+    },
+    renderList(v) {
         var _a;
         const q = norm(this.q);
         const list = DB.sales.filter(s => this.inPer(s) && (!q || norm(s.drug).includes(q) || norm(contactName(s.contactId)).includes(q))).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
@@ -3808,7 +4866,7 @@ const Home = {
             items.push({ cls: n < 0 ? 'red' : 'amber', icon: '🔔', t: r.title, s: `${n < 0 ? relD(r.remindDate) : 'Bugun' + (r.remindTime ? ' ' + r.remindTime : '')}${r.contactId ? ' · ' + contactName(r.contactId) : ''}`, sort: n, act: () => Reminders.edit(r.id), done: r.id }); });
         DB.debts.forEach(d => { const nd = Debts.nextDue(d); if (!nd)
             return; const n = dLeft(nd.date); if (n <= 3)
-            items.push({ cls: n < 0 ? 'red' : 'amber', icon: d.type === 'olgan' ? '📤' : '💰', t: `${contactName(d.contactId) || 'Qarz'}: ${money(nd.amount)}`, s: `${d.type === 'olgan' ? 'Men to\'lashim kerak' : 'Qaytarishi kerak'} · ${relD(nd.date)}`, sort: n, act: () => Debts.open(d.id) }); });
+            items.push({ cls: n < 0 ? 'red' : 'amber', icon: d.type === 'olgan' ? '📤' : '💰', t: `${debtWho(d) || 'Qarz'}: ${money(nd.amount)}`, s: `${d.type === 'olgan' ? 'Men to\'lashim kerak' : 'Qaytarishi kerak'} · ${relD(nd.date)}`, sort: n, act: () => Debts.open(d.id) }); });
         DB.expired.forEach(e => {
             const st = expStatus(e.expDate);
             if (st === 'expired' || st === 'exp30')
@@ -3835,6 +4893,12 @@ const Home = {
             if (due.length > 6)
                 items.push({ cls: 'green', icon: '🧭', t: `Yana ${due.length - 6} ta tashrif kerak`, s: 'Marshrut tuzish', sort: 2.5, act: () => Route.open() });
         }
+        DB.notes.forEach(n => {
+            if (n.kind === 'promise' && !n.done && n.due && dLeft(n.due) <= 1)
+                items.push({ cls: dLeft(n.due) < 0 ? 'red' : 'amber', icon: '🤞', t: n.title, s: `${n.dir === 'menga' ? 'Menga va\'da' : 'Men va\'da berdim'}${n.person ? ' · ' + n.person : ''} · ${relD(n.due)}`, sort: dLeft(n.due), act: () => Personal.editPromise(n.id) });
+            if (n.kind !== 'promise' && n.remind && dLeft(n.remind) <= 0 && dLeft(n.remind) > -7)
+                items.push({ cls: 'blue', icon: '🗒️', t: n.title || 'Qayd', s: 'Qayd eslatmasi · ' + relD(n.remind), sort: dLeft(n.remind) + .5, act: () => Personal.editNote(n.id) });
+        });
         DB.projects.forEach(p => { if (p.status === 'ketdi' && p.retDate && dLeft(p.retDate) <= 1)
             items.push({ cls: 'blue', icon: '✈️', t: `${contactName(p.contactId)} qaytadi`, s: relD(p.retDate), sort: dLeft(p.retDate), act: () => Projects.editTrip(p.id) }); });
         DB.events.forEach(e => { if (e.status === 'rejalashtirilgan' && dLeft(e.date) >= 0 && dLeft(e.date) <= 2)
@@ -3842,49 +4906,77 @@ const Home = {
         return items.sort((a, b) => a.sort - b.sort);
     },
     render(v) {
-        var _a;
+        var _a, _b;
         const d = new Date();
         const m = thisMonth();
-        const open = DB.debts.filter(x => Debts.isOpen(x));
+        const pf = getMeta('profile', {});
+        const hr = d.getHours();
+        const greet = hr < 5 ? 'Xayrli tun' : hr < 11 ? 'Xayrli tong' : hr < 17 ? 'Xayrli kun' : hr < 22 ? 'Xayrli kech' : 'Xayrli tun';
+        const open = DB.debts.filter(x => !x.personal && Debts.isOpen(x));
         const owed = open.filter(x => x.type !== 'olgan').reduce((s, x) => s + Debts.left(x), 0);
-        const iOwe = open.filter(x => x.type === 'olgan').reduce((s, x) => s + Debts.left(x), 0);
-        const sales = DB.sales.filter(s => monthKey(s.date) === m).reduce((s, x) => s + num(x.total), 0);
-        const visitsM = DB.visits.filter(x => monthKey(x.date) === m).length;
-        const visitsT = DB.visits.filter(x => x.date === today()).length;
-        const ag = this.agenda();
+        const A = SalesA.agg(m);
+        const plan = SalesA.plan(m);
+        const planQty = Object.values(plan).reduce((s, x) => s + num(x), 0);
         const kpi = getMeta('kpi', {});
+        const vis = DB.visits.filter(x => monthKey(x.date) === m);
+        const tp = TourPlan.get(m);
+        const workDays = tp ? tp.days.filter(x => x.type === 'work').length : 0;
+        const visTarget = num(kpi.visits) || (workDays ? workDays * 8 : 0);
+        const salesPct = planQty ? A.qty / planQty * 100 : num(kpi.sales) ? A.sum / num(kpi.sales) * 100 : null;
+        const td = TourPlan.today();
+        const tVis = DB.visits.filter(x => x.date === today());
+        const ag = this.agenda();
         v.innerHTML = `
       <div class="hero" style="margin-top:6px"><svg class="cross" viewBox="0 0 24 24" fill="currentColor"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/></svg>
         <div class="d">${WEEKDAYS[d.getDay()]}, ${d.getDate()}-${MONTHS[d.getMonth()]}</div>
-        <div class="big">${short(owed)} <span style="font-size:15px;font-weight:500;opacity:.85">so'm sizga qarzdor</span></div>
-        <div class="row"><div><b>${short(sales)}</b>bu oy sotuv${kpi.sales ? ` · ${Math.round(sales / kpi.sales * 100)}%` : ''}</div><div><b>${visitsM}</b>tashrif${kpi.visits ? ` / ${kpi.visits}` : ''}${visitsT ? ` (bugun ${visitsT})` : ''}</div>${iOwe ? `<div><b>${short(iOwe)}</b>men qarzdorman</div>` : ''}</div>
+        <div class="greet">${greet}${pf.name ? ', ' + esc(pf.name) : ''}!</div>
+        ${td ? `<div class="plan-today"><span class="pt-l">Bugungi reja</span><b>${esc(td.district || lbl(PLAN_TYPES, td.type))}${td.joint ? ' · 👥 dvoynoy' : ''}</b>${td.objects ? `<span>${esc(td.objects)}</span>` : ''}
+          <div class="pt-act"><button class="hbtn" data-q="route">${ic('nav')}Marshrut</button><button class="hbtn" data-q="visit">${ic('plus')}Tashrif${tVis.length ? ` · ${tVis.length}` : ''}</button></div></div>`
+            : `<div class="plan-today"><span class="pt-l">Bugun</span><b>${tVis.length ? tVis.length + ' ta tashrif qilindi' : 'Tur plan kiritilmagan'}</b><div class="pt-act"><button class="hbtn" data-tp>${ic('upload')}Tur planni yuklash</button></div></div>`}
+      </div>
+      <div class="rings">
+        ${ring(visTarget ? vis.length / visTarget * 100 : null, 'Tashrif', `${vis.length}${visTarget ? '/' + visTarget : ''}`, 'var(--blue)', 'visits')}
+        ${ring(salesPct, 'Sotuv', short(A.sum), 'var(--brand)', 'sales')}
+        ${ring(null, 'Sizga qarz', short(owed), 'var(--red)', 'debts')}
       </div>
       <div class="section"><div class="actions">
         <button class="act" data-q="visit"><span class="i">📍</span>Tashrif</button>
+        <button class="act" data-q="order"><span class="i">🧾</span>Buyurtma</button>
         <button class="act" data-q="pay"><span class="i">💳</span>To'lov</button>
         <button class="act" data-q="debt"><span class="i">💰</span>Qarz</button>
-        <button class="act" data-q="sale"><span class="i">🛒</span>Sotuv</button>
         <button class="act" data-q="contact"><span class="i">👤</span>Kontakt</button>
-        <button class="act" data-q="rem"><span class="i">🔔</span>Eslatma</button>
+        <button class="act" data-q="note"><span class="i">🗒️</span>Qayd</button>
         <button class="act" data-q="route"><span class="i">🧭</span>Marshrut</button>
         <button class="act" data-q="day"><span class="i">📋</span>Kun yakuni</button>
       </div></div>
       <div class="section"><div class="section-h"><h2>Bugun e'tibor bering</h2>${ag.length ? `<span class="small muted">${ag.length} ta</span>` : ''}</div>
-        <div class="list agenda">${ag.slice(0, 12).map((a, i) => `<div class="item ${a.cls}" data-a="${i}" style="cursor:pointer"><span style="font-size:20px;width:26px;text-align:center">${a.icon}</span><span class="body"><span class="t">${esc(a.t)}</span><span class="s">${esc(a.s)}</span></span>${a.done ? `<button class="btn sm" data-ad="${a.done}">Bajarildi</button>` : '<span class="c-mute">›</span>'}</div>`).join('') || `<div class="card pad" style="text-align:center;color:var(--ink2)">Shoshilinch ish yo'q. Yaqin atrofdagi vrachlarga tashrif rejalashtirish uchun <a href="#/map">xaritani</a> oching.</div>`}
+        <div class="list agenda">${ag.slice(0, 12).map((a, i) => `<div class="item ${a.cls}" data-a="${i}" style="cursor:pointer"><span style="font-size:20px;width:26px;text-align:center">${a.icon}</span><span class="body"><span class="t">${esc(a.t)}</span><span class="s">${esc(a.s)}</span></span>${a.done ? `<button class="btn sm" data-ad="${a.done}">Bajarildi</button>` : '<span class="c-mute">›</span>'}</div>`).join('') || `<div class="card pad" style="text-align:center;color:var(--ink2)">Shoshilinch ish yo'q 👌</div>`}
         ${ag.length > 12 ? `<button class="btn block sm" style="margin-top:8px" id="agAll">Yana ${ag.length - 12} ta</button>` : ''}</div></div>
       <div class="section"><div class="stats">
         <a class="stat" href="#/contacts" style="text-decoration:none;color:inherit"><div class="k">Kontaktlar</div><div class="v">${DB.contacts.length}</div><div class="x">${DB.contacts.filter(c => c.type !== 'dorixona').length} vrach · ${DB.contacts.filter(c => c.type === 'dorixona').length} dorixona</div></a>
-        <a class="stat" href="#/debts" style="text-decoration:none;color:inherit"><div class="k">Faol qarzlar</div><div class="v">${open.length}</div><div class="x ${open.some(x => Debts.overdue(x)) ? 'c-red' : ''}">${open.filter(x => Debts.overdue(x)).length} tasi kechikkan</div></a>
+        <a class="stat" href="#/visits" style="text-decoration:none;color:inherit"><div class="k">Dvoynoy vizit (oy)</div><div class="v c-violet">${vis.filter(x => x.joint).length}</div><div class="x">${new Set(vis.map(x => x.contactId)).size} ta kontakt qamrovi</div></a>
         <a class="stat" href="#/drugs" style="text-decoration:none;color:inherit"><div class="k">Dorilar</div><div class="v">${DB.expired.length}</div><div class="x">${DB.expired.filter(e => expStatus(e.expDate) !== 'ok').length} tasi muddatga yaqin</div></a>
-        <a class="stat" href="#/gifts" style="text-decoration:none;color:inherit"><div class="k">Sovg'alar (bu oy)</div><div class="v">${short(DB.gifts.filter(g => monthKey(g.date) === m).reduce((s, g) => s + num(g.amount), 0))}</div></a>
+        <a class="stat" href="#/personal" style="text-decoration:none;color:inherit"><div class="k">Shaxsiy</div><div class="v">${DB.notes.filter(n => n.kind === 'promise' && !n.done).length}</div><div class="x">faol va'da · ${DB.notes.filter(n => n.kind !== 'promise').length} qayd</div></a>
       </div></div>`;
         $$('[data-a]', v).forEach(b => b.onclick = e => { if (e.target.closest('[data-ad]'))
             return; ag[+b.dataset.a].act(); });
         $$('[data-ad]', v).forEach(b => b.onclick = () => Reminders.toggle(b.dataset.ad));
         (_a = $('#agAll', v)) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => { const L = UI.open({ title: 'Hammasi', foot: null, body: `<div class="list agenda">${ag.map((a, i) => `<button class="item ${a.cls}" data-a="${i}"><span style="font-size:20px">${a.icon}</span><span class="body"><span class="t">${esc(a.t)}</span><span class="s">${esc(a.s)}</span></span></button>`).join('')}</div>` }); $$('[data-a]', L.el).forEach(b => b.onclick = () => ag[+b.dataset.a].act()); });
         $$('[data-q]', v).forEach(b => b.onclick = () => Quick[b.dataset.q]());
+        (_b = $('[data-tp]', v)) === null || _b === void 0 ? void 0 : _b.addEventListener('click', () => TourPlan.importMenu(thisMonth()));
+        $$('[data-ring]', v).forEach(b => b.onclick = () => { const k = b.dataset.ring; if (k === 'sales') {
+            Sales.seg = 'an';
+            Router.go('sales');
+        }
+        else
+            Router.go(k); });
     }
 };
+function ring(pct, label, value, color, key) {
+    const r = 30, c = 2 * Math.PI * r;
+    const p = pct == null ? null : Math.max(0, Math.min(100, pct));
+    return `<button class="ring" data-ring="${key}"><svg viewBox="0 0 72 72" width="72" height="72"><circle cx="36" cy="36" r="${r}" fill="none" stroke="var(--surface2)" stroke-width="7"/>${p != null ? `<circle cx="36" cy="36" r="${r}" fill="none" stroke="${color}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - p / 100)}" transform="rotate(-90 36 36)"/>` : `<circle cx="36" cy="36" r="${r}" fill="none" stroke="${color}" stroke-width="7" opacity=".25"/>`}<text x="36" y="41" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">${p != null ? Math.round(pct) + '%' : '—'}</text></svg><b class="num">${esc(value)}</b><span>${esc(label)}</span></button>`;
+}
 const Quick = {
     visit: async () => { const c = await pickContact({}); if (c)
         Visits.edit(null, c); },
@@ -3894,10 +4986,11 @@ const Quick = {
             UI.toast('Faol qarz yo\'q');
             return;
         }
-        const r = await UI.menu('Qaysi qarzga to\'lov?', open.sort((a, b) => contactName(a.contactId).localeCompare(contactName(b.contactId))).map(d => ({ icon: d.type === 'olgan' ? '📤' : '💰', label: contactName(d.contactId) || '—', sub: `Qoldiq ${money(Debts.left(d))}${d.note ? ' · ' + d.note : ''}`, value: d.id })));
+        const r = await UI.menu('Qaysi qarzga to\'lov?', open.sort((a, b) => debtWho(a).localeCompare(debtWho(b))).map(d => ({ icon: d.type === 'olgan' ? '📤' : '💰', label: debtWho(d) || '—', sub: `Qoldiq ${money(Debts.left(d))}${d.note ? ' · ' + d.note : ''}`, value: d.id })));
         if (r)
             Debts.pay(r);
     },
+    order: () => Order.open(), note: () => Personal.editNote(),
     debt: () => Debts.edit(), sale: () => Sales.edit(), contact: () => Contacts.edit(), rem: () => Reminders.edit(), route: () => Route.open(), day: () => DaySum.open()
 };
 /* ═════════ SVG charts (no external library, work offline) ═════════ */
@@ -4374,15 +5467,16 @@ function refreshUI() { listeners.forEach(f => { if (f !== Sync._listener)
 const Excel = {
     sheets: {
         contacts: ['Kontaktlar', () => DB.contacts.map(c => { var _a, _b; return ({ 'Ism/Nomi': c.name, 'Turi': c.type === 'dorixona' ? 'Dorixona' : 'Vrach', 'Telefon': fmtPhone(c.phone), "Qo'shimcha telefon": fmtPhone(c.phone2), 'Mutaxassisligi': c.spec || '', 'Ish joyi': c.workplace || '', 'Hudud': regionLabel(c.region), 'Manzil': c.address || '', "Tug'ilgan kun": c.birthday || '', 'Kenglik': (_a = c.lat) !== null && _a !== void 0 ? _a : '', 'Uzunlik': (_b = c.lng) !== null && _b !== void 0 ? _b : '', 'Izoh': c.note || '' }); })],
-        debts: ['Qarzlar', () => DB.debts.map(d => ({ 'Kontakt': contactName(d.contactId), 'Turi': d.type === 'olgan' ? 'Men qarzdorman' : 'Menga qarzdor', 'Summa': num(d.amount), 'Jami (foiz bilan)': Debts.due(d), "To'langan": Debts.paid(d), 'Qoldiq': Debts.left(d), 'Holat': Debts.isOpen(d) ? (Debts.overdue(d) ? 'Kechikkan' : 'Faol') : 'Yopilgan', 'Sana': d.date || '', 'Muddat': d.dueDate || '', 'Foiz %': d.interest || '', 'Izoh': d.note || '' }))],
-        payments: ["To'lovlar", () => DB.debts.flatMap(d => (d.payments || []).map(p => ({ 'Kontakt': contactName(d.contactId), 'Qarz turi': d.type === 'olgan' ? 'Men qarzdorman' : 'Menga qarzdor', 'Sana': p.date, 'Summa': num(p.amount), 'Izoh': p.note || '' })))],
+        debts: ['Qarzlar', () => DB.debts.map(d => ({ 'Kontakt': debtWho(d), 'Shaxsiy': d.personal ? 'ha' : '', 'Turi': d.type === 'olgan' ? 'Men qarzdorman' : 'Menga qarzdor', 'Summa': num(d.amount), 'Jami (foiz bilan)': Debts.due(d), "To'langan": Debts.paid(d), 'Qoldiq': Debts.left(d), 'Holat': Debts.isOpen(d) ? (Debts.overdue(d) ? 'Kechikkan' : 'Faol') : 'Yopilgan', 'Sana': d.date || '', 'Muddat': d.dueDate || '', 'Foiz %': d.interest || '', 'Izoh': d.note || '' }))],
+        payments: ["To'lovlar", () => DB.debts.flatMap(d => (d.payments || []).map(p => ({ 'Kontakt': debtWho(d), 'Qarz turi': d.type === 'olgan' ? 'Men qarzdorman' : 'Menga qarzdor', 'Sana': p.date, 'Summa': num(p.amount), 'Izoh': p.note || '' })))],
         gifts: ["Sovg'alar", () => DB.gifts.map(g => ({ 'Kontakt': contactName(g.contactId), 'Turi': lbl(GIFT_TYPES, g.type), 'Nomi': g.name, 'Model': g.model || '', 'Qiymati': num(g.amount), 'Sana': g.date || '', 'Izoh': g.note || '' }))],
         expired: ['Dorilar', () => DB.expired.map(e => ({ 'Nomi': e.name, 'Shtrix-kod': e.barcode || '', 'Seriya': e.series || '', 'Qadoqda': e.pack || '', 'Ishlab chiqaruvchi': e.maker || '', 'Miqdor': num(e.qty), 'Narx': num(e.price), 'Jami': num(e.qty) * num(e.price), 'Yaroqlilik muddati': e.expDate || '', 'Holat': EXP_TAG[expStatus(e.expDate)][1], 'Olingan': e.recDate || '', 'Berilgan': e.givenDate || '', 'Minimal': num(e.minStock) || '', 'Kategoriya': lbl(DRUG_CATS, e.category), 'Javobgar': lbl(DRUG_WHO, e.who), 'Izoh': e.note || '' }))],
         sales: ['Sotuvlar', () => DB.sales.map(s => ({ 'Kontakt': contactName(s.contactId), 'Dori': s.drug, 'Miqdor': num(s.qty), 'Narx': num(s.price), 'Jami': num(s.total), 'Sana': s.date || '', 'Izoh': s.note || '' }))],
         returned: ['Qaytarilgan', () => DB.returned.map(r => ({ 'Dori': r.name, 'Miqdor': num(r.qty), 'Narx': num(r.price), 'Jami': num(r.total), 'Kimdan': contactName(r.contactId), 'Sabab': lbl(RET_REASON, r.reason), 'Holat': lbl(RET_STATUS, r.status), 'Sana': r.date || '', 'Izoh': r.note || '' }))],
-        visits: ['Tashriflar', () => DB.visits.map(v => ({ 'Kontakt': contactName(v.contactId), 'Sana': v.date, 'Vaqt': v.time || '', 'Maqsad': lbl(VISIT_PURPOSE, v.purpose), 'Natija': lbl(VISIT_RESULT, v.result), 'Joyida': v.dist != null ? (v.dist <= 150 ? 'ha' : Geo.fmtDist(v.dist) + ' uzoqda') : '', 'Izoh': v.note || '' }))],
+        visits: ['Tashriflar', () => DB.visits.map(v => ({ 'Kontakt': contactName(v.contactId), 'Sana': v.date, 'Vaqt': v.time || '', 'Maqsad': lbl(VISIT_PURPOSE, v.purpose), 'Natija': lbl(VISIT_RESULT, v.result), 'Preparatlar': (v.products || []).join(', '), 'Dvoynoy': v.joint ? (v.manager || 'ha') : '', 'Joyida': v.dist != null ? (v.dist <= 150 ? 'ha' : Geo.fmtDist(v.dist) + ' uzoqda') : '', 'Izoh': v.note || '' }))],
         reminders: ['Eslatmalar', () => DB.reminders.map(r => ({ 'Sarlavha': r.title, 'Kontakt': contactName(r.contactId), 'Sana': r.remindDate || '', 'Vaqt': r.remindTime || '', 'Takror': lbl(RECUR, r.recur), 'Holat': r.done ? 'Bajarildi' : 'Kutilmoqda', 'Tafsilot': r.desc || '' }))],
         projects: ['Sayohatlar', () => DB.projects.map(p => ({ 'Vrach': contactName(p.contactId), "Yo'nalish": lbl(DESTS, p.destination) || p.destination, 'Ketish': p.depDate || '', 'Qaytish': p.retDate || '', 'Holat': lbl(TRIP_ST, p.status), 'Xarajat': num(p.cost), 'Izoh': p.note || '' }))],
+        notes: ['Shaxsiy qaydlar', () => DB.notes.map(n => ({ 'Turi': n.kind === 'promise' ? 'Va\'da' : 'Qayd', 'Sarlavha': n.title || '', 'Kim': n.person || '', 'Sana': n.due || n.remind || '', 'Holat': n.kind === 'promise' ? (n.done ? 'bajarildi' : 'kutilmoqda') : '', 'Matn': n.text || '', 'Fayllar': (n.files || []).map(f => f.name).join(', ') }))],
         events: ['Tadbirlar', () => DB.events.map(e => ({ 'Nomi': e.name, 'Sana': e.date || '', 'Vaqt': e.time || '', 'Joyi': e.location || '', 'Holat': lbl(EVT_ST, e.status), 'Taklif': (e.invitees || []).length, 'Tasdiqladi': (e.invitees || []).filter(i => i.confirmed).length }))]
     },
     async build(keys) {
@@ -4451,7 +5545,7 @@ const Reports = {
             return `<h2>Kontaktlar (${DB.contacts.length})</h2>` + this.table(['Ism', 'Turi', 'Telefon', 'Mutaxassislik', 'Hudud', 'Manzil'], [...DB.contacts].sort((a, b) => a.name.localeCompare(b.name, 'uz')).map(c => [c.name, c.type === 'dorixona' ? 'Dorixona' : 'Vrach', fmtPhone(c.phone), c.spec || '', regionLabel(c.region), c.address || '']));
         if (k === 'debts') {
             const o = DB.debts.filter(d => Debts.isOpen(d));
-            return `<h2>Faol qarzlar (${o.length})</h2>` + this.table(['Kontakt', 'Turi', 'Jami', 'To\'langan', 'Qoldiq', 'Muddat'], o.map(d => [contactName(d.contactId), d.type === 'olgan' ? 'Men qarzdor' : 'Menga qarzdor', fmtNum(Debts.due(d)), fmtNum(Debts.paid(d)), fmtNum(Debts.left(d)), d.dueDate ? fmtD(d.dueDate, 'always') : '']), [2, 3, 4], ['Jami', '', fmtNum(o.reduce((s, d) => s + Debts.due(d), 0)), fmtNum(o.reduce((s, d) => s + Debts.paid(d), 0)), fmtNum(o.reduce((s, d) => s + Debts.left(d), 0)), '']);
+            return `<h2>Faol qarzlar (${o.length})</h2>` + this.table(['Kontakt', 'Turi', 'Jami', 'To\'langan', 'Qoldiq', 'Muddat'], o.map(d => [debtWho(d), d.type === 'olgan' ? 'Men qarzdor' : 'Menga qarzdor', fmtNum(Debts.due(d)), fmtNum(Debts.paid(d)), fmtNum(Debts.left(d)), d.dueDate ? fmtD(d.dueDate, 'always') : '']), [2, 3, 4], ['Jami', '', fmtNum(o.reduce((s, d) => s + Debts.due(d), 0)), fmtNum(o.reduce((s, d) => s + Debts.paid(d), 0)), fmtNum(o.reduce((s, d) => s + Debts.left(d), 0)), '']);
         }
         if (k === 'expired') {
             const l = [...DB.expired].sort((a, b) => (a.expDate || '9').localeCompare(b.expDate || '9'));
@@ -4636,7 +5730,7 @@ const Notify = {
             if (!this.once('d:' + d.id + ':' + nd.date + ':' + (n < 0 ? 'late' : 'due')))
                 return;
             changed = true;
-            const m = `${d.type === 'olgan' ? 'To\'lashingiz kerak' : 'Qarz qaytishi kerak'}: ${contactName(d.contactId)} — ${money(nd.amount)} (${relD(nd.date)})`;
+            const m = `${d.type === 'olgan' ? 'To\'lashingiz kerak' : 'Qarz qaytishi kerak'}: ${debtWho(d)} — ${money(nd.amount)} (${relD(nd.date)})`;
             if (SETS.nInApp !== false)
                 toastQ('💰 ' + m, n < 0 ? 'err' : '');
             this.push('FarmaPro: qarz', m, 'd' + d.id);
@@ -4676,13 +5770,14 @@ const Notify = {
     }
 };
 /* ═════════ SETTINGS ═════════ */
-const APP_VERSION = '20.6';
+const APP_VERSION = '21.0';
 const Settings = {
     title: 'Sozlamalar', noAuto: true,
     render(v) {
-        var _a, _b;
+        var _a, _b, _c;
         const s = SETS;
         v.innerHTML = `
+      <div class="section"><div class="section-h"><h2>Profil</h2></div><div class="card pad" id="profBox"></div></div>
       <div class="section"><div class="section-h"><h2>Sinxron (GitHub)</h2></div><div class="card pad" id="ghBox"></div></div>
       <div class="section"><div class="section-h"><h2>Zaxira nusxa</h2></div><div class="card pad">
         <p class="small muted" style="margin-bottom:10px">Telefon har kuni avtomatik nusxa oladi (oxirgi 7 kun). Faylga yuklab olingan nusxani istalgan qurilmada tiklash mumkin.</p>
@@ -4706,10 +5801,22 @@ const Settings = {
         <div class="fgrid"><div class="f half"><label>Mavzu</label><select class="inp" id="theme"><option value="auto" ${s.theme === 'auto' ? 'selected' : ''}>Telefonga moslash</option><option value="light" ${s.theme === 'light' ? 'selected' : ''}>Yorug'</option><option value="dark" ${s.theme === 'dark' ? 'selected' : ''}>Qorong'i</option></select></div>
         ${AUTH ? `<div class="f half"><label>PIN so'rash</label><select class="inp" id="lockMode"><option value="remember" ${s.lockMode !== 'ask' ? 'selected' : ''}>Faqat qulflaganda</option><option value="ask" ${s.lockMode === 'ask' ? 'selected' : ''}>Har safar ochilganda</option></select></div>` : ''}</div>
         <div class="small muted" style="margin-top:10px">${AUTH ? 'PIN-kod yoqilgan.' : 'PIN-kod yo\'q — ilova darhol ochiladi. Telefoningiz Face ID yoki kod bilan qulflangan bo\'lsa, bu yetarli.'}</div>
+        ${AUTH ? `<label class="switch" style="margin-top:8px"><input type="checkbox" id="bioSw" ${Bio.on() ? 'checked' : ''}><span class="tr"></span><span class="sl">${Bio.name()} bilan ochish<br><span class="hint">PIN o'rniga yuzingiz yoki barmoq izingiz bilan</span></span></label>` : ''}
         <div class="btn-row" style="margin-top:10px"><button class="btn" id="pwCh">${ic('lock')}${AUTH ? 'PIN-kod sozlamalari' : 'PIN-kod qo\'yish'}</button>${AUTH ? '<button class="btn" id="lockNow">Hozir qulflash</button>' : ''}</div></div></div>
       <div class="section"><div class="section-h"><h2>Ilova haqida</h2></div><div class="card pad"><div class="kv" id="about"></div>
         <div class="btn-row" style="margin-top:10px"><button class="btn" id="install" hidden>${ic('download')}Telefonga o'rnatish</button><button class="btn danger" id="wipe">${ic('trash')}Hamma ma'lumotni o'chirish</button></div></div></div>`;
         this.ghBox($('#ghBox', v));
+        const pf = getMeta('profile', {});
+        $('#profBox', v).innerHTML = `<div class="det-head" style="margin:0"><span class="av" style="width:52px;height:52px">${esc(initials(pf.name || '?'))}</span><div><b>${esc(pf.name || 'Ismingizni kiriting')}</b><div class="small muted">${esc([pf.role, pf.company].filter(Boolean).join(' · ') || 'Lavozim, kompaniya')}</div>${pf.manager ? `<div class="tiny c-violet">Menejer: ${esc(pf.manager)}</div>` : ''}</div></div><button class="btn block sm" id="profEd" style="margin-top:10px">${ic('edit')}Tahrirlash</button>`;
+        $('#profEd', v).onclick = async () => { const r = await formSheet('Profil', [{ k: 'name', label: 'Ismingiz', ph: 'Masalan: Islombek' }, { k: 'role', label: 'Lavozim', ph: 'Tibbiy vakil' }, { k: 'company', label: 'Kompaniya', ph: 'Kusum Healthcare' }, { k: 'manager', label: 'Menejeringiz', hint: 'Dvoynoy vizitlarda avtomatik qo\'yiladi' }, { k: 'area', label: 'Hududingiz', ph: 'Qarshi' }], pf); if (r) {
+            setMeta('profile', r);
+            Router.render();
+        } };
+        (_a = $('#bioSw', v)) === null || _a === void 0 ? void 0 : _a.addEventListener('change', async (e) => { if (e.target.checked) {
+            e.target.checked = await Bio.enable();
+        }
+        else
+            await Bio.disable(); });
         $$('[data-vf]', v).forEach(i => i.onchange = () => { const f = VF(); const n = Math.max(1, Math.min(365, Math.round(num(i.value)) || f[i.dataset.vf])); i.value = n; f[i.dataset.vf] = n; setMeta('visitFreq', f); UI.toast('Saqlandi', 'ok'); });
         const sv = () => { saveSets(); };
         $('#nIn', v).onchange = e => { s.nInApp = e.target.checked; sv(); };
@@ -4728,7 +5835,7 @@ const Settings = {
         $('#remDays', v).onchange = e => { s.remDays = +e.target.value; sv(); };
         $('#expWarn', v).onchange = e => { s.expWarn = +e.target.value; sv(); };
         $('#theme', v).onchange = e => { s.theme = e.target.value; sv(); applyTheme(); };
-        (_a = $('#lockMode', v)) === null || _a === void 0 ? void 0 : _a.addEventListener('change', e => { s.lockMode = e.target.value; sv(); });
+        (_b = $('#lockMode', v)) === null || _b === void 0 ? void 0 : _b.addEventListener('change', e => { s.lockMode = e.target.value; sv(); });
         $('#tgFind', v).onclick = async () => { SETS.tgToken = $('#tgTok', v).value.trim(); if (!SETS.tgToken) {
             UI.toast('Avval token kiriting', 'err');
             return;
@@ -4760,7 +5867,7 @@ const Settings = {
         };
         $('#tgRep', v).onclick = () => TG.report();
         $('#pwCh', v).onclick = () => Lock.settings();
-        (_b = $('#lockNow', v)) === null || _b === void 0 ? void 0 : _b.addEventListener('click', () => Lock.lock());
+        (_c = $('#lockNow', v)) === null || _c === void 0 ? void 0 : _c.addEventListener('click', () => Lock.lock());
         $('#bkDl', v).onclick = () => Backup.download();
         $('#bkUp', v).onclick = () => Backup.restoreFile();
         $('#bkList', v).onclick = () => Backup.list();
@@ -5204,6 +6311,7 @@ const Lock = {
                 press('x'); };
             document.addEventListener('keydown', kd);
             const cleanup = () => document.removeEventListener('keydown', kd);
+            this._kpDone = v => { cleanup(); res(v); };
             dots();
             el._extra = $('#kpExtra', el);
             this._kpEl = el;
@@ -5255,8 +6363,17 @@ const Lock = {
                 } });
             const ex = this._kpEl && this._kpEl._extra;
             if (ex) {
-                ex.innerHTML = '<button class="btn ghost sm" id="kpForgot">PIN-kodni unutdim</button>';
+                ex.innerHTML = `${Bio.on() ? `<button class="btn primary block" id="kpBio" style="margin-bottom:10px">🙂 ${Bio.name()} bilan kirish</button>` : ''}<button class="btn ghost sm" id="kpForgot">PIN-kodni unutdim</button>`;
                 $('#kpForgot', ex).onclick = () => this.forgot();
+                const bb = $('#kpBio', ex);
+                if (bb) {
+                    bb.onclick = async () => { if (await Bio.verify())
+                        this._kpDone('bio');
+                    else
+                        UI.toast('Tanilmadi — PIN-kodni kiriting', 'err'); };
+                    if (!/iphone|ipad|ipod|macintosh/i.test(navigator.userAgent))
+                        setTimeout(() => bb.click(), 300);
+                }
             }
             await p;
             await finish();
@@ -5325,11 +6442,11 @@ const Lock = {
     back() { $('#lock').hidden = true; $('#app').hidden = false; Router.render(); }
 };
 /* ═════════ MORE page ═════════ */
-const MORE = [['reminders', 'Eslatmalar', 'bell'], ['sales', 'Sotuvlar', 'cart'], ['gifts', "Sovg'alar", 'gift'], ['map', 'Xarita', 'map'], ['returned', 'Qaytarilgan dorilar', 'ret'], ['projects', 'Sayohat, tadbir', 'plane'], ['stats', 'Statistika', 'chart'], ['settings', 'Sozlamalar', 'gear']];
+const MORE = [['drugs', 'Dorilar', 'pill'], ['sales', 'Sotuvlar va tahlil', 'cart'], ['personal', 'Shaxsiy', 'lock'], ['reports', 'Hisobotlar', 'print'], ['reminders', 'Eslatmalar', 'bell'], ['gifts', "Sovg'alar", 'gift'], ['map', 'Xarita va marshrut', 'map'], ['returned', 'Qaytarilgan dorilar', 'ret'], ['projects', 'Sayohat, tadbir', 'plane'], ['stats', 'Statistika', 'chart'], ['settings', 'Sozlamalar', 'gear']];
 const More = {
     title: 'Boshqa bo\'limlar',
     render(v) {
-        const cnt = { reminders: DB.reminders.filter(r => !r.done).length, sales: DB.sales.length, gifts: DB.gifts.length, map: DB.contacts.filter(c => c.lat != null).length, returned: DB.returned.length, projects: DB.projects.length + DB.events.length };
+        const cnt = { drugs: DB.expired.length, personal: DB.notes.length + DB.debts.filter(d => d.personal).length, reminders: DB.reminders.filter(r => !r.done).length, sales: DB.sales.length, gifts: DB.gifts.length, map: DB.contacts.filter(c => c.lat != null).length, returned: DB.returned.length, projects: DB.projects.length + DB.events.length };
         const late = DB.reminders.filter(r => !r.done && dLeft(r.remindDate) !== null && dLeft(r.remindDate) <= 0).length;
         v.innerHTML = `<div class="list" style="margin-top:8px">${MORE.map(([k, l, i]) => `<a class="item" href="#/${k}" style="text-decoration:none;color:inherit"><span class="av sq" style="background:var(--surface2);color:var(--ink2)"><svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round">${IC[i]}</svg></span><span class="body"><span class="t">${l}</span>${k === 'settings' ? `<span class="s">${Sync.on() ? 'Sinxron yoqilgan' : 'Sinxron, zaxira, Telegram, PIN-kod'}</span>` : ''}</span><span class="r">${k === 'reminders' && late ? `<span class="tag red">${late} bugun</span>` : cnt[k] != null ? `<span class="small muted">${cnt[k]}</span>` : ''}</span></a>`).join('')}</div>
     ${Sync.on() ? '' : `<div class="card pad" style="margin-top:16px"><b>Ma'lumotlaringiz faqat shu telefonda</b><p class="small muted" style="margin:4px 0 10px">Telefon yo'qolsa yoki brauzer tozalansa, hammasi yo'qoladi. GitHub sinxronini yoqing — 2 daqiqa vaqt oladi.</p><a class="btn primary sm" href="#/settings">Sinxronni yoqish</a></div>`}`;
@@ -5396,8 +6513,8 @@ function openSearch() {
         const has = (...s) => s.some(x => norm(x).includes(q));
         DB.contacts.forEach(c => { if (has(c.name, c.spec, c.address, c.workplace, c.note) || (qd.length >= 3 && (phoneDigits(c.phone) + phoneDigits(c.phone2)).includes(qd)))
             res.push({ icon: '👤', t: c.name, s: [c.type === 'dorixona' ? 'Dorixona' : 'Vrach', fmtPhone(c.phone), c.address].filter(Boolean).join(' · '), go: () => Contacts.open(c.id) }); });
-        DB.debts.forEach(d => { if (has(contactName(d.contactId), d.note))
-            res.push({ icon: '💰', t: contactName(d.contactId) || 'Qarz', s: `${Debts.isOpen(d) ? 'Qoldiq ' + money(Debts.left(d)) : 'Yopilgan'}${d.note ? ' · ' + d.note : ''}`, go: () => Debts.open(d.id) }); });
+        DB.debts.forEach(d => { if (has(debtWho(d), d.note))
+            res.push({ icon: '💰', t: debtWho(d) || 'Qarz', s: `${Debts.isOpen(d) ? 'Qoldiq ' + money(Debts.left(d)) : 'Yopilgan'}${d.note ? ' · ' + d.note : ''}`, go: () => Debts.open(d.id) }); });
         DB.expired.forEach(e => { if (has(e.name, e.note) || (qd.length >= 4 && String(e.barcode || '').includes(qd)))
             res.push({ icon: '💊', t: e.name, s: `${fmtNum(e.qty)} dona · ${fmtD(e.expDate)}`, go: () => Drugs.edit(e.id) }); });
         DB.gifts.forEach(g => { if (has(g.name, g.model, contactName(g.contactId)))
@@ -5406,7 +6523,9 @@ function openSearch() {
             res.push({ icon: '🛒', t: s.drug, s: `${contactName(s.contactId)} · ${fmtD(s.date)} · ${money(s.total)}`, go: () => Sales.edit(s.id) }); });
         DB.reminders.forEach(r => { if (has(r.title, r.desc))
             res.push({ icon: '🔔', t: r.title, s: `${fmtD(r.remindDate)}${r.done ? ' · bajarilgan' : ''}`, go: () => Reminders.edit(r.id) }); });
-        DB.visits.forEach(v => { if (has(v.note))
+        DB.notes.forEach(n => { if (has(n.title, n.text, n.person))
+            res.push({ icon: n.kind === 'promise' ? '🤞' : '🗒️', t: n.title || 'Qayd', s: n.kind === 'promise' ? `Va'da${n.due ? ' · ' + fmtD(n.due) : ''}` : (n.text || '').slice(0, 60), go: () => n.kind === 'promise' ? Personal.editPromise(n.id) : Personal.editNote(n.id) }); });
+        DB.visits.forEach(v => { if (has(v.note, ...(v.products || []), v.manager))
             res.push({ icon: '📍', t: contactName(v.contactId), s: `Tashrif ${fmtD(v.date)} · ${v.note}`, go: () => Contacts.open(v.contactId, 'visits') }); });
         show(res);
     };
@@ -5415,7 +6534,7 @@ function openSearch() {
         const k = b.dataset.qf;
         let res = [];
         if (k === 'late')
-            res = DB.debts.filter(d => Debts.overdue(d)).map(d => ({ icon: '💰', t: contactName(d.contactId), s: `${money(Debts.left(d))} · ${relD(Debts.nextDue(d).date)}`, go: () => Debts.open(d.id) }));
+            res = DB.debts.filter(d => Debts.overdue(d)).map(d => ({ icon: '💰', t: debtWho(d), s: `${money(Debts.left(d))} · ${relD(Debts.nextDue(d).date)}`, go: () => Debts.open(d.id) }));
         if (k === 'today')
             res = DB.reminders.filter(r => !r.done && dLeft(r.remindDate) !== null && dLeft(r.remindDate) <= 0).map(r => ({ icon: '🔔', t: r.title, s: relD(r.remindDate), go: () => Reminders.edit(r.id) }));
         if (k === 'low')
@@ -5437,14 +6556,21 @@ function openSearch() {
     setTimeout(() => $('#gsQ', body).focus(), 250);
 }
 /* ═════════ ROUTER ═════════ */
-const ROUTES = { home: Home, contacts: Contacts, debts: Debts, drugs: Drugs, more: More, gifts: Gifts, sales: Sales, returned: Returned, reminders: Reminders, map: MapView, projects: Projects, stats: Stats, settings: Settings };
-const NAV = [['home', 'Asosiy', 'home'], ['contacts', 'Kontaktlar', 'users'], ['debts', 'Qarzlar', 'wallet'], ['drugs', 'Dorilar', 'pill'], ['more', 'Boshqa', 'more']];
-const FAB = { home: { l: 'Qo\'shish', fn: () => UI.menu('Nima qo\'shamiz?', [{ icon: '📍', label: 'Tashrif', value: Quick.visit }, { icon: '💳', label: 'To\'lov', value: Quick.pay }, { icon: '💰', label: 'Qarz', value: Quick.debt }, { icon: '🛒', label: 'Sotuv', value: Quick.sale }, { icon: '👤', label: 'Kontakt', value: Quick.contact }, { icon: '🔔', label: 'Eslatma', value: Quick.rem }, { icon: '🧭', label: 'Marshrut', value: Quick.route }, { icon: '📋', label: 'Kun yakuni', value: Quick.day }, { icon: '💊', label: 'Dori', value: () => Drugs.edit() }, { icon: '🎁', label: 'Sovg\'a', value: () => Gifts.edit() }]).then(f => f && f()) },
+const ROUTES = { home: Home, visits: VisitsView, personal: Personal, reports: ReportsCenter, contacts: Contacts, debts: Debts, drugs: Drugs, more: More, gifts: Gifts, sales: Sales, returned: Returned, reminders: Reminders, map: MapView, projects: Projects, stats: Stats, settings: Settings };
+const NAV = [['home', 'Asosiy', 'home'], ['visits', 'Tashriflar', 'check'], ['contacts', 'Kontaktlar', 'users'], ['debts', 'Qarzlar', 'wallet'], ['more', 'Boshqa', 'more']];
+const FAB = { home: { l: 'Qo\'shish', fn: () => UI.menu('Nima qo\'shamiz?', [{ icon: '📍', label: 'Tashrif', value: Quick.visit }, { icon: '💳', label: 'To\'lov', value: Quick.pay }, { icon: '💰', label: 'Qarz', value: Quick.debt }, { icon: '🧾', label: 'Buyurtma', value: () => Order.open() }, { icon: '👤', label: 'Kontakt', value: Quick.contact }, { icon: '🔔', label: 'Eslatma', value: Quick.rem }, { icon: '🧭', label: 'Marshrut', value: Quick.route }, { icon: '📋', label: 'Kun yakuni', value: Quick.day }, { icon: '💊', label: 'Dori', value: () => Drugs.edit() }, { icon: '🎁', label: 'Sovg\'a', value: () => Gifts.edit() }]).then(f => f && f()) },
+    visits: { l: 'Tashrif', fn: () => VisitsView.seg === 'plan' ? TourPlan.importMenu(VisitsView.month || thisMonth()) : Visits.edit(null, '', { date: VisitsView.day || today() }) },
+    personal: { l: 'Qo\'shish', fn: () => Personal.add() },
     contacts: { l: 'Kontakt', fn: () => Contacts.edit() }, debts: { l: 'Qarz', fn: () => Debts.edit() }, drugs: { l: 'Dori', fn: () => Drugs.edit() }, reminders: { l: 'Eslatma', fn: () => Reminders.edit() },
-    sales: { l: 'Sotuv', fn: () => Sales.edit() }, gifts: { l: 'Sovg\'a', fn: () => Gifts.edit() }, returned: { l: 'Qo\'shish', fn: () => Returned.edit() }, projects: { l: 'Qo\'shish', fn: () => Projects.add() } };
+    sales: { l: 'Sotuv', fn: () => UI.menu('Sotuv', [{ icon: '🧾', label: 'Buyurtma (bir nechta dori)', sub: 'Bitta mijozga bir yo\'la', value: 'o' }, { icon: '🛒', label: 'Bitta sotuv', value: 's' }]).then(r => { if (r === 'o')
+            Order.open(); if (r === 's')
+            Sales.edit(); }) }, gifts: { l: 'Sovg\'a', fn: () => Gifts.edit() }, returned: { l: 'Qo\'shish', fn: () => Returned.edit() }, projects: { l: 'Qo\'shish', fn: () => Projects.add() } };
 const Router = {
     cur: 'home',
-    go(r) { if (location.hash === '#/' + r)
+    go(r) { if (UI._skipPop > 0 && Date.now() - (UI._skipAt || 0) < 1200) {
+        setTimeout(() => this.go(r), 80);
+        return;
+    } if (location.hash === '#/' + r)
         this.fromHash();
     else
         location.hash = '#/' + r; },
@@ -5483,9 +6609,10 @@ const Router = {
         hydrate(v);
         const f = FAB[this.cur];
         const fb = $('#fab');
-        if (f && !Sel.mode) {
+        if (f && !Sel.mode && !(this.cur === 'personal' && false)) {
             fb.hidden = false;
-            fb.innerHTML = `${ic('plus')}<span>${esc(f.l)}</span>`;
+            const lab = this.cur === 'visits' && VisitsView.seg === 'plan' ? 'Yuklash' : f.l;
+            fb.innerHTML = `${ic(this.cur === 'visits' && VisitsView.seg === 'plan' ? 'upload' : 'plus')}<span>${esc(lab)}</span>`;
             fb.onclick = f.fn;
         }
         else
@@ -5605,6 +6732,12 @@ async function boot() {
         window.addEventListener('hashchange', () => { if (!UI.stack.length)
             Router.fromHash(); });
         Router.fromHash();
+        try {
+            Pull.init();
+        }
+        catch (e) {
+            console.warn(e);
+        }
         window.addEventListener('scroll', () => $('#top').classList.toggle('scrolled', window.scrollY > 4), { passive: true });
         document.addEventListener('keydown', e => { if (e.key === 'Escape' && UI.stack.length)
             UI.close(); if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
